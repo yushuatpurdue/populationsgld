@@ -1,0 +1,100 @@
+### This file is created by Yushu Huang for population SGMCMC experiments.
+
+## This is the function that runs population SGLD with snooker. 
+
+## input: 
+#     niteration   : number of iterations. 
+#     nchain       : number of the chains in the population to run. 
+
+## output: 
+#     a population of paths. array of dimension = c(dim(state space), nchain, niteration)
+
+###==============================================
+###=============== !!!MAIN FUNCTION!!! ==========
+###==============================================
+library(MASS)
+
+run_snookerSGLD <- function(ts, niteration, nchain){
+###=========== set path ================
+  setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  
+###============= initialization: call functions and initial values=======================
+  source("potential/mixtureGaussian.R")
+  distribution_sgld <- mixgaussian               # target posterior distribution. 
+  temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
+  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it. 
+  
+  source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
+  
+###=============== run population SGLD with snooker =====================
+  
+  output = array(NA,dim = c(dimension,nchain,niteration))   # result array
+  output[,,1] = x                               # record initialization
+  
+  for (t in 1:niteration) {
+    full_index = 1:nchain
+    Index = sample.int(nchain, ceiling(nchain/2))        # sample 5 integers between 1 and 10 without replacement. 
+    sgld_index = full_index[-Index]
+    
+    
+    x[,Index] = snooker(x, ts, Index)
+    
+    
+    x[,sgld_index] = SGLD(x[,-Index], distribution_sgld)
+
+    output[,,t] = x
+  }
+  
+  return(output)
+  
+}
+
+
+###=========================================
+###=============== run function ============
+###=========================================
+
+output_snooker = run_snookerSGLD(ts, 5000,10)
+ hist(output_snooker[1,,],breaks = seq(-7,12,0.5),main = "snooker SGLD")
+
+###=========================================
+###=============== unwrapped code ==========
+###=========================================
+
+
+# ###=========== set path ================
+# setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+# 
+# nchain = 10
+# niteration = 5000
+# 
+# ###============= initialization: call functions and initial values=======================
+# source("potential/2gaussian.R")
+# distribution_sgld <- twogaussian               # pass potential(r) to a general name that is recognizable for function SGLD.
+# x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
+# x = t(x)
+# source("sampler/snooker.R")
+# 
+# ###=============== to be wrapped into a function =====================
+# 
+# 
+# output = array(NA,dim = c(2,10,niteration))
+# output[,,1] = x
+# 
+# for (t in 1:niteration) {
+#   full_index = 1:10
+#   Index = sample.int(10,5)        # sample 5 integers between 1 and 10 without replacement.
+#   sgld_index = full_index[-Index]
+# 
+#   # distribution_sgld <- snooker_scaler               # pass potential(r) to a general name that is recognizable for function SGLD.
+# 
+#   x[,Index] = snooker(x,Index)
+# 
+# 
+#   x[,sgld_index] = SGLD(x[,-Index], distribution_sgld)
+# 
+#   output[,,t] = x
+# }
+
+
+
