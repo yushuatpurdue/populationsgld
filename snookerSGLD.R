@@ -16,7 +16,7 @@ library(MASS)
 
 run_snookerSGLD <- function(ts, niteration, nchain){
 ###=========== set path ================
-  setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
 ###============= initialization: call functions and initial values=======================
   source("potential/mixtureGaussian.R")

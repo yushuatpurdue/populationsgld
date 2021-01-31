@@ -17,7 +17,7 @@
 
 
 ###=========== set path ================
-setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+# setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
 ### ========== first: parameter setups =========
 nchain  = dim(x)[2]                    # number of chains
