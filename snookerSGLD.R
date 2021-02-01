@@ -55,7 +55,8 @@ run_snookerSGLD <- function(ts, niteration, nchain){
 ###=========================================
 
 output_snooker = run_snookerSGLD(ts, 5000,10)
-hist(output_snooker[1,,],breaks = seq(-7,12,0.5),main = "snooker SGLD")
+# hist(output_snooker[1,,],breaks = seq(-7,12,0.5),main = "snooker SGLD")
+write.csv(output_snooker, "./output.csv")
 
 ###=========================================
 ###=============== unwrapped code ==========
