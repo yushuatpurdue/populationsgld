@@ -21,7 +21,7 @@
 
 ### ========== first: parameter setups =========
 nchain = dim(x)[2]                    # number of chains
-ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
+Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
 epsilon_r = 0.1                        # learning rate for sgld in sampling r. 
 
 ### ========== call function: calculating potential & gradient ===============
@@ -45,26 +45,26 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 # ==================================
 ## function calculate the boltzmann weight. 
 
-Boltzmann <- function(x, ts){
+Boltzmann <- function(x, Ts){
   # input:  x            = vector of positions (again vector), so overall matrix
-  #         ts           = temperature selected for sampling, scaler
-  # output: Boltzmann(x) = their boltzmann weight = exp(-u(x)/ts), vector
+  #         Ts           = temperature selected for sampling, scaler
+  # output: Boltzmann(x) = their boltzmann weight = exp(-u(x)/Ts), vector
   pd_grad = potential(x)
-  Boltzmann = pd_grad$pd / ts
+  Boltzmann = pd_grad$pd / Ts
   return(Boltzmann)
 }
 
 # ==================================
 ## sample xj by boltzmann weight. 
-sample_Boltzmann <- function(x, ts, index){
+sample_Boltzmann <- function(x, Ts, index){
   # input:  x            = vector of positions (again vector), so overall matrix
-  #         ts           = temperature selected for sampling, scaler
+  #         Ts           = temperature selected for sampling, scaler
   #         index        = the indices that should be take away before sampling
   # output: sampleid     = the indices of the sampled chain in {x} to snooker with xi
   sample_Boltzmann = c()
   for (i in index) 
   {
-    weight = Boltzmann(x, ts)     # calculate the boltzmann weights for everyone in {x}
+    weight = Boltzmann(x, Ts)     # calculate the boltzmann weights for everyone in {x}
     weight_net = weight[-i]   # take away xi
     weight_normalized = weight_net/sum(weight_net)   # normalize the weight of {x\xi} set
     samples = rmultinom(1,1,weight_normalized)   # sample according to the weight
@@ -142,8 +142,8 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 ##===================================================
 
 #====================
-snooker <-function(x, ts, Index){
-  paired_Index = sample_Boltzmann(x,ts,Index)     # sample xj by boltzmann weight and record the j's.
+snooker <-function(x, Ts, Index){
+  paired_Index = sample_Boltzmann(x,Ts,Index)     # sample xj by boltzmann weight and record the j's.
   direction_e  = unit_direction(x, Index, paired_Index)     #calculate e: the unit updating direction. 
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))

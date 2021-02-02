@@ -12,7 +12,7 @@ library(Matrix)
 #   Sigma:  array of dimension d*d*m. Sigma[,,i] is the variance matrix of the i-th Gaussian. 
 
 ## output: 
-#   invsigma1, invsigma2: inverse of the covariance matrix. 
+#   invsigma: array of dimension d*d*m. Inverse of the covariance matrix. 
 #   scale1, scale2: the scale in front of the exp of normal. 
 #=======================
 mixgaussian_par <- function(weight, Sigma)
@@ -60,11 +60,18 @@ calculate_density_grad <- function(ParResult, mu, x)
   
   xtomu = x - mu  
   # matrix of dimension * #Gaussian
-  left_xtomu = array(xtomu, dim = c(length(xtomu),1)) 
-  Sigma_wrap = bdiag(apply(invSigma, n_mixture, bdiag))
-  right_xtomu = bdiag(split(xtomu, rep(1:n_mixture, each = dimension)))
+  left_xtomu = array(xtomu, dim = c(length(xtomu),1))
+  # Sigma_wrap = bdiag(apply(invSigma, n_mixture, bdiag))
+  # right_xtomu = bdiag(split(xtomu, rep(1:n_mixture, each = dimension)))
   
-  Gaussian_dist = exp(-t(left_xtomu) %*% Sigma_wrap %*% right_xtomu)
+  l2dist = c()
+  for (i in 1:n_mixture) {
+    temp = t(xtomu[,i]) %*% invSigma[,,i] %*% xtomu[,i]
+    l2dist = cbind(l2dist,temp)
+  }
+  
+  # Gaussian_dist = exp(-t(left_xtomu) %*% Sigma_wrap %*% right_xtomu)
+  Gaussian_dist = exp(-l2dist)
   # the values of the Gaussian kernel within each of the Gaussians. 
   
   weighted_pd = mixture_scale * Gaussian_dist 
