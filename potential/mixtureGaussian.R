@@ -63,7 +63,7 @@ dimension = 2
 n_mixture = 3
 
 weight = rep(1/n_mixture, n_mixture)
-sigma = 1
+sigma = 0.1
 mu = matrix(c(1,1,3,3,7,7), nrow = dimension, ncol = n_mixture)
 
 

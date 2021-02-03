@@ -19,15 +19,15 @@
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
-### ========== first: parameter setups =========
+### ========== first: parameter setups ===================================================
 nchain = dim(x)[2]                    # number of chains
 Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
-epsilon_r = 0.1                        # learning rate for sgld in sampling r. 
-
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")  
+epsilon_r = sigma^2                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
+
 # ==================================
 ## load the functions to be used when sampling. 
 
@@ -111,7 +111,7 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   # R = matrix(ncol = 5)
   # R[1,] = r
   for (i in 1:5000) {
-    dist_to0 = min(abs(r),epsilon = 0.1)               # the learning rate needs to be small near 0 to avoid blowing up there.  
+    dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
     r = SGLD(r, distribution_snookerscaler, dist_to0)
     # R = rbind(R,r)
   }
@@ -119,22 +119,21 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 }
 
 ## test for the convergence of sampling r.
-#   r0 = runif(5, -1,1)
-#   r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
-#   r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
-#   # r = rnorm(5,0,1)
-#   # r = rep(-5,5)
-#   r0 = array(r0,dim = c(1,5))
+#   # r0 = runif(5, -1,1)
+#   # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
+#   # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
+#   r0 = rnorm(length(Index))
+#   r0 = array(r0,dim = c(1,length(r0)))  
 #   R = matrix(ncol = 5)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:10000) {
+#   for (i in 1:5000) {
 #     dist_to0 = min(abs(r),epsilon_r)
 #     r = SGLD(r,distribution_snookerscaler, dist_to0)
 #     R = rbind(R,r)
 #   }
-# # 
-# hist(R[,5], breaks = seq(-12,12,0.2))
+# # # 
+# hist(R[,1], breaks = seq(-12,12,0.2))
 
 
 ##===================================================
