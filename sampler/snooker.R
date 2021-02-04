@@ -25,7 +25,7 @@ Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling 
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")  
-epsilon_r = sigma^2                        # learning rate for sgld in sampling r. 
+epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
 
 # ==================================
@@ -123,7 +123,7 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 #   # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
 #   # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
 #   r0 = rnorm(length(Index))
-#   r0 = array(r0,dim = c(1,length(r0)))  
+#   r0 = array(r0,dim = c(1,length(r0)))
 #   R = matrix(ncol = 5)
 #   R[1,] = r0
 #   r = r0
@@ -132,8 +132,8 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 #     r = SGLD(r,distribution_snookerscaler, dist_to0)
 #     R = rbind(R,r)
 #   }
-# # # 
-# hist(R[,1], breaks = seq(-12,12,0.2))
+# # #
+# hist(R[,5], breaks = seq(-12,12,0.2))
 
 
 ##===================================================

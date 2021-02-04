@@ -14,15 +14,19 @@
 ###==============================================
 library(MASS)
 
-run_snookerSGLD <- function(ts, niteration, nchain){
+run_snookerSGLD <- function(Ts, niteration, nchain){
 ###=========== set path ================
   # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
 ###============= initialization: call functions and initial values=======================
   source("potential/mixtureGaussian.R")
   distribution_sgld <- mixgaussian               # target posterior distribution. 
-  temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
-  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it. 
+  
+  ## sample x. need to change this according to the target distribution!!
+  # temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
+  # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
+  temp <- runif(nchain*dimension, min = 0, max = 10)
+  x <<- matrix(temp, nrow = dimension)
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -37,15 +41,15 @@ run_snookerSGLD <- function(ts, niteration, nchain){
     sgld_index = full_index[-Index]
     
     
-    x[,Index] = snooker(x, ts, Index)
+    x[,Index] = snooker(x, Ts, Index)
     
     
-    x[,sgld_index] = SGLD(x[,-Index], distribution_sgld)
+    x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,sigma^2))
 
     output[,,t] = x
   }
   
-  return(output)
+  return(list("output" = output, "mu" = mu))
   
 }
 
@@ -54,9 +58,10 @@ run_snookerSGLD <- function(ts, niteration, nchain){
 ###=============== run function ============
 ###=========================================
 
-output_snooker = run_snookerSGLD(Ts, 5000,10)
-# hist(output_snooker[1,,],breaks = seq(-7,12,0.5),main = "snooker SGLD")
-write.csv(output_snooker, "./output.csv")
+output_snooker = run_snookerSGLD(Ts, 5000,20)
+hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+write.csv(output_snooker$output, "./output_snooker.csv")
+write.csv(output_snooker$mu, "./mu.csv")
 
 ###=========================================
 ###=============== unwrapped code ==========
