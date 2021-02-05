@@ -47,6 +47,7 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
     x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,sigma^2))
 
     output[,,t] = x
+    print(t)
   }
   
   return(list("output" = output, "mu" = mu))
@@ -58,8 +59,8 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
 ###=============== run function ============
 ###=========================================
 
-output_snooker = run_snookerSGLD(Ts, 5,10)
-hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+output_snooker = run_snookerSGLD(Ts, 5000,20)
+# hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 write.csv(output_snooker$output, "./output_snooker.csv")
 write.csv(output_snooker$mu, "./mu.csv")
 
