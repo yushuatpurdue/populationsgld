@@ -20,7 +20,7 @@
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
 ### ========== first: parameter setups ===================================================
-nchain = dim(x)[2]                    # number of chains
+nchain  = dim(x)[2]                    # number of chains
 Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
 ### ========== call function: calculating potential & gradient ===============
 

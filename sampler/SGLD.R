@@ -1,3 +1,4 @@
+### This file is created by Yushu Huang for EMC-SGLD experiments.
 ## This is the one step SGLD sampler. 
 
 ## input: 
@@ -21,6 +22,16 @@
 
 SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
   grad = distribution_sgld(r)$grad
+  
+  if (prod(is.na(grad)) == 0){            # if there exists any entry being NA in grad:
+    if (exists("mu")){
+      blowup_entry = sign(rowSums(x - mu))*(1-is.na(grad))         # (1-is.na(grad)) returns which entries blowed up. sign(rowSums(x - mu)) returns the direction for correction. 
+      grad = 200*blowup_entry
+    }
+    else {
+      stop("gradient blows up")
+    }
+  }
   wn_length = length(r)
   wn = rnorm(wn_length)
   wn = array(wn, dim = dim(r))
