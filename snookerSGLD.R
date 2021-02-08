@@ -35,7 +35,7 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
   output = array(NA,dim = c(dimension,nchain,niteration))   # result array
   output[,,1] = x                               # record initialization
   
-  for (t in 1:niteration) {
+  for (t in 2:niteration) {
     full_index = 1:nchain
     Index = sample.int(nchain, ceiling(nchain/2))        # sample 5 integers between 1 and 10 without replacement. 
     sgld_index = full_index[-Index]
