@@ -50,7 +50,7 @@ Boltzmann <- function(x, Ts){
   #         Ts           = temperature selected for sampling, scaler
   # output: Boltzmann(x) = their boltzmann weight = exp(-u(x)/Ts), vector
   pd_grad = potential(x)
-  Boltzmann = pd_grad$pd / Ts
+  Boltzmann = pd_grad$pd / exp(Ts)
   return(Boltzmann)
 }
 
@@ -144,8 +144,6 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 snooker <-function(x, Ts, Index){
   paired_Index = sample_Boltzmann(x,Ts,Index)     # sample xj by boltzmann weight and record the j's.
   direction_e  = unit_direction(x, Index, paired_Index)     #calculate e: the unit updating direction. 
-  r = rnorm(length(Index))
-  r = array(r,dim = c(1,length(r)))
   
   # source("potential/2gauss_hess.R")
   
@@ -153,8 +151,15 @@ snooker <-function(x, Ts, Index){
     distribution_snookerscaler = snooker_scaler(r,potential,x[,paired_Index],direction_e)
   }
   
-  r = sample_r(epsilon_r, Index, distribution_snookerscaler)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify. 
-
+  r = NA
+  for (attempt in 1:3) {
+    try(r <- sample_r(epsilon_r, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
+    if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
+  }
+  if (prod(is.na(r))) stop("r = NA")        # if r still has NA entries then stop. 
+  
+  
   r_matrix = t(array(r, dim = c(length(r), dimension))) 
   snooker_update = x[,paired_Index] + r_matrix*direction_e 
   return(snooker_update) 

@@ -50,7 +50,7 @@ if (exists("mu")){
 #      positions after one step update of SGLD sampler. 
 
 SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
-  grad = distribution_sgld(r)$grad      # compute the gradient. 
+  grad = tau*distribution_sgld(r)$grad      # compute the gradient. 
   
   rowsum_mu <- function(x){
     return(rowSums(x - mu))
@@ -59,8 +59,6 @@ SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
   if (sum(is.na(grad)) > 0){            # if there exists any entry being NA in grad:
     if (exists("mu")){
       NAdirection = sign(apply(r, 2, rowsum_mu))                   #  returns the direction for correction
-      # print(NAdirection)
-      # print(is.na(grad))
       blowup_entry = NAdirection*(is.na(grad))         # (1-is.na(grad)) returns which entries blowed up. sign(rowSums(x - mu)) 
       
       grad[is.na(grad)] <- 0
