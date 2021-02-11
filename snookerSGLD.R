@@ -20,8 +20,7 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
   
 ###============= initialization: call functions and initial values=======================
   source("potential/mixtureGaussian.R")
-  distribution_sgld <- mixgaussian               # target posterior distribution. 
-  write.csv(mu, "./mu.csv")
+  distribution_sgld <- mixgaussian               # target posterior distribution.  
   ## sample x. need to change this according to the target distribution!!
   # temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
@@ -64,7 +63,7 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
 output_snooker = run_snookerSGLD(Ts, 5000,20)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 write.csv(output_snooker$output, "./output_snooker.csv")
-
+write.csv(output_snooker$mu, "./mu.csv")
 ###=========================================
 ###=============== unwrapped code ==========
 ###=========================================
