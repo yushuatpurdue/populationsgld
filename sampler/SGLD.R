@@ -50,7 +50,7 @@ if (exists("mu")){
 #      positions after one step update of SGLD sampler. 
 
 SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
-  grad = tau*distribution_sgld(r)$grad      # compute the gradient. 
+  grad = distribution_sgld(r)$grad      # compute the gradient. 
   
   rowsum_mu <- function(x){
     return(rowSums(x - mu))
