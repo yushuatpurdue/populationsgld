@@ -14,7 +14,7 @@
 ###==============================================
 library(MASS)
 
-run_snookerSGLD <- function(Ts, niteration, nchain){
+run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
 ###=========== set path ================
   # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
@@ -41,7 +41,7 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
     sgld_index = full_index[-Index]
     
     
-    x[,Index] = snooker(x, Ts, Index)
+    x[,Index] = snooker(x, temperature_select, Index)
     
     
     x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,sigma^2), tau = Ts[sgld_index])
@@ -59,9 +59,16 @@ run_snookerSGLD <- function(Ts, niteration, nchain){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-
-output_snooker = run_snookerSGLD(Ts, 5000,20)
+Ts      = seq(1,5,4/(nchain-1)) 
+output_snooker = run_snookerSGLD(Ts, temperature_select = 0.5, 5000,20)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+
+plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 5000 iteration", xlab = "x", ylab = "y")
+points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+
+plot(output_snooker$output[1,5,], output_snooker$output[2,5,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 5, 5000 iteration", xlab = "x", ylab = "y")
+points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+
 write.csv(output_snooker$output, "./output_snooker.csv")
 write.csv(output_snooker$mu, "./mu.csv")
 ###=========================================

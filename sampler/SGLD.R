@@ -72,7 +72,7 @@ SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
   wn = rnorm(wn_length)
   wn = array(wn, dim = dim(r))
   
-  r_update = r - grad*epsilon +sqrt(2*epsilon*tau)*wn
+  r_update = r - grad*epsilon + sqrt(2*epsilon*tau)*wn
   return(r_update)
 }
 

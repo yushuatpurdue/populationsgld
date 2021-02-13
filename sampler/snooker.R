@@ -1,13 +1,7 @@
 ### This file is created by Yushu Huang for population SGMCMC experiments.
+##  This is the one step snooker sampler. Main function named snooker, and a bunch of supportive functions. 
+##  Follows the EMC algorithm (Faming Liang 2001) and reconstruct it under the SGLD setting. 
 
-## This is the one step snooker sampler. 
-
-## input: 
-#     x:       current positions of the population. dim(x) = [dimension, nsample]
-#     Index:   which bunch of the population we are going to update via snooker. 
-
-## output: 
-#     those states of x that got updated.
 
 
 
@@ -21,7 +15,8 @@
 
 ### ========== first: parameter setups ===================================================
 nchain  = dim(x)[2]                    # number of chains
-Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
+# temperature_select = 0.5
+# Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")  
@@ -45,26 +40,26 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 # ==================================
 ## function calculate the boltzmann weight. 
 
-Boltzmann <- function(x, Ts){
-  # input:  x            = vector of positions (again vector), so overall matrix
-  #         Ts           = temperature selected for sampling, scaler
-  # output: Boltzmann(x) = their boltzmann weight = exp(-u(x)/Ts), vector
+Boltzmann <- function(x, temperature_select){
+  # input:  x                      = vector of positions (again vector), so overall matrix
+  #         temperature_select     = temperature selected for sampling, scaler
+  # output: Boltzmann(x)           = their boltzmann weight = exp(-u(x)/temperature_select), vector
   pd_grad = potential(x)
-  Boltzmann = pd_grad$pd / exp(Ts)
+  Boltzmann = (pd_grad$pd)^(1/temperature_select)
   return(Boltzmann)
 }
 
 # ==================================
 ## sample xj by boltzmann weight. 
-sample_Boltzmann <- function(x, Ts, index){
-  # input:  x            = vector of positions (again vector), so overall matrix
-  #         Ts           = temperature selected for sampling, scaler
-  #         index        = the indices that should be take away before sampling
-  # output: sampleid     = the indices of the sampled chain in {x} to snooker with xi
+sample_Boltzmann <- function(x, temperature_select, index){
+  # input:  x                   = vector of positions (again vector), so overall matrix
+  #         temperature_select  = temperature selected for sampling, scaler
+  #         index               = the indices that should be take away before sampling
+  # output: sampleid            = the indices of the sampled chain in {x} to snooker with xi
   sample_Boltzmann = c()
   for (i in index) 
   {
-    weight = Boltzmann(x, Ts)     # calculate the boltzmann weights for everyone in {x}
+    weight = Boltzmann(x, temperature_select)     # calculate the boltzmann weights for everyone in {x}
     weight_net = weight[-i]   # take away xi
     weight_normalized = weight_net/sum(weight_net)   # normalize the weight of {x\xi} set
     samples = rmultinom(1,1,weight_normalized)   # sample according to the weight
@@ -139,10 +134,18 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 ##===================================================
 ## =========== !!!MAIN FUNCTION!!! ==================
 ##===================================================
+## This is the one step snooker sampler. 
 
+## input: 
+#     x:                       current positions of the population. dim(x) = [dimension, nchain]
+#     temperature_select:      temperature ladder. A sequence of length nchain. 
+#     Index:                   which bunch of the population we are going to update via snooker. 
+
+## output: 
+#     those states of x that got updated.
 #====================
-snooker <-function(x, Ts, Index){
-  paired_Index = sample_Boltzmann(x,Ts,Index)     # sample xj by boltzmann weight and record the j's.
+snooker <-function(x, temperature_select, Index){
+  paired_Index = sample_Boltzmann(x,temperature_select,Index)     # sample xj by boltzmann weight and record the j's.
   direction_e  = unit_direction(x, Index, paired_Index)     #calculate e: the unit updating direction. 
   
   # source("potential/2gauss_hess.R")
