@@ -59,8 +59,9 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
 ###=========================================
 ###=============== run function ============
 ###=========================================
+nchain  = 20 
 Ts      = seq(1,5,4/(nchain-1)) 
-output_snooker = run_snookerSGLD(Ts, temperature_select = 0.5, 5000,20)
+output_snooker = run_snookerSGLD(Ts, temperature_select = 0.5, 5000, nchain)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 
 plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 5000 iteration", xlab = "x", ylab = "y")
