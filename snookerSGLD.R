@@ -28,6 +28,7 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   temp <- runif(nchain*dimension, min = 0, max = 10)
   x <<- matrix(temp, nrow = dimension)
+  mutation_rate = 0.7        # number of chains to go through SGLD instead of snooker. 
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -38,7 +39,7 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
   
   for (t in 2:niteration) {
     full_index = 1:nchain
-    Index = sample.int(nchain, ceiling(nchain/2))        # sample 5 integers between 1 and 10 without replacement. 
+    Index = sample.int(nchain, ceiling(nchain*(1 - mutation_rate)))        # sample (1 - mutation_rate) portion of the chains to do crossover. 
     print(Index)
     sgld_index = full_index[-Index]
     

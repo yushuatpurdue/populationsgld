@@ -64,8 +64,9 @@ n_mixture = 10
 
 weight = rep(1/n_mixture, n_mixture)
 sigma = 0.1
-mu = runif(dimension*n_mixture,0,10)
-mu = matrix(mu, nrow = dimension)
+# mu = runif(dimension*n_mixture,0,10)
+# mu = matrix(mu, nrow = dimension)
+mu = t(matrix(c(2.418759, 6.618219, 6.691523, 6.904582, 2.196740, 0.5989215, 0.1847932, 5.264697, 4.879505, 8.004288, 6.077461, 3.801844, 5.177598, 2.469589, 9.876724, 2.1504432, 3.2653869, 2.133480, 7.884069, 4.334636),ncol = dimension))
 # mu = matrix(c(1,5,5,1,7,7), nrow = dimension, ncol = n_mixture)
 
 
