@@ -15,8 +15,8 @@
 
 ### ========== first: parameter setups ===================================================
 nchain  = dim(x)[2]                    # number of chains
-# temperature_select = 0.5
-# Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
+# temperature_select = 0.5             # selection temperature for sampling xj
+# Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")  
@@ -32,9 +32,9 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 
 
 
-##==================================================
-## =========== necessary function ==================
-##==================================================
+##===================================================
+## =========== supportive function ==================
+##===================================================
 
 ### ============ Second: find the chains to pair with x ===========
 # ==================================

@@ -3,8 +3,10 @@
 ## This is the function that runs population SGLD with snooker. 
 
 ## input: 
-#     niteration   : number of iterations. 
-#     nchain       : number of the chains in the population to run. 
+#     niteration         : number of iterations. 
+#     nchain             : number of the chains in the population to run. 
+#     Ts                 : temperature ladder. 
+#     temoerature_select : select temperature in snooker. 
 
 ## output: 
 #     a population of paths. array of dimension = c(dim(state space), nchain, niteration)
