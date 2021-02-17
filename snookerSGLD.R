@@ -28,7 +28,6 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   temp <- runif(nchain*dimension, min = 0, max = 10)
   x <<- matrix(temp, nrow = dimension)
-  mutation_rate = 0.3        # number of chains to go through SGLD instead of snooker. 
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -39,17 +38,24 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
   
   for (t in 2:niteration) {
     full_index = 1:nchain
-    Index = sample.int(nchain, ceiling(nchain*(1 - mutation_rate)))        # sample (1 - mutation_rate) portion of the chains to do crossover. 
-    print(Index)
-    sgld_index = full_index[-Index]
-    
-    
-    x[,Index] = snooker(x, temperature_select, Index)
-    
-    
-    x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,2*sigma^2), tau = Ts[sgld_index])
-
-    output[,,t] = x
+    if (mutation_rate>0 && mutation_rate<1){
+      Index = sample.int(nchain, ceiling(nchain*(1 - mutation_rate)))        # sample (1 - mutation_rate) portion of the chains to do crossover. 
+      print(Index)
+      sgld_index = full_index[-Index]
+      
+      
+      x[,Index] = snooker(x, temperature_select, Index)
+      
+      
+      x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,2*sigma^2), tau = Ts[sgld_index])
+      
+      output[,,t] = x
+    }
+    else if (mutation_rate == 1){
+      x = SGLD(x, distribution_sgld, min(0.1,2*sigma^2), tau = Ts)
+      output[,,t] = x
+    }
+   
     print(x)
     print(t)
   }
@@ -64,16 +70,18 @@ run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
 ###=========================================
 nchain  = 20 
 Ts      = seq(1,5,4/(nchain-1)) 
+mutation_rate = 1        # number of chains to go through SGLD instead of snooker. 
+
 output_snooker = run_snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 
-plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 50000 iteration", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 10000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
-plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 10000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
-plot(output_snooker$output[1,5,], output_snooker$output[2,5,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 5, 50000 iteration", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,5,], output_snooker$output[2,5,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 5, 10000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
 write.csv(output_snooker$output, "./output_snooker.csv")
