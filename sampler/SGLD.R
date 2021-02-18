@@ -52,10 +52,6 @@ if (exists("mu")){
 SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
   grad = distribution_sgld(r)$grad      # compute the gradient. 
   
-  rowsum_mu <- function(x){
-    return(rowSums(x - mu))
-  }
-  
   if (sum(is.na(grad)) > 0){            # if there exists any entry being NA in grad:
     if (exists("mu")){
       NAdirection = sign(apply(r, 2, rowsum_mu))                   #  returns the direction for correction
@@ -71,6 +67,9 @@ SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
   wn_length = length(r)
   wn = rnorm(wn_length)
   wn = array(wn, dim = dim(r))
+  
+  tau = array(tau, dim = dim(t(wn)))
+  tau = t(tau)
   
   r_update = r - grad*epsilon + sqrt(2*epsilon*tau)*wn
   return(r_update)
