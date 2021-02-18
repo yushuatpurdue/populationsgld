@@ -88,7 +88,7 @@ l2 <- function(vec){
 # ==================================
 ## function to calculate e: the unit updating direction. 
 unit_direction <- function(x, index, pair){
-  diff_pair = x[,index] - x[,pair]
+  diff_pair = x[,pair] - x[,index]
   e_norm = apply(diff_pair,2,l2)
   e_norm = rep(1,dimension)%*%t(e_norm)
   unit_direction = diff_pair/e_norm 
