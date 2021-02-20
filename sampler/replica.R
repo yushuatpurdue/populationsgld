@@ -29,10 +29,16 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 
 ### ============ calculating the swapping rate ===========
 # ========================================================
-swaprate <- function(loglikelihood){
-  # input:   loglikelihhod            = the loglikelihood of the current position of the two chains. length 2 vector. 
+swaprate <- function(x){
+  # input:   x            = the current position of the two chains. length 2 vector. 
+  # output:  swap rate of x. 
+  
+  # first calculate the gradient and pobability density of x. 
+  pd_grad               = potential(x)
+  likelihood            = pd_grad$pd
+  loglikelihood         = log(likelihood)
   difftemperature_term  = -diff(1/Ts)          # 1/t1 - 1/t2
-  diffloglikelihood     = -diff(loglikelihood)
+  diffloglikelihood     = -diff(t(loglikelihood))
   swaprate              = exp(difftemperature_term * (diffloglikelihood - difftemperature_term*loglike_variance))
   return(swaprate)
 }
@@ -53,11 +59,20 @@ swaprate <- function(loglikelihood){
 #====================
 
 replica <-function(x, learning_rate = 0.1, Ts){
-  pd_grad = potential(x)
-  likelihood = pd_grad$pd
-  gradient = pd_grad$grad
   
+  # 1) one step SGLD
+  x      = SGLD(x, potential, learning_rate, Ts)
   
+  # 2) Decided to swap or not. 
+  swap_x = swaprate(x)          # swapping rate. 
+  u      = runif(1)              # generate an U[0,1] random number
+  if (u < swap_x){              # swap if u < swapping rate. 
+    temp = x[,1]
+    x[,1] <- x[,2]
+    x[,2] <-temp
+  }
+  
+  return(x)
 }
 
 
@@ -67,7 +82,8 @@ replica <-function(x, learning_rate = 0.1, Ts){
 ##====================================
 ## =========== test ==================
 ##====================================
-# dimension = 2
-# x = mvrnorm(2, mu = rep(0,dimension), Sigma = diag(1,dimension))
-# x = t(x)
-# learning_rate = c(0.01,0.03)
+dimension = 2
+x = mvrnorm(2, mu = rep(0,dimension), Sigma = diag(1,dimension))
+x = t(x)
+learning_rate = c(0.01,0.03)
+
