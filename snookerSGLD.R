@@ -70,7 +70,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=========================================
 nchain  = 20 
 Ts      = seq(1,5,4/(nchain-1)) 
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker. 
+mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker. 
 learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
 output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain, learning_rate)
