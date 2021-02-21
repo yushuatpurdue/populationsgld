@@ -16,7 +16,7 @@
 ###==============================================
 library(MASS)
 
-snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
+snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rate){
 ###=========== set path ================
   # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
@@ -47,12 +47,12 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
       x[,Index] = snooker(x, temperature_select, Index)
       
       
-      x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, min(0.1,sigma^2), tau = Ts[sgld_index])
+      x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, epsilon = learning_rate, tau = Ts[sgld_index])
       
       output[,,t] = x
     }
     else if (mutation_rate == 1){
-      x = SGLD(x, distribution_sgld, min(0.1,sigma^2), tau = Ts)
+      x = SGLD(x, distribution_sgld, epsilon = learning_rate, tau = Ts)
       output[,,t] = x
     }
    
@@ -71,8 +71,9 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
 nchain  = 20 
 Ts      = seq(1,5,4/(nchain-1)) 
 mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker. 
+learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
-output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain)
+output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain, learning_rate)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 
 plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 10000 iteration", xlab = "x", ylab = "y")
