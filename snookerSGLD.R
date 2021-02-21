@@ -3,10 +3,10 @@
 ## This is the function that runs population SGLD with snooker. 
 
 ## input: 
-#     niteration         : number of iterations. 
-#     nchain             : number of the chains in the population to run. 
-#     Ts                 : temperature ladder. 
-#     temoerature_select : select temperature in snooker. 
+#     Ts                 : temperature ladder. vector. 
+#     temperature_select : select temperature in snooker. scaler. 
+#     niteration         : number of iterations. scaler. 
+#     nchain             : number of the chains in the population to run. scaler. 
 
 ## output: 
 #     a population of paths. array of dimension = c(dim(state space), nchain, niteration)
@@ -16,7 +16,7 @@
 ###==============================================
 library(MASS)
 
-run_snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
+snookerSGLD <- function(Ts, temperature_select, niteration, nchain){
 ###=========== set path ================
   # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
@@ -72,7 +72,7 @@ nchain  = 20
 Ts      = seq(1,5,4/(nchain-1)) 
 mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker. 
 
-output_snooker = run_snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain)
+output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 
 plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 10000 iteration", xlab = "x", ylab = "y")
