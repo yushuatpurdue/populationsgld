@@ -26,7 +26,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
   ## sample x. need to change this according to the target distribution!!
   # temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  temp <- runif(nchain*dimension, min = 0, max = 10)
+  temp <- runif(nchain*dimension, min = 0, max = 1)
   x <<- matrix(temp, nrow = dimension)
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
@@ -69,9 +69,9 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=============== run function ============
 ###=========================================
 nchain  = 20 
-Ts      = seq(1,10,9/(nchain-1)) 
-mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker. 
-learning_rate = seq(0.01,0.05,0.04/(nchain*mutation_rate - 1))
+Ts      = seq(1,5,4/(nchain-1)) 
+mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker. 
+learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
 output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain, learning_rate)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
