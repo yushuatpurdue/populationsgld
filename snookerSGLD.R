@@ -69,9 +69,9 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=============== run function ============
 ###=========================================
 nchain  = 20 
-Ts      = seq(1,5,4/(nchain-1)) 
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker. 
-learning_rate = seq(0.01,0.04,0.03/(nchain*mutation_rate - 1))
+Ts      = seq(1,10,9/(nchain-1)) 
+mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker. 
+learning_rate = seq(0.01,0.05,0.04/(nchain*mutation_rate - 1))
 
 output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 10000, nchain, learning_rate)
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
@@ -82,11 +82,11 @@ points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 10000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
-plot(output_snooker$output[1,5,], output_snooker$output[2,5,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 5, 10000 iteration", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,1,500:10000], output_snooker$output[2,1,500:10000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, iteration 500:10000", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
 write.csv(output_snooker$output, "./output_snooker.csv")
-write.csv(output_snooker$mu, "./mu.csv")
+# write.csv(output_snooker$mu, "./mu.csv")
 ###=========================================
 ###=============== unwrapped code ==========
 ###=========================================
