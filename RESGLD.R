@@ -56,17 +56,17 @@ Ts                  = c(1,10)                    # temperature of the two chains
 learning_rate       = c(0.01,0.03)
 
 
-output_RESGLD = RESGLD(Ts, niteration = 10000, learning_rate)
+output_RESGLD = RESGLD(Ts, niteration = 50000, learning_rate)
 
-hist(as.numeric(output_RESGLD$output[1,1,]),breaks = seq(-7,12,0.1),main = "RESGLD")
+hist(as.numeric(output_RESGLD$output[1,2,]),breaks = seq(-7,12,0.1),main = "RESGLD")
 
-plot(output_RESGLD$output[1,,], output_RESGLD$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD 10000 iteration", xlab = "x", ylab = "y")
+plot(output_RESGLD$output[1,,], output_RESGLD$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD 50000 iteration", xlab = "x", ylab = "y")
 points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
-plot(output_RESGLD$output[1,1,], output_RESGLD$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 1, 10000 iteration", xlab = "x", ylab = "y")
+plot(output_RESGLD$output[1,1,], output_RESGLD$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 1, 50000 iteration", xlab = "x", ylab = "y")
 points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
-plot(output_RESGLD$output[1,2,], output_RESGLD$output[2,2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 10000 iteration", xlab = "x", ylab = "y")
+plot(output_RESGLD$output[1,2,], output_RESGLD$output[2,2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 50000 iteration", xlab = "x", ylab = "y")
 points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
 write.csv(output_RESGLD$output, "./output_RESGLD.csv")
