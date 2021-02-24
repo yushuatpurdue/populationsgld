@@ -1,3 +1,3 @@
 #!/bin/bash
 
-Rscript snookerSGLD.R
+Rscript RESGLD.R
