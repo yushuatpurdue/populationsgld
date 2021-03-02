@@ -2,6 +2,25 @@
 ##  This is the one step snooker sampler. Main function named snooker, and a bunch of supportive functions. 
 ##  Follows the EMC algorithm (Faming Liang 2001) and reconstruct it under the SGLD setting. 
 
+##=======================================================
+## =========== structural introduction ==================
+##=======================================================
+## THIS CODE CONSISITS OF 3 PARTS. 
+
+## part 1: initialization
+
+## part 2: supportive functions. 
+  # Boltzmann        : calculating the boltzmann weights of the current chains, for the subsequent sampling. 
+  # sample_Boltzmann : sample the paired chains xj according to the Boltzmann weight. 
+  # l2               : calculate the l2 distance, to normalize xj - xi
+  # unit_direction   : calculate normalized direction of xj - xi
+  # sample_r         : sample the snooker scaler. 
+
+## part 3: main function: snooker
+  # for a population of chains, uniformly draw a chain xi (this step is not included in this file), and pair it with xj chain drawn under Boltzmann distribution. 
+  # calculate the unit direction, and sample the snooker scaler. 
+  # updated xi = xj + r*e 
+
 
 
 
@@ -19,7 +38,7 @@ nchain  = dim(x)[2]                    # number of chains
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
-source("potential/mixtureGaussian.R")  
+source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
 epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
 
@@ -32,9 +51,9 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 
 
 
-##===================================================
-## =========== supportive function ==================
-##===================================================
+##====================================================
+## =========== supportive functions ==================
+##====================================================
 
 ### ============ Second: find the chains to pair with x ===========
 # ==================================

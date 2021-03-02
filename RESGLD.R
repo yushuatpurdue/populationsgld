@@ -25,7 +25,7 @@ RESGLD <-function(Ts, niteration, learning_rate){
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   temp <- runif(2*dimension, min = 0, max = 1)
   x <<- matrix(temp, nrow = dimension)
-  print(x)
+  # print(x)
   
   source("sampler/replica.R")                    # source one-step replica exchange sampler. Note: SGLD sampler has got sourced in "sampler/replica.R", no need to source again. 
   
