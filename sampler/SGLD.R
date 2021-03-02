@@ -49,7 +49,7 @@ if (exists("mu")){
 ## output: 
 #      positions after one step update of SGLD sampler. 
 
-SGLD <- function(r, distribution_sgld, epsilon = 0.1,tau = 1){
+SGLD <- function(r, distribution_sgld, epsilon = 0.1, tau = 1){
   grad = distribution_sgld(r)$grad      # compute the gradient. 
   
   if (sum(is.na(grad)) > 0){            # if there exists any entry being NA in grad:
