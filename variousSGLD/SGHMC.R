@@ -1,5 +1,5 @@
 ### This file is created by Yushu Huang for EMC-SGLD experiments.
-### This file runs the SGHMC to produce a chain. 
+### This file runs the SGHMC to produce a chain. See paper Chen (2014 ICML). 
 ### An additional supportive function is defined to deal with the gradient blowup. 
 
 ###============= initialization: call functions and initial values=======================
@@ -41,11 +41,13 @@ onestepSGHMC <- function(position, momentum, learning_rate = 0.1, temperature = 
   ## the following 'if' is to bound the blowed up gradients. Idea and details refer to "./SGLD.R". 
   if (sum(is.na(grad)) > 0){            # if there exists any entry being NA in grad:
     if (exists("mu")){
-      NAdirection = sign(apply(position, 2, rowsum_mu))                   #  returns the direction for correction
+      NAdirection = sign(apply(position_update, 2, rowsum_mu))                   #  returns the direction for correction
       blowup_entry = NAdirection*(is.na(grad))         # (1-is.na(grad)) returns which entries blowed up. sign(rowSums(x - mu)) 
       
       grad[is.na(grad)] <- 0
       grad = 200*blowup_entry + grad
+      
+      # print("gradient corrected")
     }
     else {
       stop("gradient blows up")
@@ -101,12 +103,15 @@ SGHMC <- function(temperature, niteration, learning_rate){
 ###=============== run function ============
 ###=========================================
 
-output_SGHMC = SGHMC(temperature, 50000, learning_rate)
+output_SGHMC = SGHMC(temperature, 200000, learning_rate)
 
-plot(output_SGHMC[1,1,], output_SGHMC[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 50000 iteration", xlab = "x", ylab = "y")
+plot(output_SGHMC[1,1,1:50000], output_SGHMC[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 50000 iteration", xlab = "x", ylab = "y")
 points(mu[1,], mu[2,], pch = 3,col = "green")
 
-write.csv(output_SGHMC, "./output_SGHMC.csv")
+plot(output_SGHMC[1,1,], output_SGHMC[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 200000 iteration", xlab = "x", ylab = "y")
+points(mu[1,], mu[2,], pch = 3,col = "green")
+
+write.csv(output_SGHMC, "./variousSGLD/output_SGHMC.csv")
 
 ##====================================
 ## =========== test ==================

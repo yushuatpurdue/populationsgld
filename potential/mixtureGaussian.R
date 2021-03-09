@@ -46,8 +46,6 @@ calculate_density_grad <- function(mu, sigma, x, weight)
   pd = sum(weighted_pd)
   # probability density at x. 
 
-  # gradU = ( weighted_pd1 * invsigma1 %*% xtomu1 + weighted_pd2 * invsigma2 %*% xtomu2)/pd
-  # gradU =  array(invSigma,dim = c(2,2*3)) %*% (rep(weighted_pd,each = 2) * left_xtomu)/pd
   gradU = xtomu%*%weighted_pd/variance/pd
   # gradient of U at x. U = -log(probability density)
   
@@ -111,7 +109,7 @@ mixgaussian <- function(x)
 #   mu[,i] = c(i,i)
 # }
 
-# x = t(mvrnorm(10, mu = rep(0,2), Sigma = diag(1,2)))
+# x = t(mvrnorm(1, mu = rep(0,2), Sigma = diag(1,2)))
 # 
 # ParResult = mixgaussian_par(weight, Sigma)
 # ParResult$mixture_scale
