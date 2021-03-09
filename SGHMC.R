@@ -4,7 +4,7 @@
 
 ###============= initialization: call functions and initial values=======================
 library(MASS)
-setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+# setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian    
 
