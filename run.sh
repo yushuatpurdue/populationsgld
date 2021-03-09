@@ -1,3 +1,4 @@
 #!/bin/bash
 
-Rscript snookerSGLD.R
+cd variousSGLD
+Rscript SGHMC.R
