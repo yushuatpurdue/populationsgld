@@ -1,3 +1,3 @@
 #!/bin/bash
 
-Rscript SGHMC.R
+Rscript MSGLD.R
