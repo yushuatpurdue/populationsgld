@@ -117,7 +117,7 @@ mixgaussian2 <- function(x)
 # }
 
 # x = t(mvrnorm(10, mu = rep(0,2), Sigma = diag(1,2)))
-mixgaussian2(x)
+# mixgaussian2(x)
 
 # 
 # ParResult = mixgaussian_par(weight, Sigma)
