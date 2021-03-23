@@ -77,8 +77,8 @@ output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 200000, nchain, learn
 # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
 
 
-plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
-points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+# plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
+# points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
 plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 200000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
@@ -86,7 +86,7 @@ points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 plot(output_snooker$output[1,1,1:50000], output_snooker$output[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
 points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 
-write.csv(output_snooker$output, "./output_snooker.csv")
+write.csv(output_snooker$output[,1,], "./output_snooker.csv")
 
 
 
@@ -109,7 +109,7 @@ write.csv(output_snooker$output, "./output_snooker.csv")
 # points(mu[1,], mu[2,], pch = 3,col = "green")
 # 
 # write.csv(output, "./variousSGLD/output_SGLD.csv")
-# write.csv(output_snooker$mu, "./mu.csv")
+
 ###=========================================
 ###=============== unwrapped code ==========
 ###=========================================
