@@ -1,77 +1,43 @@
 ### This file is created by Yushu Huang for EMC-SGLD experiments.
 ### It contains the function for calculation of gradient and density of Gaussian mixture posterior of arbitrary number of Gaussians. 
-### And two additional functions to support the calculation. 
+### And one additional function to support the calculation. 
 
-library(Matrix)
-
-###============= mixgaussian_par: supportive function 1==========
-## calculation on the parameters of the multivariate normal, like the matrix inverse, so avoid repeating such calculation in sampling. 
-
-## input: 
-#   weight: (p1, p2, p3,..., pm), a m*1 vector of weights sums up to 1, each entry a weight. m = number of Gaussian in the model. 
-#   Sigma:  array of dimension d*d*m. Sigma[,,i] is the variance matrix of the i-th Gaussian. 
-
-## output: 
-#   invsigma: array of dimension d*d*m. Inverse of the covariance matrix. 
-#   scale1, scale2: the scale in front of the exp of normal. 
-#=======================
-mixgaussian_par <- function(weight, Sigma)
-{
-  dimension = dim(Sigma)[1]
-  # dimension of space. 
-  n_mixture = dim(Sigma)[3]
-  # number of Gaussians in the mixture model. 
-  detSigma = apply(Sigma, n_mixture, det)
-  # a vector of length m. Entry i = the determinant of the variance matrix of i-th Gaussian. 
-  
-  mixture_scale = weight/sqrt((2*pi)^dimension*detSigma) 
-  # so that scale * exp(-matrix norm of (x - mu)/2) = a vector of weighted density of each Gaussian.  
-  invSigma = apply(Sigma, n_mixture, solve)
-  invSigma = array(invSigma,dim = c(dimension,dimension,n_mixture))
-  # inverse of the variance matrices. 
-
-  return(list("mixture_scale" = mixture_scale, "invSigma" = invSigma))
-}
+##### Note that the mixture Gaussians have equivariance of a diagonal form. So this file does not apply to the most general case. 
 
 
 
-###============= calculate_density_grad: supportive function 2==========
+###============= calculate_density_grad: supportive function ==========
 
 ## calculate_density_grad: a function calculate the posterior density and gradient of log density wrt a given x
 ## input:
-#    ParResult:     The outputs of twogaussian_par. 
-#    mu:  Matrix of size (d, m). Column i = mean vector of i-th Gaussian. 
-#    x: The current position of a sample.  
+#    mu:      Matrix of size (d, m). Column i = mean vector of i-th Gaussian. m = number of Gaussian in the model. 
+#    sigma:   Scaler. Each Gaussian has the same variance of diag(sigma^2,d)
+#    x:       The current position of a sample.  
+#    weight:  (p1, p2, p3,..., pm), a m*1 vector of weights sums up to 1, each entry a weight. 
 
 ## output:
 #    pd: The posterior density at x. 
 #    gradU: The gradient of -log posterior. 
 
 #======================
-calculate_density_grad <- function(ParResult, mu, x)
+calculate_density_grad <- function(mu, sigma, x, weight)
 {
-  mixture_scale = ParResult$mixture_scale 
-  # a vector of length m = #Gaussians. 
-  n_mixture = length(mixture_scale) 
-  # number of Gaussians in the mixture model. 
   dimension = dim(mu)[1]
-  invSigma = ParResult$invSigma 
-  # inverse of the variance matrices. 
+  n_mixture = dim(mu)[2]
+  mixture_scale = weight/(sqrt(2*pi)*sigma^dimension) 
+  # so that scale * exp(-matrix norm of (x - mu)/2) = a vector of weighted density of each Gaussian.  
   
   xtomu = x - mu  
   # matrix of dimension * #Gaussian
-  left_xtomu = array(xtomu, dim = c(length(xtomu),1))
+  variance = sigma^2
+  l2dist = colSums(xtomu^2)
+  # a vector of length m = #Gaussians. 
+  
+  # left_xtomu = array(xtomu, dim = c(length(xtomu),1))
   # Sigma_wrap = bdiag(apply(invSigma, n_mixture, bdiag))
   # right_xtomu = bdiag(split(xtomu, rep(1:n_mixture, each = dimension)))
   
-  l2dist = c()
-  for (i in 1:n_mixture) {
-    temp = t(xtomu[,i]) %*% invSigma[,,i] %*% xtomu[,i]
-    l2dist = cbind(l2dist,temp)
-  }
-  
-  # Gaussian_dist = exp(-t(left_xtomu) %*% Sigma_wrap %*% right_xtomu)
-  Gaussian_dist = exp(-l2dist)
+  Gaussian_dist = exp(-l2dist/variance/2)
   # the values of the Gaussian kernel within each of the Gaussians. 
   
   weighted_pd = mixture_scale * Gaussian_dist 
@@ -80,8 +46,7 @@ calculate_density_grad <- function(ParResult, mu, x)
   pd = sum(weighted_pd)
   # probability density at x. 
 
-  # gradU = ( weighted_pd1 * invsigma1 %*% xtomu1 + weighted_pd2 * invsigma2 %*% xtomu2)/pd
-  gradU =  array(invSigma,dim = c(2,2*3)) %*% (rep(weighted_pd,each = 2) * left_xtomu)/pd
+  gradU = xtomu%*%weighted_pd/variance/pd
   # gradient of U at x. U = -log(probability density)
   
   return(list("pd" = pd, "gradU" = gradU))
@@ -93,16 +58,16 @@ calculate_density_grad <- function(ParResult, mu, x)
 ### ====================================================
 ## parameter setting. 
 dimension = 2
+n_mixture = 20
 
-weight = c(1/3,1/3,1/3)
-Sigma = array(NA, dim = c(2,2,3))
-mu = matrix(NA, nrow = 2, ncol = 3)
-for (i in 1:3) {
-  Sigma[,,i] = diag(i,2)
-  mu[,i] = c(i,i)
-}
+weight = rep(1/n_mixture, n_mixture)
+sigma = 0.1
+mu = runif(dimension*n_mixture,0,10)
+mu = matrix(mu, nrow = dimension)
+# mu = t(matrix(c(2.418759, 6.618219, 6.691523, 6.904582, 2.196740, 0.5989215, 0.1847932, 5.264697, 4.879505, 8.004288, 6.077461, 3.801844, 5.177598, 2.469589, 9.876724, 2.1504432, 3.2653869, 2.133480, 7.884069, 4.334636),ncol = dimension))
+mu = t(matrix(c(2.547309, 1.005194, 6.898408, 9.168438, 7.154848, 9.028120, 2.140865, 6.635207, 9.1268483, 0.03306429, 9.616817, 1.475194, 1.15205, 8.724225, 3.652639, 8.746123, 7.246912, 4.365018, 6.467183, 2.876139, 2.547301, 1.910528, 8.405147, 5.954380, 3.854593, 9.139374, 8.745735, 7.449630, 0.9170815, 5.54110136, 6.089943, 9.411089, 1.08722, 4.368250, 8.852135, 2.893911, 2.387444, 6.759031, 6.694622, 6.853250), ncol = dimension))
+# mu = matrix(c(1,5,5,1,7,7), nrow = dimension, ncol = n_mixture)
 
-ParResult = mixgaussian_par(weight, Sigma)
 
 # ===================================
 ## calculate the probability density and gradient for a position x.
@@ -118,7 +83,7 @@ mixgaussian <- function(x)
 {
   temp <- function(x)
   {
-    temp = calculate_density_grad(ParResult, mu, x)
+    temp = calculate_density_grad(mu, sigma, x, weight)
   }
   calc_density_grad = apply(x, 2, temp)
   grad = c()
@@ -144,7 +109,7 @@ mixgaussian <- function(x)
 #   mu[,i] = c(i,i)
 # }
 
-# x = t(mvrnorm(10, mu = rep(0,2), Sigma = diag(1,2)))
+# x = t(mvrnorm(1, mu = rep(0,2), Sigma = diag(1,2)))
 # 
 # ParResult = mixgaussian_par(weight, Sigma)
 # ParResult$mixture_scale

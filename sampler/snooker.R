@@ -1,13 +1,26 @@
 ### This file is created by Yushu Huang for population SGMCMC experiments.
+##  This is the one step snooker sampler. Main function named snooker, and a bunch of supportive functions. 
+##  Follows the EMC algorithm (Faming Liang 2001) and reconstruct it under the SGLD setting. 
 
-## This is the one step snooker sampler. 
+##=======================================================
+## =========== structural introduction ==================
+##=======================================================
+## THIS CODE CONSISITS OF 3 PARTS. 
 
-## input: 
-#     x:       current positions of the population. dim(x) = [dimension, nsample]
-#     Index:   which bunch of the population we are going to update via snooker. 
+## part 1: initialization
 
-## output: 
-#     those states of x that got updated.
+## part 2: supportive functions. 
+  # Boltzmann        : calculating the boltzmann weights of the current chains, for the subsequent sampling. 
+  # sample_Boltzmann : sample the paired chains xj according to the Boltzmann weight. 
+  # l2               : calculate the l2 distance, to normalize xj - xi
+  # unit_direction   : calculate normalized direction of xj - xi
+  # sample_r         : sample the snooker scaler. 
+
+## part 3: main function: snooker
+  # for a population of chains, uniformly draw a chain xi (this step is not included in this file), and pair it with xj chain drawn under Boltzmann distribution. 
+  # calculate the unit direction, and sample the snooker scaler. 
+  # updated xi = xj + r*e 
+
 
 
 
@@ -19,15 +32,16 @@
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
-### ========== first: parameter setups =========
-nchain = dim(x)[2]                    # number of chains
-Ts      = seq(1,5,4/(nchain-1))            # selection temperature for sampling xj
-epsilon_r = 0.1                        # learning rate for sgld in sampling r. 
-
+### ========== first: parameter setups ===================================================
+nchain  = dim(x)[2]                    # number of chains
+# temperature_select = 0.5             # selection temperature for sampling xj
+# Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
-source("potential/mixtureGaussian.R")  
+source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
+epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
+
 # ==================================
 ## load the functions to be used when sampling. 
 
@@ -37,34 +51,34 @@ source("sampler/SGLD.R")                          # source 1 step SLGD as updati
 
 
 
-##==================================================
-## =========== necessary function ==================
-##==================================================
+##====================================================
+## =========== supportive functions ==================
+##====================================================
 
 ### ============ Second: find the chains to pair with x ===========
 # ==================================
 ## function calculate the boltzmann weight. 
 
-Boltzmann <- function(x, Ts){
-  # input:  x            = vector of positions (again vector), so overall matrix
-  #         Ts           = temperature selected for sampling, scaler
-  # output: Boltzmann(x) = their boltzmann weight = exp(-u(x)/Ts), vector
+Boltzmann <- function(x, temperature_select){
+  # input:  x                      = vector of positions (again vector), so overall matrix
+  #         temperature_select     = temperature selected for sampling, scaler
+  # output: Boltzmann(x)           = their boltzmann weight = exp(-u(x)/temperature_select), vector
   pd_grad = potential(x)
-  Boltzmann = pd_grad$pd / Ts
+  Boltzmann = (pd_grad$pd)^(1/temperature_select)
   return(Boltzmann)
 }
 
 # ==================================
 ## sample xj by boltzmann weight. 
-sample_Boltzmann <- function(x, Ts, index){
-  # input:  x            = vector of positions (again vector), so overall matrix
-  #         Ts           = temperature selected for sampling, scaler
-  #         index        = the indices that should be take away before sampling
-  # output: sampleid     = the indices of the sampled chain in {x} to snooker with xi
+sample_Boltzmann <- function(x, temperature_select, index){
+  # input:  x                   = vector of positions (again vector), so overall matrix
+  #         temperature_select  = temperature selected for sampling, scaler
+  #         index               = the indices that should be take away before sampling
+  # output: sampleid            = the indices of the sampled chain in {x} to snooker with xi
   sample_Boltzmann = c()
   for (i in index) 
   {
-    weight = Boltzmann(x, Ts)     # calculate the boltzmann weights for everyone in {x}
+    weight = Boltzmann(x, temperature_select)     # calculate the boltzmann weights for everyone in {x}
     weight_net = weight[-i]   # take away xi
     weight_normalized = weight_net/sum(weight_net)   # normalize the weight of {x\xi} set
     samples = rmultinom(1,1,weight_normalized)   # sample according to the weight
@@ -93,7 +107,7 @@ l2 <- function(vec){
 # ==================================
 ## function to calculate e: the unit updating direction. 
 unit_direction <- function(x, index, pair){
-  diff_pair = x[,index] - x[,pair]
+  diff_pair = x[,pair] - x[,index]
   e_norm = apply(diff_pair,2,l2)
   e_norm = rep(1,dimension)%*%t(e_norm)
   unit_direction = diff_pair/e_norm 
@@ -110,8 +124,8 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   r = array(r,dim = c(1,length(r)))
   # R = matrix(ncol = 5)
   # R[1,] = r
-  for (i in 1:5000) {
-    dist_to0 = min(abs(r),epsilon = 0.1)               # the learning rate needs to be small near 0 to avoid blowing up there.  
+  for (i in 1:1000) {
+    dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
     r = SGLD(r, distribution_snookerscaler, dist_to0)
     # R = rbind(R,r)
   }
@@ -119,34 +133,39 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 }
 
 ## test for the convergence of sampling r.
-#   r0 = runif(5, -1,1)
-#   r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
-#   r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
-#   # r = rnorm(5,0,1)
-#   # r = rep(-5,5)
-#   r0 = array(r0,dim = c(1,5))
+#   # r0 = runif(5, -1,1)
+#   # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
+#   # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
+#   r0 = rnorm(length(Index))
+#   r0 = array(r0,dim = c(1,length(r0)))
 #   R = matrix(ncol = 5)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:10000) {
+#   for (i in 1:5000) {
 #     dist_to0 = min(abs(r),epsilon_r)
 #     r = SGLD(r,distribution_snookerscaler, dist_to0)
 #     R = rbind(R,r)
 #   }
-# # 
+# # #
 # hist(R[,5], breaks = seq(-12,12,0.2))
 
 
 ##===================================================
 ## =========== !!!MAIN FUNCTION!!! ==================
 ##===================================================
+## This is the one step snooker sampler. 
 
+## input: 
+#     x:                       current positions of the population. dim(x) = [dimension, nchain]
+#     temperature_select:      temperature ladder. A sequence of length nchain. 
+#     Index:                   which bunch of the population we are going to update via snooker. 
+
+## output: 
+#     those states of x that got updated.
 #====================
-snooker <-function(x, Ts, Index){
-  paired_Index = sample_Boltzmann(x,Ts,Index)     # sample xj by boltzmann weight and record the j's.
+snooker <-function(x, temperature_select, Index){
+  paired_Index = sample_Boltzmann(x,temperature_select,Index)     # sample xj by boltzmann weight and record the j's.
   direction_e  = unit_direction(x, Index, paired_Index)     #calculate e: the unit updating direction. 
-  r = rnorm(length(Index))
-  r = array(r,dim = c(1,length(r)))
   
   # source("potential/2gauss_hess.R")
   
@@ -154,8 +173,15 @@ snooker <-function(x, Ts, Index){
     distribution_snookerscaler = snooker_scaler(r,potential,x[,paired_Index],direction_e)
   }
   
-  r = sample_r(epsilon_r, Index, distribution_snookerscaler)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify. 
-
+  r = NA
+  for (attempt in 1:3) {
+    try(r <- sample_r(epsilon_r, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
+    if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
+  }
+  if (prod(is.na(r))) stop("r = NA")        # if r still has NA entries then stop. 
+  
+  
   r_matrix = t(array(r, dim = c(length(r), dimension))) 
   snooker_update = x[,paired_Index] + r_matrix*direction_e 
   return(snooker_update) 

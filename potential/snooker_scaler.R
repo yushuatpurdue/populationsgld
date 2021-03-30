@@ -29,8 +29,8 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
   position = paired_x + r_matrix*direction                     # xj + r*e
   
   temp_potential = distr_grad(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
-  pd = temp_potential$pd
-  grad = temp_potential$grad
+  pd = temp_potential$pd                               # No temperature ladder here
+  grad = temp_potential$grad                           # No temperature ladder here
   # hess = temp_potential$hess 
   
   r_to_dm1 = abs(r)^(dimension - 1)    
