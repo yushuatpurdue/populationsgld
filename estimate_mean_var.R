@@ -20,7 +20,7 @@ rowMeans(chain)
 cov(t(chain))
 
 
-
+output_snooker = read.csv(file = "./variousSGLD/output_snooker.csv")
 
 
 

@@ -56,7 +56,19 @@ Ts                  = c(1,10)                    # temperature of the two chains
 learning_rate       = c(0.01,0.03)
 
 
-output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
+nrun    = 20                  # run nrun independent times. 
+mu_est_RE = array(NA, dim = c(2, nrun))
+var_est_RE = array(NA, dim = c(2,2,nrun))
+for (i in 1:nrun) {
+  output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
+  # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+  record = output_RESGLD$output[,2,]
+  
+  mu_est_RE[,i] = rowMeans(record)
+  var_est_RE[,,i] = cov(t(record))
+}
+
+# output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
 
 # hist(as.numeric(output_RESGLD$output[1,2,]),breaks = seq(-7,12,0.1),main = "RESGLD")
 
@@ -66,18 +78,20 @@ output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
 # plot(output_RESGLD$output[1,1,], output_RESGLD$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 1, 200000 iteration", xlab = "x", ylab = "y")
 # points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
-plot(output_RESGLD$output[1,2,], output_RESGLD$output[2,2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 200000 iteration", xlab = "x", ylab = "y")
-points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
+# plot(output_RESGLD$output[1,2,], output_RESGLD$output[2,2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 200000 iteration", xlab = "x", ylab = "y")
+# points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
 # plot(output_RESGLD$output[1,1,1:50000], output_RESGLD$output[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 1, 50000 iteration", xlab = "x", ylab = "y")
 # points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
-plot(output_RESGLD$output[1,2,1:50000], output_RESGLD$output[2,2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 50000 iteration", xlab = "x", ylab = "y")
-points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
+# plot(output_RESGLD$output[1,2,1:50000], output_RESGLD$output[2,2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 2, 50000 iteration", xlab = "x", ylab = "y")
+# points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
 
-write.csv(output_RESGLD$output, "./output_RESGLD.csv")
+# write.csv(output_RESGLD$output, "./output_RESGLD.csv")
 # write.csv(output_RESGLD$mu, "./mu.csv")
+write.csv(mu_est_RE, "./mu_est_RE.csv")
+write.csv(var_est_RE, "./var_est_RE.csv")
 
 
 
