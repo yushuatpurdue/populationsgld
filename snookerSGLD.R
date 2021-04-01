@@ -77,7 +77,7 @@ nrun    = 4                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20, nchain, learning_rate)
+  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 200000, nchain, learning_rate)
   # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
   record = output_snooker$output[,1,]
   
@@ -104,7 +104,7 @@ print(var_est_EMC)
 ## write.csv(output_snooker$output[,1,], "./output_snooker.csv")
 jobid = Sys.getenv("SLURM_JOBID")
 write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
-write.csv(var_est_EMC, "./var_est_EMC.csv")
+write.csv(var_est_EMC, paste0("./var_est_EMC",jobid,".csv"))
 
 
 
