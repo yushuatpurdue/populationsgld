@@ -15,7 +15,7 @@ output = as.matrix(output_SGHMC[,2:dim(output_RESGLD)[2]])
 output = array(output,dim = c(2,2,200000))       # conform the output to dimension*2*niteration. 
 chain = output[,1,1:200000]
 
-chain = output_EMCSGLD
+chain = output_snooker
 rowMeans(chain)
 cov(t(chain))
 
