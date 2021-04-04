@@ -102,8 +102,9 @@ print(var_est_EMC)
 ## points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 #
 ## write.csv(output_snooker$output[,1,], "./output_snooker.csv")
-#write.csv(mu_est_EMC, "./mu_est_EMC.csv")
-write.csv(var_est_EMC, "./var_est_EMC.csv")
+jobid = Sys.getenv("SLURM_JOBID")
+write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
+write.csv(var_est_EMC, paste0("./var_est_EMC",jobid,".csv"))
 
 
 
