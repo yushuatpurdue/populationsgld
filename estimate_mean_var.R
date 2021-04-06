@@ -23,4 +23,12 @@ cov(t(chain))
 output_snooker = read.csv(file = "./variousSGLD/output_snooker.csv")
 
 
+##============== test block =====================
+mu_temp = matrix( c(4.550054, 4.529108, 4.635438, 4.657882, 6.115618, 6.011488, 5.947732, 5.989498), nrow = 2)
+write.csv(mu_est_EMC, "mu_est_EMC_robust.csv")
+
+var_temp = matrix(c(10.561816, -1.160173, -1.160173,  6.485462, 10.544170, -1.126407, -1.126407,  6.631775, 10.667723, -1.385709, -1.385709,  6.673100, 10.2903327, -0.8232726, -0.8232726,  6.9141576), nrow = 2)
+write.csv(var_est_EMC, "./var_est_EMC_robust.csv")
+
+
 
