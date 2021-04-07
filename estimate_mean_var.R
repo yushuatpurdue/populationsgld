@@ -20,8 +20,31 @@ rowMeans(chain)
 cov(t(chain))
 
 
-output_snooker = read.csv(file = "./variousSGLD/output_snooker.csv")
 
+
+output_SGLD = snookerSGLD(0.8, temperature_select = 0.5, 200000, nchain, 0.02)
+# hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+output = output_SGLD
+
+nrun    = 20                  # run nrun independent times. 
+mu_est = array(NA, dim = c(2, nrun))
+var_est = array(NA, dim = c(2,2,nrun))
+for (i in 1:20) {
+  output_MSGLD = MSGLD(smoothingfactor, biasfactor, temperature, 200000, learning_rate)
+  output = output_MSGLD
+  mu_est[,i] = rowMeans(output)
+  var_est[,,i] = cov(t(output))
+}
+rowMeans(mu_est)
+sd(mu_est[1,])
+sd(mu_est[2,])
+
+mean(var_est[1,1,])
+sd(var_est[1,1,])
+mean(var_est[2,2,])
+sd(var_est[2,2,])
+mean(var_est[1,2,])
+sd(var_est[1,2,])
 
 ##============== test block =====================
 mu_temp = matrix( c(4.550054, 4.529108, 4.635438, 4.657882, 6.115618, 6.011488, 5.947732, 5.989498), nrow = 2)
