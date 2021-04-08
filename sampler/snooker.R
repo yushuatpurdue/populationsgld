@@ -39,7 +39,7 @@ nchain  = dim(x)[2]                    # number of chains
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
-epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
+epsilon_r = min(0.1, 2*sigma^2)                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
 
 # ==================================
@@ -124,30 +124,30 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   r = array(r,dim = c(1,length(r)))
   # R = matrix(ncol = 5)
   # R[1,] = r
-  for (i in 1:5000) {
+  for (i in 1:1000) {
     dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-    r = SGLD(r, distribution_snookerscaler, dist_to0)
+    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 5)
     # R = rbind(R,r)
   }
   return(r)
 }
 
-## test for the convergence of sampling r.
-#   # r0 = runif(5, -1,1)
-#   # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
-#   # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
+# test for the convergence of sampling r.
+  # r0 = runif(5, -1,1)
+  # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
+  # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
 #   r0 = rnorm(length(Index))
 #   r0 = array(r0,dim = c(1,length(r0)))
-#   R = matrix(ncol = 5)
+#   R = matrix(ncol = 10)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:5000) {
+#   for (i in 1:1000) {
 #     dist_to0 = min(abs(r),epsilon_r)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0)
+#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 5)
 #     R = rbind(R,r)
 #   }
 # # #
-# hist(R[,5], breaks = seq(-12,12,0.2))
+# hist(R[,4], breaks = seq(-12,12,0.2))
 
 
 ##===================================================
@@ -192,12 +192,12 @@ snooker <-function(x, temperature_select, Index){
 ##====================================
 ## =========== test ==================
 ##====================================
-# nchain = 10
+# nchain = 20
 # dimension = 2
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
 # #
-# Index = sample.int(10,5)        # sample 5 integers between 1 and 10 without replacement.
+# Index = sample.int(20,10)        # sample 10 integers between 1 and 20 without replacement.
 # paired_Index = sample.int(9,5)  # sample j so xj that gotta paired with xi (just an example. practically need to use boltzmann weight)
 # # if j>i, means the real j is j+1 (because j is in 1:9 and need to be in 1:10 while jump over i). 
 # addon = rep(0,nchains)        

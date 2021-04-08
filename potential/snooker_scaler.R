@@ -56,7 +56,7 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 
 # r = rnorm(length(Index))
 # r = array(r,dim = c(1,length(r)))
-# nchain = 10
+# nchain = 20
 # dimension = 2
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
@@ -67,10 +67,10 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # # rm(paired_x)
 # # rm(direction)
 
-# # distribution plot
+# distribution plot
 # r = array(seq(-10,10,0.05),dim = c(1,401))
 # r_matrix = t(array(r, dim = c(length(r), dimension)))
-# position = paired_x[,5] + r_matrix*direction [,5]
+# position = paired_x[,4] + r_matrix*direction [,4]
 # temp_potential = mixgaussian(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
