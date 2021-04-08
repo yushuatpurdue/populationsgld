@@ -108,7 +108,7 @@ plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim =
 ## plot(output_snooker$output[1,1,1:50000], output_snooker$output[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
 ## points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 #
-## write.csv(output_snooker$output[,1,], "./output_snooker.csv")
+write.csv(output_snooker$output[,1,], "./output_snooker.csv")
 
 
 
