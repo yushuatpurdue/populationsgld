@@ -141,7 +141,7 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 #   R = matrix(ncol = 10)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:5000) {
+#   for (i in 1:1000) {
 #     dist_to0 = min(abs(r),0.02)
 #     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 2)
 #     R = rbind(R,r)

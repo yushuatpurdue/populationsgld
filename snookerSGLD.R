@@ -57,7 +57,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
     }
    
     # print(x)
-    # print(t)
+    print(t)
   }
   
   return(list("output" = output, "mu" = mu))
