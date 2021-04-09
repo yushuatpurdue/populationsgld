@@ -97,12 +97,12 @@ learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
 #
 ##==================== run option2: run chain and plot =================
- output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
+ output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
 #
 ## plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
 ## points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 #
-plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 20000 iteration", xlab = "x", ylab = "y")
  points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 ## 
 ## plot(output_snooker$output[1,1,1:50000], output_snooker$output[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")

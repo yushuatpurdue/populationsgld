@@ -126,14 +126,14 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   # R[1,] = r
   for (i in 1:1000) {
     dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 5)
+    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 2)
     # R = rbind(R,r)
   }
   return(r)
 }
 
 # test for the convergence of sampling r.
-  # r0 = runif(5, -1,1)
+  # r0 = runif(10, -1,1)
   # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
   # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
 #   r0 = rnorm(length(Index))
@@ -141,13 +141,13 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 #   R = matrix(ncol = 10)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:1000) {
-#     dist_to0 = min(abs(r),epsilon_r)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 5)
+#   for (i in 1:5000) {
+#     dist_to0 = min(abs(r),0.02)
+#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 2)
 #     R = rbind(R,r)
 #   }
 # # #
-# hist(R[,4], breaks = seq(-12,12,0.2))
+# hist(R[,7], breaks = seq(-12,12,0.2))
 
 
 ##===================================================
