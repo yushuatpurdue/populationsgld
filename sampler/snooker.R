@@ -126,7 +126,7 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   # R[1,] = r
   for (i in 1:5000) {
     dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 2)
+    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 1)
     # R = rbind(R,r)
   }
   return(r)
