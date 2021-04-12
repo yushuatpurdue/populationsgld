@@ -39,7 +39,7 @@ nchain  = dim(x)[2]                    # number of chains
 ### ========== call function: calculating potential & gradient ===============
 
 source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
-epsilon_r = min(0.1, 2*sigma^2)                        # learning rate for sgld in sampling r. 
+epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
 potential = mixgaussian
 
 # ==================================
@@ -124,9 +124,9 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
   r = array(r,dim = c(1,length(r)))
   # R = matrix(ncol = 5)
   # R[1,] = r
-  for (i in 1:5000) {
+  for (i in 1:3000) {
     dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 1)
+    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = 4)
     # R = rbind(R,r)
   }
   return(r)
@@ -141,9 +141,9 @@ sample_r <- function(epsilon,Index, distribution_snookerscaler){
 #   R = matrix(ncol = 10)
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:1000) {
-#     dist_to0 = min(abs(r),0.02)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 2)
+#   for (i in 1:2000) {
+#     dist_to0 = min(abs(r),0.01)
+#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 4)
 #     R = rbind(R,r)
 #   }
 # # #
