@@ -75,35 +75,35 @@ learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 1                  # run nrun independent times.
-mu_est_EMC = array(NA, dim = c(2, nrun))
-var_est_EMC = array(NA, dim = c(2,2,nrun))
-for (i in 1:nrun) {
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 200000, nchain, learning_rate)
-  # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
-  record = output_snooker$output[,1,]
-
-  mu_est_EMC[,i] = rowMeans(record)
-  var_est_EMC[,,i] = cov(t(record))
-}
-
-print(mu_est_EMC)
-print(var_est_EMC)
-
-jobid = Sys.getenv("SLURM_JOBID")
-write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
-write.csv(var_est_EMC, paste0("./var_est_EMC",jobid,".csv"))
+# nrun    = 1                  # run nrun independent times.
+# mu_est_EMC = array(NA, dim = c(2, nrun))
+# var_est_EMC = array(NA, dim = c(2,2,nrun))
+# for (i in 1:nrun) {
+#   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 200000, nchain, learning_rate)
+#   # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
+#   record = output_snooker$output[,1,]
+# 
+#   mu_est_EMC[,i] = rowMeans(record)
+#   var_est_EMC[,,i] = cov(t(record))
+# }
+# 
+# print(mu_est_EMC)
+# print(var_est_EMC)
+# 
+# jobid = Sys.getenv("SLURM_JOBID")
+# write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
+# write.csv(var_est_EMC, paste0("./var_est_EMC",jobid,".csv"))
 
 
 #
 ##==================== run option2: run chain and plot =================
-# output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 200000, nchain, learning_rate)
+output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
 # 
 # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
 # points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 # 
-# plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 200000 iteration", xlab = "x", ylab = "y")
-#  points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+plot(output_snooker$output[1,1,], output_snooker$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
+ points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 # 
 # plot(output_snooker$output[1,1,1:50000], output_snooker$output[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker: chain 1, 50000 iteration", xlab = "x", ylab = "y")
 # points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
