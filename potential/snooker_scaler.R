@@ -60,12 +60,12 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # dimension = 2
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
-
+# 
 # paired_x = x[,paired_Index]
 # direction = direction_e
-# # snooker_scaler(r)
-# # rm(paired_x)
-# # rm(direction)
+# snooker_scaler(r)
+# rm(paired_x)
+# rm(direction)
 
 # distribution plot
 # r = array(seq(-10,10,0.05),dim = c(1,401))
@@ -79,7 +79,7 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # numerator = colSums(direction[1]*grad)
 # grad_r = -(dimension - 1)/r + numerator
 # 
-# plot(r, pd_r, type = "l")
+# plot(r, log(pd_r), type = "l")
 # plot(r[2:401],-(log(pd_r)[2:401] - log(pd_r)[1:400])/0.05, type = "l")
 # plot(r, grad_r,type = "l")
 # plot(r,-(dimension - 1)*sign(r)/r,type = "l")

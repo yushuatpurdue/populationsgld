@@ -38,9 +38,12 @@ nchain  = dim(x)[2]                    # number of chains
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
-source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
-epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
-potential = mixgaussian
+# source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
+# epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
+source("potential/2gaussian.R")                # source the potential & gradient calculator.
+epsilon_r = 0.1  
+# potential = mixgaussian
+potential = twogaussian
 
 # ==================================
 ## load the functions to be used when sampling. 
@@ -192,7 +195,7 @@ snooker <-function(x, temperature_select, Index){
 ##====================================
 ## =========== test ==================
 ##====================================
-# nchain = 20
+# nchain = 10
 # dimension = 2
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
