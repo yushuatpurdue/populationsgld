@@ -87,6 +87,7 @@ nrun    = 1                  # run nrun independent times.
 for (i in 1:nrun) {
   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 100000, nchain, learning_rate)
   hist(as.numeric(output_snooker$output[2,1,1:100000]),breaks = seq(-8,13,0.5),main = "EMC-SGLD", xlab = "axis 1")
+  write.csv(output_snooker$output, "./output_snooker.csv")
 #   record = output_snooker$output[,1,]
 # 
 #   mu_est_EMC[,i] = rowMeans(record)
