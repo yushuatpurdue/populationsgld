@@ -86,7 +86,7 @@ nrun    = 1                  # run nrun independent times.
 # var_est_EMC = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 100000, nchain, learning_rate)
-  hist(as.numeric(output_snooker_mut5_thirdweight_sgld$output[2,1,1:5000]),breaks = seq(-8,13,0.5),main = "SGLD", xlab = "axis 1")
+  hist(as.numeric(output_snooker$output[2,1,1:100000]),breaks = seq(-8,13,0.5),main = "EMC-SGLD", xlab = "axis 1")
 #   record = output_snooker$output[,1,]
 # 
 #   mu_est_EMC[,i] = rowMeans(record)
