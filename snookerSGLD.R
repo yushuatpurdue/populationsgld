@@ -59,7 +59,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
     }
    
     # print(x)
-    print(t)
+    # print(t)
   }
   
   return(list("output" = output))
@@ -75,7 +75,7 @@ nchain  = 10
 # Ts      = seq(1,5,4/(nchain-1))
 Ts      = rep(1,nchain)
 # mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
-mutation_rate = 0.6        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 # learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 learning_rate = rep(0.1,nchain)
 
@@ -85,8 +85,8 @@ nrun    = 1                  # run nrun independent times.
 # mu_est_EMC = array(NA, dim = c(2, nrun))
 # var_est_EMC = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
-  hist(as.numeric(output_snooker$output[2,1,]),breaks = seq(-8,13,0.5),main = "snooker SGLD")
+  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 100000, nchain, learning_rate)
+  hist(as.numeric(output_snooker_mut5_thirdweight_sgld$output[2,1,1:5000]),breaks = seq(-8,13,0.5),main = "SGLD", xlab = "axis 1")
 #   record = output_snooker$output[,1,]
 # 
 #   mu_est_EMC[,i] = rowMeans(record)

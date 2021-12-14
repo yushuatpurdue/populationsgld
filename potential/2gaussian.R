@@ -125,7 +125,7 @@ twogaussian <- function(x)
 # ParResult$scale2
 # ParResult$invsigma2
 # 
-# x = matrix(c(1,1,0,0, 0,0,1,1),nrow = 4)
+# x = matrix(c(0,0,0,0,0,5,5,5,5,5),nrow = 5)
 # result2 = twogaussian(result, mu1, mu2, c(1,1,0,0))
 # result2$gradU
 
