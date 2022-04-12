@@ -18,9 +18,9 @@ library(MASS)
 
 snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rate){
 ###=========== set path ================
-  if(getwd() != "/Users/yushuhuang/Documents/pu/2020fall/populationsgld"){
-    setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
-  }
+  # if(getwd() != "/Users/yushuhuang/Documents/pu/2020fall/populationsgld"){
+  #   setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  # }
   
 ###============= initialization: call functions and initial values=======================
   ## source the potentials to be used for sampling, then define the distribution accordingly. 
