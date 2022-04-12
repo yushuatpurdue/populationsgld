@@ -14,10 +14,12 @@
 ### ====================================================
 ## Idea: 
 # 1. When a gradient vanishes in a not-too-sparse space, it must be too far away from the centers region, meaning that we need to find the direction of the centers region. 
-# 2. When a gradient vanishes in a too-sparse space, it could either be too far away from where the centers are, or it could be amid the centers while too far from any of them, in this case we need to keep moving to any direction until the gradient escapes from being NA. 
+# 2. When a gradient vanishes in a too-sparse space, it could either be too far away from where the centers are, or it could be amid the centers while too far from any of them, in both casse we need to keep moving to a direction until the gradient escapes from being NA. 
 # 3. Once moving into the correct direction the sample would be kicked into the centers region, and should be playing around quite well that the vanishing gradient doesn't happen again. 
 
-## Solution: if gradient = NA, then calculate x - mu and sum it up by directions, i.e. rowSums(x - mu). If it's positive in a direction then x needs to be dragged towards negative, so set gradU = 200, else if it's negative then set gradU = -200. This is a bit similar to the reLU idea. 
+## Solution: (The idea is a bit similar to the reLU idea.) If gradient = NA, then calculate x - mu and sum it up by directions, i.e. rowSums(x - mu). If it's positive in a direction then it means x is to the right of the mass, and needs to be dragged towards negative, so set gradU = 200, else if it's negative then set gradU = -200. This encourages x to cross the barrier if x is in the desolated mid of the centers, and drags x closer to the centers if x is outside the realm: the risk is an oscillation among centers for the first case, though it means the "desolated mid place" is too large for any sampler, and other tricks needs to be devised. 
+
+## (An alternative solution could be gradient clipping. However if the initialization straight away gives gradient = NA then we have to decide which direction is the correct one even if we wanted to clip the gradient. ) 
 
 ### The function "rowsum_mu" is to calculate x - mu and sum it up by directions. 
 ## parameter needed: 
@@ -55,7 +57,7 @@ SGLD <- function(r, distribution_sgld, epsilon = 0.1, tau = 1){
   if (sum(is.na(grad)) > 0){            # if there exists any entry being NA in grad:
     if (exists("mu")){
       NAdirection = sign(apply(r, 2, rowsum_mu))                   #  returns the direction for correction
-      blowup_entry = NAdirection*(is.na(grad))         # (1-is.na(grad)) returns which entries blowed up. sign(rowSums(x - mu)) 
+      blowup_entry = NAdirection*(is.na(grad))         # is.na(grad) returns which entries blowed up. sign(rowSums(x - mu)) 
       
       grad[is.na(grad)] <- 0
       grad = 200*blowup_entry + grad

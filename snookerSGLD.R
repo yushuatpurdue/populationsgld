@@ -18,14 +18,18 @@ library(MASS)
 
 snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rate){
 ###=========== set path ================
-  # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  if(getwd() != "/Users/yushuhuang/Documents/pu/2020fall/populationsgld"){
+    setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  }
   
 ###============= initialization: call functions and initial values=======================
+  ## source the potentials to be used for sampling, then define the distribution accordingly. 
   # source("potential/mixtureGaussian.R")
   # distribution_sgld <- mixgaussian               # target posterior distribution.  
   source("potential/2gaussian.R")
   distribution_sgld <- twogaussian               # target posterior distribution.  
-  ## sample x. need to change this according to the target distribution!!
+  
+  ## sample initial position x. need to change this according to the target distribution!!
   temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   # temp <- runif(nchain*dimension, min = 0, max = 1)
@@ -46,7 +50,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
       sgld_index = full_index[-Index]
       
       
-      x[,Index] = snooker(x, temperature_select, Index)
+      x[,Index] = snooker(x, temperature_select, Index, tau = Ts)
       
       
       x[,sgld_index] = SGLD(x[,-Index], distribution_sgld, epsilon = learning_rate, tau = Ts[sgld_index])
@@ -81,12 +85,16 @@ learning_rate = rep(0.1,nchain)
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 1                  # run nrun independent times.
+nrun    = 4                  # run nrun independent times.
 # mu_est_EMC = array(NA, dim = c(2, nrun))
 # var_est_EMC = array(NA, dim = c(2,2,nrun))
+
 for (i in 1:nrun) {
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 100000, nchain, learning_rate)
-  hist(as.numeric(output_snooker$output[2,1,1:100000]),breaks = seq(-8,13,0.5),main = "EMC-SGLD", xlab = "axis 1")
+  start_time <- Sys.time()
+  output_sgld = snookerSGLD(Ts, temperature_select = 0.5, 5000*i, nchain, learning_rate)
+  end_time <- Sys.time()
+  print(paste0("running time for", i, "th run = ", end_time - start_time))
+  hist(as.numeric(output_sgld$output[2,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
   write.csv(output_snooker$output, "./output_snooker.csv")
 #   record = output_snooker$output[,1,]
 # 

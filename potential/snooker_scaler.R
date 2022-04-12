@@ -70,8 +70,8 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # distribution plot
 # r = array(seq(-10,10,0.05),dim = c(1,401))
 # r_matrix = t(array(r, dim = c(length(r), dimension)))
-# position = paired_x[,7] + r_matrix*direction [,7]
-# temp_potential = mixgaussian(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
+# position = paired_x[,3] + r_matrix*direction [,3]
+# temp_potential = twogaussian(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
 # r_to_dm1 = abs(r)^(dimension - 1)
@@ -79,7 +79,7 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # numerator = colSums(direction[1]*grad)
 # grad_r = -(dimension - 1)/r + numerator
 # 
-# plot(r, log(pd_r), type = "l")
+# plot(r, pd_r, type = "l")
 # plot(r[2:401],-(log(pd_r)[2:401] - log(pd_r)[1:400])/0.05, type = "l")
 # plot(r, grad_r,type = "l")
 # plot(r,-(dimension - 1)*sign(r)/r,type = "l")
