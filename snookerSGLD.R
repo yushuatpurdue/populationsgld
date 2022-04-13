@@ -94,7 +94,7 @@ for (i in 1:nrun) {
   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 5000*i, nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for", i, "th run = ", end_time - start_time))
-  hist(as.numeric(output_snooker$output[2,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
+  hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
   write.csv(output_snooker$output, "./output_snooker.csv")
 #   record = output_snooker$output[,1,]
 # 
