@@ -13,7 +13,8 @@
 ###=============== !!!MAIN FUNCTION!!! ==========
 ###==============================================
 
-run_parallelSGLD <- function(niteration, nchain){
+library(MASS)
+run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
   ###=========== set path ================
   setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
@@ -21,18 +22,17 @@ run_parallelSGLD <- function(niteration, nchain){
   source("potential/2gaussian.R")
   distribution_sgld <- twogaussian               # target posterior distribution. 
   temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(1,dimension))      # initial states
-  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it. 
+  x <<- t(temp)                                  # DEFINE AS GLOBAL! or SGLD(x, ...) wouldn't be able to read it. 
   
-  source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
-  ###=============== run population SGLD with snooker =====================
+  ###=============== run parallel SGLD =====================
   
   output = array(NA,dim = c(dimension,nchain,niteration))   # result array
   output[,,1] = x                               # record initialization
   
   for (t in 1:niteration) {
     
-    x = SGLD(x, distribution_sgld)
+    x = SGLD(x, distribution_sgld,epsilon = 0.1, tau = 1)
     
     output[,,t] = x
   }
@@ -45,7 +45,25 @@ run_parallelSGLD <- function(niteration, nchain){
 ###=============== run function ============
 ###=========================================
 
-output_parallel = run_parallelSGLD(20000,10)
-hist(output_parallel[1,,],breaks = seq(-7,12,0.5), main = "parallel SGLD")
+
+hist(output_parallel[1,1,],breaks = seq(-7,12,0.5), main = "parallel SGLD")
+
+
+
+nrun    = 1                  # run nrun independent times.
+
+for (i in 1:nrun) {
+  start_time <- Sys.time()
+  output_parallel = run_parallelSGLD(5e7,10)
+  end_time <- Sys.time()
+  print(paste0("running time for ", i, "th run = ", end_time - start_time))
+}
+
+pdf(file="2gaussianSGLDplot.pdf")
+for (i in 2:7) {
+  hist(as.numeric(output_parallel[1,1,1:(5*10**i)]),breaks = seq(-8,13,0.5),main = paste0("SGLD ", 5*10**i, " iterations"), xlab = "axis 1")
+}
+
+dev.off() 
 
 
