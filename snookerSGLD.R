@@ -105,7 +105,7 @@ for (i in 1:nrun) {
 ## plot
 pdf(file="2gaussianEMCplot.pdf")
 for (i in 1:10) {
-  hist(as.numeric(output_snooker$output[1,1,1:500*i]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD ", 500*i, " iterations"), xlab = "axis 1")
+  hist(as.numeric(output_snooker$output[1,1,1:500*i]),breaks = seq(-8,13,1),main = paste0("EMC-SGLD ", 500*i, " iterations"), xlab = "axis 1")
 }
 
 dev.off() 

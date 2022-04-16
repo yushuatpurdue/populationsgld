@@ -54,7 +54,7 @@ nrun    = 3                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_parallel = run_parallelSGLD(2e8,1)
+  output_parallel = run_parallelSGLD(1e8,1)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # write.csv(output_parallel, paste0("./output_parallel_",i, ".csv"))
@@ -62,9 +62,12 @@ for (i in 1:nrun) {
 
 pdf(file="2gaussianSGLDplot.pdf")
 for (i in 2:8) {
-  bins = hist(as.numeric(output_parallel[1,1,1:(5*10**i)]), breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("SGLD ", 5*10**i, " iterations"), xlab = "axis 1")
+  bins = hist(as.numeric(output_parallel[1,1,1:(1*10**i)]), breaks = seq(-8,13,1), freq=FALSE, main = paste0("SGLD ", 1*10**i, " iterations"), xlab = "axis 1")
   
 }
+thining = seq(5e6, 1e8, 5e4)
+time = seq(4,80,0.04)
+plot(time, output_parallel[1,1,thining], type = "l", xlab = "CPU time (mins)", ylab = "position")
 
 dev.off() 
 
