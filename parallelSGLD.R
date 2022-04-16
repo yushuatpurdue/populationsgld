@@ -17,7 +17,7 @@ library(MASS)
 
 run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
   ###=========== set path ================
-  setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+  # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
   
   ###============= initialization: call functions and initial values=======================
   source("potential/2gaussian.R")
