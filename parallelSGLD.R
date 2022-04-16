@@ -21,6 +21,7 @@ run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
   
   ###============= initialization: call functions and initial values=======================
   source("potential/2gaussian.R")
+  source("sampler/SGLD.R")
   distribution_sgld <- twogaussian               # target posterior distribution. 
   temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(1,dimension))      # initial states
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or SGLD(x, ...) wouldn't be able to read it. 
