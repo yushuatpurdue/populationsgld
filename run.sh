@@ -1,4 +1,5 @@
 #!/bin/bash
 
 # Rscript test.R
-Rscript snookerSGLD.R
+# Rscript snookerSGLD.R
+Rscript parallelSGLD.R
