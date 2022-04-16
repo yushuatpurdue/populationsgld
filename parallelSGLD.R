@@ -50,18 +50,18 @@ run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
 
 
 
-nrun    = 1                  # run nrun independent times.
+nrun    = 3                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_parallel = run_parallelSGLD(5e7,10)
+  output_parallel = run_parallelSGLD(2e8,1)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # write.csv(output_parallel, paste0("./output_parallel_",i, ".csv"))
 }
 
 pdf(file="2gaussianSGLDplot.pdf")
-for (i in 2:7) {
+for (i in 2:8) {
   bins = hist(as.numeric(output_parallel[1,1,1:(5*10**i)]), breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("SGLD ", 5*10**i, " iterations"), xlab = "axis 1")
   
 }
