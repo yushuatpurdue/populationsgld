@@ -23,7 +23,7 @@ run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
   source("potential/2gaussian.R")
   source("sampler/SGLD.R")
   distribution_sgld <- twogaussian               # target posterior distribution. 
-  temp <- matrix(mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(1,dimension)), nrow = nchain)      # initial states
+  temp <- matrix(mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension)), nrow = nchain)      # initial states
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or SGLD(x, ...) wouldn't be able to read it. 
   
   
@@ -65,7 +65,7 @@ for (i in 1:nrun) {
   }
   thining = seq(2.5e6, 5e7, 2.5e4)
   time = seq(4,80,0.04)
-  plot(time, output_parallel[1,1,thining], type = "l", xlab = "CPU time (mins)", ylab = "position")
+  plot(time, output_parallel[1,1,thining], type = "l", xlab = "CPU time (mins)", ylab = "position", main = "SGLD sample path")
   
   dev.off() 
 }

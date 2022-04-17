@@ -107,6 +107,7 @@ pdf(file="2gaussianEMCplot.pdf")
 for (i in 1:10) {
   hist(as.numeric(output_snooker$output[1,1,1:500*i]),breaks = seq(-8,13,1),main = paste0("EMC-SGLD ", 500*i, " iterations"), xlab = "axis 1")
 }
+plot(time = seq(4,80,0.04), output_snooker[1,1,100:2000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
 
 dev.off() 
 
