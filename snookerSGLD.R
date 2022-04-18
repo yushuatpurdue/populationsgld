@@ -81,7 +81,7 @@ Ts      = rep(1,nchain)
 # mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
 mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 # learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
-learning_rate = rep(0.02,nchain)
+learning_rate = rep(0.05,nchain)
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
@@ -103,9 +103,9 @@ for (i in 1:nrun) {
   ## plot
   pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
   for (j in 1:50) {
-    hist(as.numeric(output_snooker$output[1,1,1:100*j]),breaks = seq(-8,13,1),main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
+    hist(as.numeric(output_snooker$output[1,1,1:100*j]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
   }
-  plot(output_snooker$output[1,1,1000:3000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  plot(output_snooker$output[1,1,500:3000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
   
   dev.off() 
 }
