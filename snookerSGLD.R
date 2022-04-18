@@ -91,7 +91,7 @@ nrun    = 3                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
+  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 2000, nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
@@ -103,9 +103,9 @@ for (i in 1:nrun) {
   ## plot
   pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
   for (i in 1:10) {
-    hist(as.numeric(output_snooker$output[1,1,1:2000*i]),breaks = seq(-8,13,1),main = paste0("EMC-SGLD ", 2000*i, " iterations"), xlab = "axis 1")
+    hist(as.numeric(output_snooker$output[1,1,1:200*i]),breaks = seq(-8,13,1),main = paste0("EMC-SGLD ", 200*i, " iterations"), xlab = "axis 1")
   }
-  plot(output_snooker$output[1,1,1000:20000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  plot(seq(4,80,0.04), output_snooker$output[1,1,100:2000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
   
   dev.off() 
 }
