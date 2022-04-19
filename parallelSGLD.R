@@ -54,7 +54,7 @@ nrun    = 3                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_parallel = run_parallelSGLD(5e7,1,epsilon = 0.02)
+  output_parallel = run_parallelSGLD(5e7,1,epsilon = 0.05)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # write.csv(output_parallel, paste0("./output_parallel_",i, ".csv"))
