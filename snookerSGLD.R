@@ -103,7 +103,7 @@ for (i in 1:nrun) {
   ## plot
   pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
   for (j in 1:50) {
-    hist(as.numeric(output_snooker$output[1,1,1:100*j]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
+    hist(as.numeric(output_snooker$output[1,1,1:100*j]),breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
   }
   plot(output_snooker$output[1,1,1:2000], type = "l", main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
   
