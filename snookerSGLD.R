@@ -30,7 +30,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
   distribution_sgld <- twogaussian               # target posterior distribution.  
   
   ## sample initial position x. need to change this according to the target distribution!!
-  temp <- mvrnorm(nchain, mu = rep(5,dimension), Sigma = diag(1,dimension))      # initial states
+  temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   # temp <- runif(nchain*dimension, min = 0, max = 1)
   # x <<- matrix(temp, nrow = dimension)
