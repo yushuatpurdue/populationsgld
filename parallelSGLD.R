@@ -23,7 +23,7 @@ run_parallelSGLD <- function(niteration, nchain, epsilon = 0.1, tau = 1){
   source("potential/2gaussian.R")
   source("sampler/SGLD.R")
   distribution_sgld <- twogaussian               # target posterior distribution. 
-  temp <- matrix(mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension)), nrow = nchain)      # initial states
+  temp <- matrix(mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension)), nrow = nchain)      # initial states
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or SGLD(x, ...) wouldn't be able to read it. 
   
   
@@ -54,16 +54,16 @@ nrun    = 3                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_parallel = run_parallelSGLD(1.3e7,1,epsilon = 0.05)
+  output_parallel = run_parallelSGLD(5e7,1,epsilon = 0.05)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # write.csv(output_parallel, paste0("./output_parallel_",i, ".csv"))
   pdf(file=paste0("2gaussianSGLDplot_",i,".pdf"))
   for (j in 1:10) {
-    bins = hist(as.numeric(output_parallel[1,1,1:(1.3e6*j)]), breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("SGLD ", 1.3e6*j, " iterations"), xlab = "axis 1")
+    bins = hist(as.numeric(output_parallel[1,1,1:(5e6*j)]), breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("SGLD ", 5e6*j, " iterations"), xlab = "axis 1")
     
   }
-  thining = seq(1.3e4,1.3e7,1.3e4)
+  thining = seq(5e4,5e7,5e4)
   time = seq(19/1000,19,19/1000)
   plot(time, output_parallel[1,1,thining], ylim = c(-2,8), type = "l", xlab = "CPU time (mins)", ylab = "position", main = "SGLD sample path")
   
