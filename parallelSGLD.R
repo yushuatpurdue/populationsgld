@@ -63,8 +63,8 @@ for (i in 1:nrun) {
     bins = hist(as.numeric(output_parallel[1,1,1:(1.5e6*j)]), breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("SGLD ", 1.5e6*j, " iterations"), xlab = "axis 1")
     
   }
-  thining = seq(1.5e4,1.5e7,1.5e4)
-  time = seq(19/1000,19,19/1000)
+  thining = seq(1.25e4,1.25e7,1.25e4)
+  time = seq(22/1000,22,22/1000)
   plot(time, output_parallel[1,1,thining], ylim = c(-2,8), type = "l", xlab = "CPU time (mins)", ylab = "position", main = "SGLD sample path")
   
   dev.off() 
