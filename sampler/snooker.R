@@ -43,7 +43,7 @@ nchain  = dim(x)[2]                    # number of chains
 # potential = mixgaussian
 
 source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.3  
+epsilon_r = 0.1  
 potential = twogaussian
 
 # ==================================
@@ -123,12 +123,23 @@ unit_direction <- function(x, index, pair){
 
 # ==================================
 ## function: r sampler. 
-sample_r <- function(epsilon,temperature, Index, distribution_snookerscaler){
+sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler){
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))
+  temperature0 = temperature/(T_annealing)^niterate
+  anneal_temperature = temperature0
+  epsilon_r0 = epsilon_r/(e_annealing)^niterate
+  anneal_epsilon_r = epsilon_r0
   # R = matrix(ncol = 5)
   # R[1,] = r
-  for (i in 1:5000) {
+  for (i in 1:(0.5*niterate)) {
+    anneal_epsilon_r = anneal_epsilon_r*e_annealing
+    dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
+    anneal_temperature = anneal_temperature*T_annealing
+    r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
+    # R = rbind(R,r)
+  }
+  for (i in 1:(0.5*niterate)) {
     dist_to0 = min(abs(r),epsilon = epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
     r = SGLD(r, distribution_snookerscaler, dist_to0, tau = temperature)
     # R = rbind(R,r)
@@ -137,19 +148,33 @@ sample_r <- function(epsilon,temperature, Index, distribution_snookerscaler){
 }
 
 # test for the convergence of sampling r.
-  # r0 = runif(10, -1,1)
-  # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
-  # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
+# r0 = runif(10, -1,1)
+# r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
+# r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
 #   r0 = rnorm(length(Index))
 #   r0 = array(r0,dim = c(1,length(r0)))
 #   R = matrix(ncol = length(r0))
 #   R[1,] = r0
 #   r = r0
-#   for (i in 1:5000) {
-#     dist_to0 = min(abs(r),0.1)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = Ts[Index])
+#   temperature0 = 1/(0.996)^500
+#   anneal_temperature = temperature0
+#   epsilon_r0 = 0.1/(0.998)^500
+#   anneal_epsilon_r = epsilon_r0
+#   for (i in 1:500) {
+#     
+#     anneal_temperature = anneal_temperature*0.996
+#     anneal_epsilon_r = anneal_epsilon_r*0.998
+#     dist_to0 = min(abs(r),anneal_epsilon_r)
+#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
 #     R = rbind(R,r)
 #   }
+#   for (i in 1:500) {
+#     
+#     dist_to0 = min(abs(r),0.1)
+#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 1)
+#     R = rbind(R,r)
+#   }
+#   
 # # #
 # hist(R[,3], breaks = seq(-12,12,0.2))
 
@@ -179,7 +204,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, temperature = tau[paired_Index], Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }
@@ -197,14 +222,14 @@ snooker <-function(x, temperature_select, Index, tau){
 ## =========== test ==================
 ##====================================
 # nchain = 10
-# dimension = 2
+# dimension = 5
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
 # #
 # Index = sample.int(10,5)        # sample 10 integers between 1 and 20 without replacement.
 # paired_Index = sample.int(9,5)  # sample j so xj that gotta paired with xi (just an example. practically need to use boltzmann weight)
-# # if j>i, means the real j is j+1 (because j is in 1:9 and need to be in 1:10 while jump over i). 
-# addon = rep(0,nchains)        
+# if j>i, means the real j is j+1 (because j is in 1:9 and need to be in 1:10 while jump over i).
+# addon = rep(0,nchain)
 # addon = addon(which(paired_Index>Index))
 # paired_Index = paired_Index + addon
 # 
