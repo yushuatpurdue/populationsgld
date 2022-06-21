@@ -102,10 +102,10 @@ for (i in 1:nrun) {
 #   var_est_EMC[,,i] = cov(t(record))
   ## plot
   pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
-  for (j in 1:12) {
+  for (j in 1:20) {
     hist(as.numeric(output_snooker$output[1,1,1:(100*j)]),breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
   }
-  plot(seq(22/1200,22,22/1200),output_snooker$output[1,1,0:1200], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  plot(seq(22/1200,22,22/1200),output_snooker$output[1,1,0:2000], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
   
   dev.off() 
 }
