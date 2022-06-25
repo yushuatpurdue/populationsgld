@@ -81,7 +81,7 @@ Ts      = rep(1,nchain)
 # mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
 mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 # learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
-learning_rate = rep(0.01,nchain)
+learning_rate = rep(0.05,nchain)
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
