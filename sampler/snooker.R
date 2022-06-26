@@ -123,7 +123,7 @@ unit_direction <- function(x, index, pair){
 
 # ==================================
 ## function: r sampler. 
-sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler){
+sample_r <- function(epsilon, niterate = 1500, temperature, T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler){
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))
   temperature0 = temperature/(T_annealing)^niterate
