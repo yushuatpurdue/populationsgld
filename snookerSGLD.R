@@ -16,6 +16,10 @@
 ###==============================================
 library(MASS)
 
+source("potential/mixtureGaussian.R")
+distribution_sgld <- mixgaussian               # target posterior distribution.
+potential = mixgaussian
+
 snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rate){
 ###=========== set path ================
   # if(getwd() != "/Users/yushuhuang/Documents/pu/2020fall/populationsgld"){
@@ -24,16 +28,15 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
   
 ###============= initialization: call functions and initial values=======================
   ## source the potentials to be used for sampling, then define the distribution accordingly. 
-  # source("potential/mixtureGaussian.R")
-  # distribution_sgld <- mixgaussian               # target posterior distribution.  
-  source("potential/2gaussian.R")
-  distribution_sgld <- twogaussian               # target posterior distribution.  
+  
+  # source("potential/2gaussian.R")
+  # distribution_sgld <- twogaussian               # target posterior distribution.  
   
   ## sample initial position x. need to change this according to the target distribution!!
-  temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
-  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  # temp <- runif(nchain*dimension, min = 0, max = 1)
-  # x <<- matrix(temp, nrow = dimension)
+  # temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
+  # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
+  temp <- runif(nchain*dimension, min = 0, max = 1)
+  x <<- matrix(temp, nrow = dimension)
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -74,14 +77,14 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=========================================
 ###=============== run function ============
 ###=========================================
-# nchain  = 20
-nchain  = 10
-# Ts      = seq(1,5,4/(nchain-1))
-Ts      = rep(1,nchain)
-# mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
-mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
-# learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
-learning_rate = rep(0.05,nchain)
+nchain  = 20
+# nchain  = 10
+Ts      = seq(1,5,4/(nchain-1))
+# Ts      = rep(1,nchain)
+mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
+# mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
+learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
+# learning_rate = rep(0.05,nchain)
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
@@ -95,20 +98,24 @@ for (i in 1:nrun) {
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
-  write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
-#   record = output_snooker$output[,1,]
-# 
-#   mu_est_EMC[,i] = rowMeans(record)
-#   var_est_EMC[,,i] = cov(t(record))
-  ## plot
-  pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
-  for (j in 1:20) {
-    hist(as.numeric(output_snooker$output[1,1,1:(100*j)]),breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
-  }
-  plot(seq(22/2000,22,22/2000),output_snooker$output[1,1,0:2000], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
   
-  dev.off() 
-}
+  
+  record = output_snooker$output[,1,]
+
+  mu_est_EMC[,i] = rowMeans(record)
+  var_est_EMC[,,i] = cov(t(record))
+  print(paste("mu estimate = ", mu_est_EMC))
+  print(paste("var estimate = ", var_est_EMC))
+  ## plot
+#   pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
+#   for (j in 1:20) {
+#     hist(as.numeric(output_snooker$output[1,1,1:(100*j)]),breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("EMC-SGLD ", 100*j, " iterations"), xlab = "axis 1")
+#   }
+#   plot(seq(22/2000,22,22/2000),output_snooker$output[1,1,0:2000], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+#   
+#   dev.off() 
+# }
 
 
 
@@ -127,6 +134,17 @@ for (i in 1:nrun) {
 ##==================== run option2: run chain and plot =================
 # output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
 # # 
+pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
+  for (j in 1:20) {
+    plot(output_snooker$output[1,1,1:(100*j)], output_snooker$output[2,1,1:(100*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("snooker ",100*j, " iteration"), xlab = "x", ylab = "y")
+    points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+    
+  }
+  plot(output_snooker$output[1,1,0:2000],output_snooker$output[2,1,0:2000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  
+  dev.off() 
+}
+
 # # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
 # # points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
 # # 

@@ -42,9 +42,9 @@ nchain  = dim(x)[2]                    # number of chains
 # epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
 # potential = mixgaussian
 
-source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.1  
-potential = twogaussian
+# source("potential/2gaussian.R")                # source the potential & gradient calculator.
+epsilon_r = 0.01  
+# potential = twogaussian
 
 # ==================================
 ## load the functions to be used when sampling. 
@@ -126,16 +126,16 @@ unit_direction <- function(x, index, pair){
 sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler){
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))
-  temperature0 = temperature/(T_annealing)^niterate
+  temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*niterate)
   anneal_temperature = temperature0
-  epsilon_r0 = epsilon_r/(e_annealing)^niterate
+  epsilon_r0 = epsilon_r/(e_annealing)^(0.5*niterate)
   anneal_epsilon_r = epsilon_r0
   # R = matrix(ncol = 5)
   # R[1,] = r
   for (i in 1:(0.5*niterate)) {
     anneal_epsilon_r = anneal_epsilon_r*e_annealing
     dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-    anneal_temperature = anneal_temperature*T_annealing
+    anneal_temperature = (anneal_temperature+1-temperature)*T_annealing + temperature-1
     r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
     # R = rbind(R,r)
   }
@@ -151,32 +151,32 @@ sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998,
 # r0 = runif(10, -1,1)
 # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
 # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
-#   r0 = rnorm(length(Index))
-#   r0 = array(r0,dim = c(1,length(r0)))
-#   R = matrix(ncol = length(r0))
-#   R[1,] = r0
-#   r = r0
-#   temperature0 = 1/(0.996)^500
-#   anneal_temperature = temperature0
-#   epsilon_r0 = 0.1/(0.998)^500
-#   anneal_epsilon_r = epsilon_r0
-#   for (i in 1:500) {
-#     
-#     anneal_temperature = anneal_temperature*0.996
-#     anneal_epsilon_r = anneal_epsilon_r*0.998
-#     dist_to0 = min(abs(r),anneal_epsilon_r)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
-#     R = rbind(R,r)
-#   }
-#   for (i in 1:500) {
-#     
-#     dist_to0 = min(abs(r),0.1)
-#     r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 1)
-#     R = rbind(R,r)
-#   }
-#   
-# # #
-# hist(R[,3], breaks = seq(-12,12,0.2))
+  # r0 = rnorm(length(Index))
+  # r0 = array(r0,dim = c(1,length(r0)))
+  # R = matrix(ncol = length(r0))
+  # R[1,] = r0
+  # r = r0
+  # temperature0 = 4+1/(0.998)^1000
+  # anneal_temperature = temperature0
+  # epsilon_r0 = 0.01/(0.999)^1000
+  # anneal_epsilon_r = epsilon_r0
+  # for (i in 1:1000) {
+  # 
+  #   anneal_temperature = (anneal_temperature-4)*0.998+4
+  #   anneal_epsilon_r = anneal_epsilon_r*0.999
+  #   dist_to0 = min(abs(r),0.01)
+  #   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
+  #   R = rbind(R,r)
+  # }
+  # for (i in 1:1000) {
+  # 
+  #   dist_to0 = min(abs(r),0.01)
+  #   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 5)
+  #   R = rbind(R,r)
+  # }
+
+# #
+# hist(R[,2], breaks = seq(-12,12,0.2))
 
 
 ##===================================================
@@ -204,7 +204,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 1, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }
