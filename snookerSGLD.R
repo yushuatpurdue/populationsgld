@@ -89,8 +89,8 @@ learning_rate = seq(0.01,0.03,0.02/(nchain*mutation_rate - 1))
 
 ##================ run option1: evaluate the mean & var estimation ==================
 nrun    = 3                  # run nrun independent times.
-# mu_est_EMC = array(NA, dim = c(2, nrun))
-# var_est_EMC = array(NA, dim = c(2,2,nrun))
+mu_est_EMC = array(NA, dim = c(2, nrun))
+var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
