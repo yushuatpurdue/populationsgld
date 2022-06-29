@@ -94,7 +94,7 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 2000, nchain, learning_rate)
+  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
@@ -136,11 +136,11 @@ for (i in 1:nrun) {
 # # 
 pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
   for (j in 1:20) {
-    plot(output_snooker$output[1,1,1:(100*j)], output_snooker$output[2,1,1:(100*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("snooker ",100*j, " iteration"), xlab = "x", ylab = "y")
+    plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("snooker ",1000*j, " iteration"), xlab = "x", ylab = "y")
     points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
     
   }
-  plot(output_snooker$output[1,1,0:2000],output_snooker$output[2,1,0:2000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+  plot(output_snooker$output[1,1,0:20000],output_snooker$output[2,1,0:20000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
   
   dev.off() 
 }
