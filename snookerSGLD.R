@@ -134,13 +134,13 @@ for (i in 1:nrun) {
 ##==================== run option2: run chain and plot =================
 # output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
 # # 
-pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
+pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
   for (j in 1:20) {
     plot(output_snooker$output[1,1,1:(100*j)], output_snooker$output[2,1,1:(100*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("snooker ",100*j, " iteration"), xlab = "x", ylab = "y")
     points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
     
   }
-  plot(output_snooker$output[1,1,0:2000],output_snooker$output[2,1,0:2000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+  plot(output_snooker$output[1,1,0:2000],output_snooker$output[2,1,0:2000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
   
   dev.off() 
 }
