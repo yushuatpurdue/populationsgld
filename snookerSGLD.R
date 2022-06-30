@@ -93,7 +93,7 @@ mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
-  mutation_rate = 0.75 + 0.5*i
+  mutation_rate = 0.75 + 0.05*i
   print(paste0("mutation rate = ", mutation_rate))
   start_time <- Sys.time()
   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
