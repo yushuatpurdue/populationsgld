@@ -81,7 +81,8 @@ nchain  = 20
 # nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-# mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.85        # number of chains to go through SGLD instead of snooker.
+print(paste0("mutation rate = ", mutation_rate))
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
 # learning_rate = rep(0.05,nchain)
@@ -93,8 +94,6 @@ mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
-  mutation_rate = 0.75 + 0.05*i
-  print(paste0("mutation rate = ", mutation_rate))
   start_time <- Sys.time()
   output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
   end_time <- Sys.time()
