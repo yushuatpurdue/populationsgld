@@ -81,7 +81,7 @@ nchain  = 20
 # nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.7        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
 print(paste0("mutation rate = ", mutation_rate))
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
@@ -95,7 +95,7 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 20000, nchain, learning_rate)
+  output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
@@ -135,12 +135,12 @@ for (i in 1:nrun) {
 # output_snooker = snookerSGLD(Ts, temperature_select = 0.5, 50000, nchain, learning_rate)
 # # 
   pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
-    for (j in 1:20) {
+    for (j in 1:50) {
       plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("snooker ",1000*j, " iteration"), xlab = "x", ylab = "y")
       points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
     
     }
-  plot(output_snooker$output[1,1,0:20000],output_snooker$output[2,1,0:20000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+  plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
   
   dev.off() 
   print(paste("mu estimate = ", mu_est_EMC[,i]))
