@@ -89,7 +89,7 @@ learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 3                  # run nrun independent times.
+nrun    = 5                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 
