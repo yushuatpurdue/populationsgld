@@ -117,12 +117,7 @@ for (i in 1:nrun) {
 #   dev.off() 
 # }
 
-mu_est = rowMeans(mu_est_EMC)
-sigma_est_1 = mean(var_est_EMC[1,1,])
-sigma_est_2 = mean(var_est_EMC[2,2,])
-cov_est = mean(var_est_EMC[1,2,])
-print(paste0("estimated mu = ", mu_est))
-print(paste0("estimated cov = ", sigma_est_1, sigma_est_2,cov_est))
+
 
 
 
@@ -151,6 +146,13 @@ print(paste0("estimated cov = ", sigma_est_1, sigma_est_2,cov_est))
   print(paste("mu estimate = ", mu_est_EMC[,i]))
   print(paste("var estimate = ", var_est_EMC[,,i]))
 }
+
+mu_est = rowMeans(mu_est_EMC)
+sigma_est_1 = mean(var_est_EMC[1,1,])
+sigma_est_2 = mean(var_est_EMC[2,2,])
+cov_est = mean(var_est_EMC[1,2,])
+print(paste0("estimated mu = ", mu_est))
+print(paste0("estimated cov = ", sigma_est_1, sigma_est_2,cov_est))
 
 
 # # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
