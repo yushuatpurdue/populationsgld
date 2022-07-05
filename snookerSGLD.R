@@ -81,7 +81,7 @@ nchain  = 20
 # nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.95        # number of chains to go through SGLD instead of snooker.
 print(paste0("mutation rate = ", mutation_rate))
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
@@ -117,7 +117,12 @@ for (i in 1:nrun) {
 #   dev.off() 
 # }
 
-
+mu_est = rowMeans(mu_est_EMC)
+sigma_est_1 = mean(var_est_EMC[1,1,])
+sigma_est_2 = mean(var_est_EMC[2,2,])
+cov_est = mean(var_est_EMC[1,2,])
+print(paste0("estimated mu = ", mu_est))
+print(paste0("estimated cov = ", sigma_est_1, sigma_est_2,cov_est))
 
 
 
@@ -146,6 +151,7 @@ for (i in 1:nrun) {
   print(paste("mu estimate = ", mu_est_EMC[,i]))
   print(paste("var estimate = ", var_est_EMC[,,i]))
 }
+
 
 # # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
 # # points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
