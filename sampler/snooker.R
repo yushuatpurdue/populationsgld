@@ -43,7 +43,7 @@ nchain  = dim(x)[2]                    # number of chains
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.01  
+epsilon_r = 0.005  
 # potential = twogaussian
 
 # ==================================
