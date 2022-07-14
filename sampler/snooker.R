@@ -43,7 +43,7 @@ nchain  = dim(x)[2]                    # number of chains
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.005  
+epsilon_r = 0.003  
 # potential = twogaussian
 
 # ==================================
@@ -126,6 +126,7 @@ unit_direction <- function(x, index, pair){
 sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler){
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))
+  ## assuming temperature >= 1
   temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*niterate)
   anneal_temperature = temperature0
   epsilon_r0 = epsilon_r/(e_annealing)^(0.5*niterate)
@@ -204,7 +205,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 1, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }
