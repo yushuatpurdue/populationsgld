@@ -205,7 +205,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 1, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }
