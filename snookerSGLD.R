@@ -81,7 +81,7 @@ nchain  = 20
 # nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.85        # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 # learning_rate = rep(0.05,nchain)
@@ -90,7 +90,7 @@ print(paste0("learning rate = ", learning_rate[1], "to ", learning_rate[nchain])
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 5                  # run nrun independent times.
+nrun    = 10                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 
@@ -155,6 +155,8 @@ cov_est = mean(var_est_EMC[1,2,])
 print(paste0("estimated mu = ", mu_est))
 print(paste0("estimated cov = ", sigma_est_1,", ", sigma_est_2,", ",cov_est))
 
+df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,], var1 = var_est_EMC[1,1,], var2 = var_est_EMC[2,2,], cov = var_est_EMC[1,2,]) # estimating mu and sigma. 
+write.csv(df, "./mu_var_est.csv")
 
 # # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")
 # # points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
