@@ -97,7 +97,7 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = 1, temperature_select = 0.5, 1000000, nchain = 1, learning_rate = 0.001)
+  output_snooker = snookerSGLD(Ts = 1, temperature_select = 0.5, 200000000, nchain = 1, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
