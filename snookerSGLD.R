@@ -91,13 +91,13 @@ print(paste0("learning rate = ", learning_rate[1], "to ", learning_rate[nchain])
 
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 1                  # run nrun independent times.
+nrun    = 10                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))
 var_est_EMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = 1, temperature_select = 0.5, 200000000, nchain = 1, learning_rate = 0.001)
+  output_snooker = snookerSGLD(Ts = 1, temperature_select = 0.5, 150000000, nchain = 1, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
@@ -140,7 +140,7 @@ for (i in 1:nrun) {
   pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
     for (j in 1:50) {
       # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
-      plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",1000*j, " iteration"), xlab = "x", ylab = "y")
+      plot(output_snooker$output[1,1,1:(3000000*j)], output_snooker$output[2,1,1:(3000000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",3000000*j, " iteration"), xlab = "x", ylab = "y")
       points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
     
     }
