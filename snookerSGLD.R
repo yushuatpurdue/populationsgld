@@ -104,7 +104,7 @@ for (i in 1:nrun) {
   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
   
   
-  record = output_snooker$output[,1,]
+  record = output_snooker$output[,1,c(1:50000)*3000]
 
   mu_est_EMC[,i] = rowMeans(record)
   var_est_EMC[,,i] = cov(t(record))
