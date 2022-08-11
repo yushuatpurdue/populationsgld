@@ -145,7 +145,7 @@ for (i in 1:nrun) {
     
     }
   # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-  plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
+  plot(output_snooker$output[1,1,c(1:50000)*3000],output_snooker$output[2,1,c(1:50000)*3000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
   
   dev.off() 
   print(paste("mu estimate = ", mu_est_EMC[,i]))
