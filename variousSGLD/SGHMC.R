@@ -115,19 +115,19 @@ output_SGHMC = SGHMC(temperature, 50000000, learning_rate)
 
 
 nrun    = 10                  # run nrun independent times.
-mu_est_EMC = array(NA, dim = c(2, nrun))
-var_est_EMC = array(NA, dim = c(2,2,nrun))
+mu_est_SGHMC = array(NA, dim = c(2, nrun))
+var_est_SGHMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_SGHMC = SGHMC(temperature, 50000000, learning_rate = 0.001)
+  output_SGHMC = SGHMC(temperature, 150000000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
   
   
-  record = output_SGHMC[,1,c(1:50000)*1000]
+  record = output_SGHMC[,1,c(1:50000)*3000]
   
   mu_est_SGHMC[,i] = rowMeans(record)
   var_est_SGHMC[,,i] = cov(t(record))
@@ -136,7 +136,7 @@ for (i in 1:nrun) {
   pdf(file=paste0("mixGaussianSGHMCplot_",i,".pdf"))
   for (j in 1:50) {
     # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
-    plot(record[1,c(1:1000*j)], record[2,c(1:1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGHMC ",1000*j*1000, " iteration"), xlab = "x", ylab = "y")
+    plot(record[1,c(1:1000*j)], record[2,c(1:1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGHMC ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
     points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
     
   }
