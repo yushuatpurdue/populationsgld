@@ -137,7 +137,7 @@ for (i in 1:nrun) {
   for (j in 1:50) {
     # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
     plot(record[1,c(1:1000*j)], record[2,c(1:1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGHMC ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
-    points(output_snooker$mu[1,], output_snooker$mu[2,], pch = 3,col = "green")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
     
   }
   # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
