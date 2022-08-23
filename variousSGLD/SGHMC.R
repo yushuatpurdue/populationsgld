@@ -103,7 +103,7 @@ SGHMC <- function(temperature, niteration, learning_rate){
 ###=============== run function ============
 ###=========================================
 
-output_SGHMC = SGHMC(temperature, 50000000, learning_rate)
+# output_SGHMC = SGHMC(temperature, 50000000, learning_rate)
 
 # plot(output_SGHMC[1,1,1:50000], output_SGHMC[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 50000 iteration", xlab = "x", ylab = "y")
 # points(mu[1,], mu[2,], pch = 3,col = "green")
