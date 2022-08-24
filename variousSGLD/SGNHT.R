@@ -90,7 +90,7 @@ SGNHT <- function(A, temperature, niteration, learning_rate){
   output = array(NA,dim = c(dimension,niteration))   
   output[,1] = x      
   
-  # run SGHMC chain
+  # run SGNHT chain
   for (t in 2:niteration) {
     
     temp       = onestepSGNHT(x, m, gamma, temperature, A, learning_rate = 0.1)
@@ -128,17 +128,17 @@ var_est_SGNHT = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_SGHMC = SGNHT(A, temperature, 150000000, learning_rate = 0.001)
+  output_SGNHT = SGNHT(A, temperature, 150000000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
   
   
-  record = output_SGHMC[,1,c(1:50000)*3000]
+  record = output_SGNHT[,c(1:50000)*3000]
   
-  mu_est_SGHMC[,i] = rowMeans(record)
-  var_est_SGHMC[,,i] = cov(t(record))
+  mu_est_SGNHT[,i] = rowMeans(record)
+  var_est_SGNHT[,,i] = cov(t(record))
   
   
   pdf(file=paste0("mixGaussianSGnhtplot_",i,".pdf"))
