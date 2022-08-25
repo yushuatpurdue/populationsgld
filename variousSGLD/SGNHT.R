@@ -143,7 +143,7 @@ for (i in 1:nrun) {
   
   pdf(file=paste0("mixGaussianSGnhtplot_",i,".pdf"))
   for (j in 1:50) {
-    plot(record[1,c(1:1000*j)], record[2,c(1:1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGNHT ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+    plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGNHT ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
     points(mu[1,], mu[2,], pch = 3,col = "green")
     
   }
