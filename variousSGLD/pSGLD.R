@@ -145,7 +145,7 @@ var_est_pSGLD = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_pSGLD = pSGLD(A, temperature, 150000000, learning_rate = 0.001)
+  output_pSGLD = pSGLD(lambda, alpha, 150000000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
