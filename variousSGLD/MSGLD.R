@@ -9,7 +9,7 @@ source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian   
 
 dimension = 2
-learning_rate = 0.021
+learning_rate = 0.001
 temperature = 2
 smoothingfactor = 0.5                        # smoothing factor beta (tailing off coefficient) for the momentum wrt time. 
 biasfactor = 0.5                            # bias factor: how much portion of momentum will be used in updating position. 
@@ -106,28 +106,57 @@ MSGLD <- function(smoothingfactor, biasfactor, temperature, niteration, learning
 ###=============== run function ============
 ###=========================================
 
-output_MSGLD = MSGLD(smoothingfactor, biasfactor, temperature, 200000, learning_rate)
+# output_MSGLD = MSGLD(smoothingfactor, biasfactor, temperature, 200000, learning_rate)
+# 
+# plot(output_MSGLD[1,1:50000], output_MSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 50000 iteration", xlab = "x", ylab = "y")
+# points(mu[1,], mu[2,], pch = 3,col = "green")
+# 
+# plot(output_MSGLD[1,], output_MSGLD[2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 200000 iteration", xlab = "x", ylab = "y")
+# points(mu[1,], mu[2,], pch = 3,col = "green")
 
-plot(output_MSGLD[1,1:50000], output_MSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 50000 iteration", xlab = "x", ylab = "y")
-points(mu[1,], mu[2,], pch = 3,col = "green")
+# write.csv(output_MSGLD, "./variousSGLD/output_MSGLD.csv")
 
-plot(output_MSGLD[1,], output_MSGLD[2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 200000 iteration", xlab = "x", ylab = "y")
-points(mu[1,], mu[2,], pch = 3,col = "green")
+nrun    = 10                  # run nrun independent times.
+mu_est_MSGLD = array(NA, dim = c(2, nrun))
+var_est_MSGLD = array(NA, dim = c(2,2,nrun))
 
-write.csv(output_MSGLD, "./variousSGLD/output_MSGLD.csv")
+for (i in 1:nrun) {
+  print(paste0(i,"th run"))
+  start_time <- Sys.time()
+  output_MSGLD = MSGLD(smoothingfactor, biasfactor, temperature, 150000000, learning_rate)
+  end_time <- Sys.time()
+  print(paste0("running time = ", end_time - start_time))
+  # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
+  # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
 
 
-##====================================
-## =========== test ==================
-##====================================
+  record = output_MSGLD[,c(1:50000)*3000]
 
-### test for SGNHT applied on 
+  mu_est_MSGLD[,i] = rowMeans(record)
+  var_est_MSGLD[,,i] = cov(t(record))
 
-# position = mvrnorm(1, mu = rep(0,dimension), Sigma = diag(1,dimension))
-# position = array(position,dim = c(2,1))
-# momentum = array(1,dim = c(2,1))
-# friction = 1
-## x = array(c(1,-0.5,0.3,0.2,0.4),dim = c(1,5))
-# learning_rate = 0.1
-# onestepSGNHT(position, momentum, friction, A, learning_rate = 0.1)
+
+  pdf(file=paste0("mixGaussianMSGLDplot_",i,".pdf"))
+  for (j in 1:50) {
+    plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("MSGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+
+  }
+  plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "MSGLD sample path", xlab = "x", ylab = "y")
+
+  dev.off()
+  print(paste("mu estimate = ", mu_est_MSGLD[,i]))
+  print(paste("var estimate = ", var_est_MSGLD[,,i]))
+}
+
+mu_est = rowMeans(mu_est_MSGLD)
+sigma_est_1 = mean(var_est_MSGLD[1,1,])
+sigma_est_2 = mean(var_est_MSGLD[2,2,])
+cov_est = mean(var_est_MSGLD[1,2,])
+print(paste0("estimated mu = ", mu_est))
+print(paste0("estimated cov = ", sigma_est_1,", ", sigma_est_2,", ",cov_est))
+
+df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,], var1 = var_est_MSGLD[1,1,], var2 = var_est_MSGLD[2,2,], cov = var_est_MSGLD[1,2,]) # estimating mu and sigma.
+write.csv(df, "./mu_var_est_MSGLD.csv")
+
 

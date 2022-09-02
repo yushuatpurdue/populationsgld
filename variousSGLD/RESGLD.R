@@ -52,24 +52,53 @@ RESGLD <-function(Ts, niteration, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,10)                    # temperature of the two chains. 
-learning_rate       = c(0.01,0.03)
+Ts                  = c(1,5)                    # temperature of the two chains. 
+learning_rate       = c(0.001,0.003)
 
 
-nrun    = 20                  # run nrun independent times. 
-mu_est_RE = array(NA, dim = c(2, nrun))
-var_est_RE = array(NA, dim = c(2,2,nrun))
+nrun    = 10                  # run nrun independent times.
+mu_est_RESGLD = array(NA, dim = c(2, nrun))
+var_est_RESGLD = array(NA, dim = c(2,2,nrun))
+
 for (i in 1:nrun) {
-  output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
-  # hist(as.numeric(output_snooker$output[2,,1:10]),breaks = seq(-7,12,0.5),main = "snooker SGLD")
-  record = output_RESGLD$output[,2,]
+  print(paste0(i,"th run"))
+  start_time <- Sys.time()
+  output_RESGLD = RESGLD(Ts, niteration = 150000000, learning_rate)
+  end_time <- Sys.time()
+  print(paste0("running time = ", end_time - start_time))
   
-  mu_est_RE[,i] = rowMeans(record)
-  var_est_RE[,,i] = cov(t(record))
+  
+  record = output_RESGLD[,1,c(1:50000)*3000]
+  
+  mu_est_RESGLD[,i] = rowMeans(record)
+  var_est_RESGLD[,,i] = cov(t(record))
+  
+  
+  pdf(file=paste0("mixGaussianRESGLDplot_",i,".pdf"))
+  for (j in 1:50) {
+    plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+    
+  }
+  plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
+  
+  dev.off() 
+  print(paste("mu estimate = ", mu_est_RESGLD[,i]))
+  print(paste("var estimate = ", var_est_RESGLD[,,i]))
 }
 
-# output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
+mu_est = rowMeans(mu_est_RESGLD)
+sigma_est_1 = mean(var_est_RESGLD[1,1,])
+sigma_est_2 = mean(var_est_RESGLD[2,2,])
+cov_est = mean(var_est_RESGLD[1,2,])
+print(paste0("estimated mu = ", mu_est))
+print(paste0("estimated cov = ", sigma_est_1,", ", sigma_est_2,", ",cov_est))
 
+df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,], var1 = var_est_RESGLD[1,1,], var2 = var_est_RESGLD[2,2,], cov = var_est_RESGLD[1,2,]) # estimating mu and sigma. 
+write.csv(df, "./mu_var_est_RESGLD.csv")
+
+# output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
+# 
 # hist(as.numeric(output_RESGLD$output[1,2,]),breaks = seq(-7,12,0.1),main = "RESGLD")
 
 # plot(output_RESGLD$output[1,,], output_RESGLD$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD 200000 iteration", xlab = "x", ylab = "y")
@@ -90,8 +119,8 @@ for (i in 1:nrun) {
 
 # write.csv(output_RESGLD$output, "./output_RESGLD.csv")
 # write.csv(output_RESGLD$mu, "./mu.csv")
-write.csv(mu_est_RE, "./mu_est_RE.csv")
-write.csv(var_est_RE, "./var_est_RE.csv")
+# write.csv(mu_est_RE, "./mu_est_RE.csv")
+# write.csv(var_est_RE, "./var_est_RE.csv")
 
 
 
