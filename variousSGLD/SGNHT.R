@@ -11,7 +11,7 @@ distribution_sgld <- mixgaussian
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 50                    # can be regarded as an initial friction. 
+A             = 80                    # can be regarded as an initial friction. 
 
 
 ### ======================================================
