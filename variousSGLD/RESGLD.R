@@ -63,12 +63,12 @@ var_est_RESGLD = array(NA, dim = c(2,2,nrun))
 for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_RESGLD = RESGLD(Ts, niteration = 150000000, learning_rate)
+  output_RESGLD = RESGLD(Ts, niteration = 50000000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   
   
-  record = output_RESGLD[,1,c(1:50000)*3000]
+  record = output_RESGLD$output[,1,c(1:50000)*1000]
   
   mu_est_RESGLD[,i] = rowMeans(record)
   var_est_RESGLD[,,i] = cov(t(record))
@@ -76,7 +76,7 @@ for (i in 1:nrun) {
   
   pdf(file=paste0("mixGaussianRESGLDplot_",i,".pdf"))
   for (j in 1:50) {
-    plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+    plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",1000*j*1000, " iteration"), xlab = "x", ylab = "y")
     points(mu[1,], mu[2,], pch = 3,col = "green")
     
   }
