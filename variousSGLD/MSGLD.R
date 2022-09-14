@@ -12,7 +12,7 @@ dimension = 2
 learning_rate = 0.001
 temperature = 2
 smoothingfactor = 0.9                        # smoothing factor beta (tailing off coefficient) for the momentum wrt time. beta_1 in pater 
-biasfactor = 100                            # bias factor: how much portion of momentum will be used in updating position. alpha in paper
+biasfactor = 50                            # bias factor: how much portion of momentum will be used in updating position. alpha in paper
 
 
 

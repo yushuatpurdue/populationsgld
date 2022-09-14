@@ -52,7 +52,7 @@ RESGLD <-function(Ts, niteration, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,5)                    # temperature of the two chains. 
+Ts                  = c(1,8)                    # temperature of the two chains. 
 learning_rate       = c(0.001,0.003)
 
 
