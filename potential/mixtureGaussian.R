@@ -8,7 +8,7 @@
 
 ###============= calculate_density_grad: supportive function ==========
 
-## calculate_density_grad: a function calculate the posterior density and gradient of log density wrt a given x
+## calculate_density_grad: a function calculate the posterior density and gradient of - log density wrt a given x
 ## input:
 #    mu:      Matrix of size (d, m). Column i = mean vector of i-th Gaussian. m = number of Gaussian in the model. 
 #    sigma:   Scaler. Each Gaussian has the same variance of diag(sigma^2,d)
@@ -16,8 +16,8 @@
 #    weight:  (p1, p2, p3,..., pm), a m*1 vector of weights sums up to 1, each entry a weight. 
 
 ## output:
-#    pd: The posterior density at x. 
-#    gradU: The gradient of -log posterior. 
+#    $pd: The posterior density at x. 
+#    $gradU: The gradient of -log posterior. 
 
 #======================
 calculate_density_grad <- function(mu, sigma, x, weight)

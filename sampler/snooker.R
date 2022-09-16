@@ -38,14 +38,14 @@ nchain  = dim(x)[2]                    # number of chains
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
-# source("potential/mixtureGaussian.R")                # source the potential & gradient calculator. 
-# epsilon_r = min(0.1, sigma^2)                        # learning rate for sgld in sampling r. 
+# source("potential/mixtureGaussian.R")                # source the potential & gradient calculator.
+epsilon_r = 0.003                        # learning rate for sgld in sampling r.
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.003  
+# epsilon_r = 0.05  
 # potential = twogaussian
-
+## potential will be specified in snookerSGLD. 
 # ==================================
 ## load the functions to be used when sampling. 
 

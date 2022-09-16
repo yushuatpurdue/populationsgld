@@ -1,15 +1,39 @@
 ### This file is created by Yushu Huang for EMC-SGLD experiments.
 ### It contains the function for calculation of gradient and density of Nonlinear regression in Kim 2020 4.3. 
 ### And one additional function to support the calculation. 
-### It also contains a function for generating the regression dataset. The 5 datasets only need to be generated once. 
 
-###============= generate dataset ==========
+###============= calculate_density_grad: supportive function ==========
 
-genDataset <- function(nData){
-  x = runif(nData,-2,4)   # generate nData number of sample from unif[-2,4] as x
-  fx = (x-1)^2 + 2*sin(20*x) +cos(10*x-1) +1/6
-  noise = rnorm(nData,0,1)
-  y = x+ noise
-  return(list('x' = x,'y' = y))
+## calculate_density_grad: a function calculate the posterior density and gradient of - log density wrt a given x
+## input:
+#    dataSet: (x,y) dataset for nonlinear regression. generated from the genDataset function. a dataframe of 2 arguments: $x and $y
+#    x:       The current position of a sample.  
+
+## output:
+#    $pd: The posterior density at x. 
+#    $gradU: The gradient of -log posterior. 
+
+#======================
+calculate_density_grad <- function(dataSet, theta)
+{
+  
 }
 
+### ====================================================
+### ================!!! MAIN BODY !!!===================
+### ====================================================
+## parameter setting. 
+nSet = 1
+# ===================================
+## calculate the probability density and gradient for a position x.
+## input: 
+#    x:   positions. matrix of p*n. p = dimension of space, n = number of chains. 
+## output: 
+#    a data frame of two columns
+#         $grad = gradient of the potential at x. 
+#         $pd   = (posterior) probability density at x. 
+
+## side note: potential = -log(probability density)
+nonlinearReg <-function(x){
+  
+}
