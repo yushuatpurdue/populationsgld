@@ -43,9 +43,9 @@ nonlinearReg <-function(theta, Batch, nData){
 ### ====================================================
 ### ================!!!   TEST    !!!===================
 ### ====================================================
-theta1 = seq(-20,30,0.1)
-theta2 = seq(-20,30,0.1)
+theta1 = seq(-20,30,0.5)
+theta2 = seq(-20,30,0.5)
 theta = expand.grid(theta1,theta2)
-
-
-
+pd_grad = nonlinearReg(theta, Batch, nData)
+contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101))
+# theta = mvrnorm(3, mu = rep(0,2), Sigma = diag(1,2))
