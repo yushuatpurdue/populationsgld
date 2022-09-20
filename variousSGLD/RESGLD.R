@@ -52,7 +52,7 @@ RESGLD <-function(Ts, niteration, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,5)                    # temperature of the two chains. 
+Ts                  = c(1,4)                    # temperature of the two chains. 
 learning_rate       = c(0.001,0.003)
 
 
@@ -83,8 +83,8 @@ for (i in 1:nrun) {
   plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
   
   dev.off() 
-  print(paste("mu estimate = ", mu_est_RESGLD))
-  print(paste("var estimate = ", var_est_RESGLD))
+  print(paste("mu estimate = ", mu_est_RESGLD[,i]))
+  print(paste("var estimate = ", var_est_RESGLD[,,i]))
 }
 
 mu_est = rowMeans(mu_est_RESGLD)
