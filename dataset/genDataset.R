@@ -11,13 +11,26 @@
 #   $x    : list of length nData. explanatory variable
 #   $y    : list of length nData. response variable
 
-genDataset <- function(nData, nSet){
+genDataset <- function(nData, nSet, batchSize){
+  # generate x and y
   x      = runif(nData,-2,4)                 # generate nData number of sample from unif[-2,4] as x
   fx     = (x-1)^2 + 2*sin(20*x) +cos(10*x-1) +1/6  # underlying true model f(x)
   noise  = rnorm(nData,0,1)
   y      = fx+ noise                 # y = f(x) + noise
-  output = list('x' = x,'y' = y)
+  
+  # augment dataset. 
+  one = rep(1, batchSize)
+  nBatches = as.integer(nData/batchSize)+1
+  augment = one
+  for (i in 2:nBatches){
+    temp = one*i
+    augment = append(augment,temp)
+  }
+  augment = augment[1:nData]
+  
+  output = data.frame('augment' = augment, 'x' = x,'y' = y) # use which(output$augment == 1) to find batch. 
   write.csv(output, paste0("./dataset/datasetNLR",nSet,".csv"), row.names=FALSE)
+  
 }
 
 
@@ -27,13 +40,14 @@ genDataset <- function(nData, nSet){
 ## parameter setting
 nSet = 5
 nData = 10000
+batchSize = 100
 
 for (i in 1:nSet)
 {
   if (file.exists(paste0("./dataset/datasetNLR",i,".csv"))){
     read.csv(paste0("./dataset/datasetNLR",i,".csv"))
   } else {
-    genDataset(nData,i)
+    genDataset(nData,i, batchSize)
   }
 }
 
