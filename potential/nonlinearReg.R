@@ -8,6 +8,7 @@
 ### ====================================================
 ## parameter setting. 
 nSet = 1
+dimension = 2
 
 nonlinearReg <-function(theta, Batch, nData){
   ## This function calculates the LEVERAGED posterior density and LEVERAGED gradient (-d log pd). 
@@ -15,12 +16,13 @@ nonlinearReg <-function(theta, Batch, nData){
   ## same with the leveraged gradient. 
   ## c here is nData. 
   ## Input: 
-  #    theta : dimension of 2*n. 2 = dimension of space, n = number of chains. 
-  #    Batch : output[which(output$augment == 2),]
+  #    theta : dimension of n*2. 2 = dimension of space, n = number of chains. 
+  #    Batch : batch data from datasetNLR#.csv. obtained by dataset[which(dataset$augment == num),]. dimension = nBatch*3 (3 is x and y and batch number). 
   #    nData : number of data in total dataset.  
   ## Output: 
   #    $pd   : leveraged posterior density
   #    $gradU: leveraged stochastic gradient
+  theta = t(theta)
   nBatch = dim(Batch)[1]
   nTheta = dim(theta)[1]
   x = matrix(Batch$x)%*%rep(1,nTheta)
@@ -34,18 +36,22 @@ nonlinearReg <-function(theta, Batch, nData){
   pd = exp(-(negLogPrior+negStochLogLike)/nData)       # nData: leverage
   
   DnegLogPrior = theta
-  DnegStochLogLike = matrix(c(colSums(-(y-fx)*(2*x*cos(theta1*x) +1/30)), colSums(theta2 + (y - fx)*(x*sin(theta2*x -1) +1/20)))*nData/nBatch, nrow = dim(theta)[1], ncol = dim(theta)[2])
+  DnegStochLogLike = matrix(c(colSums(-(y-fx)*(2*x*cos(theta1*x) +1/30)), colSums((y - fx)*(x*sin(theta2*x -1) +1/20)))*nData/nBatch, nrow = dim(theta)[1], ncol = dim(theta)[2])
   gradU = (DnegLogPrior + DnegStochLogLike)/nData               # nData: leverage
-  return(list("pd" = pd, "gradU" = gradU))
+  
+  
+  return(list("pd" = t(pd), "gradU" = t(gradU)))
 }
 
 
 ### ====================================================
 ### ================!!!   TEST    !!!===================
 ### ====================================================
-theta1 = seq(-20,30,0.5)
-theta2 = seq(-20,30,0.5)
-theta = expand.grid(theta1,theta2)
-pd_grad = nonlinearReg(theta, Batch, nData)
-contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101))
+# Batch = output
+# theta1 = seq(-20,30,0.5)
+# theta2 = seq(-20,30,0.5)
+# theta = expand.grid(theta1,theta2)
+# pd_grad = nonlinearReg(theta, Batch, nData)
+# cols = rev(colorRampPalette(c('darkred','red','blue','lightblue'))(40))
+# filled.contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101),nlevels = 40, col = cols)
 # theta = mvrnorm(3, mu = rep(0,2), Sigma = diag(1,2))

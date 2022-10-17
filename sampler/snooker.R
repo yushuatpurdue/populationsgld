@@ -7,7 +7,7 @@
 ##=======================================================
 ## THIS CODE CONSISITS OF 3 PARTS. 
 
-## part 1: initialization
+## part 1: initialization. Many of this are inheritated from snookerSGLD.R
 
 ## part 2: supportive functions. 
   # Boltzmann        : calculating the boltzmann weights of the current chains, for the subsequent sampling. 
@@ -18,7 +18,8 @@
 
 ## part 3: main function: snooker
   # for a population of chains, uniformly draw a chain xi (this step is not included in this file), and pair it with xj chain drawn under Boltzmann distribution. 
-  # calculate the unit direction, and sample the snooker scaler. 
+  # calculate the unit direction 
+  # sample the snooker scaler. 
   # updated xi = xj + r*e 
 
 
@@ -39,11 +40,11 @@ nchain  = dim(x)[2]                    # number of chains
 ### ========== call function: calculating potential & gradient ===============
 
 # source("potential/mixtureGaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.003                        # learning rate for sgld in sampling r.
+# epsilon_r = 0.003                        # learning rate for sgld in sampling r.
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
-# epsilon_r = 0.05  
+epsilon_r = 0.1
 # potential = twogaussian
 ## potential will be specified in snookerSGLD. 
 # ==================================
