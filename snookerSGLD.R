@@ -137,7 +137,7 @@ for (i in 1:nrun) {
 ##==================== run option2: run chain and plot =================
 
 # # 
-pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
+# pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
   pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
     for (j in 1:50) {
       # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")

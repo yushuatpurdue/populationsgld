@@ -24,12 +24,16 @@
 
 #========================= plotting and analyzing the snookerSGLD outputs =======================
 ## read data and conform to numeric mode. 
-output_snooker = read.csv(file = "./2gaussian/mu_0/tempering/output_snooker_4.csv")
+output_snooker4 = read.csv(file = "./output_snooker_4.csv")
+output_snooker1 = read.csv(file = "./output_snooker_1.csv")
 # output_snooker = read.csv(file = "./output_snooker_3.csv")
 # output_snooker_6 = read.csv(file = "./2gaussian/mu_0/lr0p05/output_snooker_6.csv")
 
-output_snooker = as.matrix(output_snooker)
-output_snooker = array(output_snooker,dim = c(5,10,2000))       # conform the output to dimension*nchain*niteration. 
+output_snooker4 = as.matrix(output_snooker4)
+output_snooker4 = array(output_snooker4,dim = c(5,10,2000))       # conform the output to dimension
+
+output_snooker1 = as.matrix(output_snooker1)
+output_snooker1 = array(output_snooker1,dim = c(5,10,2000))       # conform the output to dimension*nchain*niteration. 
 # output_snooker_6 = as.matrix(output_snooker_6[,2:dim(output_snooker_6)[2]])
 # output_snooker_6 = array(output_snooker_6,dim = c(5,10,5000))
 
@@ -39,7 +43,10 @@ output_snooker = array(output_snooker,dim = c(5,10,2000))       # conform the ou
 ## plot the result
 # plot(output_mu[1,], output_mu[2,], pch = ".") 
 # hist(as.numeric(output_snooker[1,1:1200]),breaks = seq(-7,12,0.5),freq=FALSE, main = "snooker SGLD")
-plot(seq(13/1200,13,13/1200),output_snooker[1,1,0:1200], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+pdf(file=paste0("mixGaussianSGLDplot_",4,".pdf"))
+plot(seq(13/1200,13,13/1200),output_snooker4[1,1,0:1200], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
+pdf(file=paste0("mixGaussianSGLDplot_",1,".pdf"))
+plot(seq(13/1200,13,13/1200),output_snooker1[1,1,0:1200], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
 
 # scatter plot:  
 # plot(output_snooker[1,,], output_snooker[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 5000 iteration", xlab = "x", ylab = "y")
