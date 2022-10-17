@@ -4,7 +4,7 @@ test.R
 estimate_mean_var.R
 submitjob.sh
 variousSGLD/parameters.rtf
-analyze.R
+
 csv_results/
 >>>>>>> 4df8f88232e52427a60210629d1f84ac3194d7f8
 .RData
