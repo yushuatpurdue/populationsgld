@@ -92,6 +92,11 @@ for (i in 1:nrun) {
 
   # record = output_snookerBatch$output[,1,]   # mixgaussian
   print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+  pdf(file=paste0("pRavine",i,".pdf"))
+  plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
+  plot(output_snookerBatch$output[1,1,2000:3000],output_snookerBatch$output[2,1,2000:3000],pch = ".")
+  plot(output_snookerBatch$output[1,1,3000:4000],output_snookerBatch$output[2,1,3000:4000],pch = ".")
+  dev.off()
 
   # mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
