@@ -90,7 +90,7 @@ for (i in 1:nrun) {
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  record = output_snooker$output[,1,]   # mixgaussian
+  # record = output_snookerBatch$output[,1,]   # mixgaussian
   print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
 
   # mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
