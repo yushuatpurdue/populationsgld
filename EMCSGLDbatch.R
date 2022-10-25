@@ -15,18 +15,8 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
   # }
   
   ###============= initialization: call functions and initial values=======================
-  ## source the potentials to be used for sampling, then define the distribution accordingly. 
   
-  # source("potential/2gaussian.R")
-  # distribution_sgld <- twogaussian               # target posterior distribution.  
-  
-  ## sample initial position x. need to change this according to the target distribution!!
-  # temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
-  # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  # temp <- runif(nchain*dimension, min = 0, max = 1)
-  # x <<- matrix(temp, ncol = dimension)
   theta <<- t(mvrnorm(nchain, mu = c(0,0), Sigma = diag(1,2)))
-  # theta <<- t(matrix(c(20,10,20,10),ncol = 2))
   
   source("sampler/snookerBatch.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -80,10 +70,29 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 # theta = mvrnorm(20, mu = c(0,0), Sigma = diag(1,2))
 # nchain  = 20
 # nepoch = 10
-# nchain  = 10
+
+## ================ run simulation ======================
+nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
 mutation_rate = 0.6        # number of chains to go through SGLD instead of snooker.
-
 learning_rate = seq(0.005,0.025,0.02/(nchain - 1))
-output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
+
+# output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
+
+nrun    = 10                  # run nrun independent times.
+# mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
+# var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+
+for (i in 1:nrun) {
+  start_time <- Sys.time()
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
+  end_time <- Sys.time()
+  print(paste0("running time for ", i, "th run = ", end_time - start_time))
+
+  record = output_snooker$output[,1,]   # mixgaussian
+  print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+
+  # mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
+  # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
+}
