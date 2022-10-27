@@ -75,7 +75,7 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.005,0.025,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
