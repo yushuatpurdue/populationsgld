@@ -72,11 +72,11 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 # nepoch = 10
 
 ## ================ run simulation ======================
-nchain  = 10
-Ts      = seq(1,5,4/(nchain-1))
+nchain  = 20
+Ts      = seq(1,10,9/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.005,0.025,0.02/(nchain - 1))
+mutation_rate = 0.6        # number of chains to go through SGLD instead of snooker.
+learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
@@ -86,7 +86,7 @@ nrun    = 10                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 20, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
