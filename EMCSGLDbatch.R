@@ -86,16 +86,16 @@ nrun    = 10                  # run nrun independent times.
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 20, learning_rate)
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = 20, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
   # record = output_snookerBatch$output[,1,]   # mixgaussian
-  print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+  # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+  print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000])))
   pdf(file=paste0("pRavine",i,".pdf"))
   plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
-  plot(output_snookerBatch$output[1,1,2000:3000],output_snookerBatch$output[2,1,2000:3000],pch = ".")
-  plot(output_snookerBatch$output[1,1,3000:4000],output_snookerBatch$output[2,1,3000:4000],pch = ".")
+  
   dev.off()
 
   # mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
