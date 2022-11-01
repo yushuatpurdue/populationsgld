@@ -86,7 +86,7 @@ mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 20, learning_rate)
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = 20, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
