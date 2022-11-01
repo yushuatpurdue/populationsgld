@@ -75,13 +75,13 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 nchain  = 20
 Ts      = seq(1,10,9/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
-nrun    = 10                  # run nrun independent times.
-# mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
+nrun    = 20                  # run nrun independent times.
+mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
@@ -91,17 +91,17 @@ for (i in 1:nrun) {
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
   # record = output_snookerBatch$output[,1,]   # mixgaussian
-  print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
-  # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000])))
+  # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+  print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000])))
   pdf(file=paste0("pRavine",i,".pdf"))
   plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
   
   dev.off()
 
-  # mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])   # mixgaussian
+  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])   # mixgaussian
   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
 
-  # df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])
-  # write.csv(df, "./thetaEst.csv")
+  df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])
+  write.csv(df, "./thetaEst.csv")
   
 }
