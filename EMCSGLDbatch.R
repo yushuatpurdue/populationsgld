@@ -98,7 +98,7 @@ for (i in 1:nrun) {
   
   dev.off()
 
-  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])   # mixgaussian
+  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])
   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
 
   df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])

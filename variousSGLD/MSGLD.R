@@ -169,7 +169,35 @@ batchMSGLD <- function(smoothingfactor, biasfactor, temperature, nepoch, learnin
 ###=============== run function ============
 ###=========================================
 
-output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, 2000, learning_rate)
+# output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, 2000, learning_rate)
+
+nrun    = 20                  # run nrun independent times.
+mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
+# var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+
+for (i in 1:nrun) {
+  start_time <- Sys.time()
+  output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 48000, learning_rate)
+  end_time <- Sys.time()
+  print(paste0("running time for ", i, "th run = ", end_time - start_time))
+  
+  record = output_MSGLD[,c(1:2000)*2400]
+  # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
+  print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
+  pdf(file=paste0("pRavine",i,".pdf"))
+  plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
+  
+  dev.off()
+  
+  mu_est_MSGLD[,i] = rowMeans(record[,1000:2000])
+  # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
+  
+  df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,])
+  write.csv(df, "./thetaEstMSGLD.csv")
+  
+}
+
+
 # 
 # plot(output_MSGLD[1,1:50000], output_MSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 50000 iteration", xlab = "x", ylab = "y")
 # points(mu[1,], mu[2,], pch = 3,col = "green")
