@@ -76,7 +76,7 @@ nchain  = 20
 Ts      = seq(1,10,9/(nchain-1))
 # Ts      = rep(1,nchain)
 mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
+learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
@@ -92,7 +92,7 @@ for (i in 1:nrun) {
 
   # record = output_snookerBatch$output[,1,]   # mixgaussian
   # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
-  print(paste0("5e2 to 1e3: ", rowMeans(output_snookerBatch$output[,1,500:1000]),"1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000])))
+  print(paste0(rowMeans(output_snookerBatch$output[,1,1000:2000])))
   # pdf(file=paste0("pRavine",i,".pdf"))
   # plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
   # 
