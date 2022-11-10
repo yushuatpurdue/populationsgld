@@ -131,7 +131,7 @@ batchSGNHT <- function(A, temperature, nepoch, learning_rate){
   gamma = A
   
   # result array of positions:
-  output = array(NA,dim = c(dimension,niteration))   
+  output = array(NA,dim = c(dimension,nepoch*nBatch))  
   output[,1] = x      
   
   # run SGNHT chain
