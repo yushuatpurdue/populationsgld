@@ -174,7 +174,7 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_SGNHT = SGNHT(A, temperature, 150000000, learning_rate = 0.001)
-  output_SGNHT = batchSGNHT(A, temperature, 6, learning_rate = 0.001)
+  output_SGNHT = batchSGNHT(A, temperature, 60000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
