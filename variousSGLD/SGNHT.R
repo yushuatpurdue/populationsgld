@@ -181,7 +181,7 @@ for (i in 1:nrun) {
   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
   
   
-  record = output_MSGLD[,c(1:2000)*3000]
+  record = output_SGNHT[,c(1:2000)*3000]
   
   # mu_est_SGNHT[,i] = rowMeans(record)
   # var_est_SGNHT[,,i] = cov(t(record))
