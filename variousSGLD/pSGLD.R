@@ -5,14 +5,22 @@
 ###============= initialization: call functions and initial values=======================
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
-source("potential/mixGauss2order.R")
-distribution_sgld <- mixgaussian2    
+# source("potential/mixGauss2order.R")
+# distribution_sgld <- mixgaussian2    
 
 dimension     = 2
 learning_rate = 0.001
 alpha         = 0.02                 # tuning parameter 1
 lambda        = 0.1                 # tuning parameter 2
 
+## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
+
+Data = read.csv("dataset/datasetNLR1.csv")
+source("potential/nonlinearReg.R")
+# potential = nonlinearReg
+stochPotential = nonlinearReg
+nData = dim(Data)[1]
+nBatch = max(Data$augment)
 
 
 ### =======================================================
@@ -99,6 +107,9 @@ onesteppSGLD <- function(position, V, alpha, lambda, learning_rate = 0.1){
 ### ======================================================
 ### =============== main function=========================
 ### ======================================================
+
+### =========function 1: pSGLD ===========
+
 pSGLD <-function(lambda, alpha, niteration, learning_rate){
   
   # position, dimension*1:
@@ -119,6 +130,37 @@ pSGLD <-function(lambda, alpha, niteration, learning_rate){
     V = temp$V_update
     
     output[,t] =x
+  }
+  return(output)
+}
+
+### =========function 2: batchSGNHT===========
+batchpSGLD <-function(lambda, alpha, nepoch, learning_rate){
+  
+  # position, dimension*1:
+  x = rnorm(dimension, 0,1 )
+  x = array(x, dim = c(dimension,1))
+  # V, dimension*1: 
+  V = 0
+  V = array(V, dim = c(dimension,1))
+  
+  # result array of positions:
+  output = array(NA,dim = c(dimension,nepoch*nBatch))   
+  output[,1] = x      
+  
+  # run SGHMC chain
+  for (t in 1:nepoch){
+    for (i in 1:nBatch){
+      Batch = Data[which(Data$augment == k),]
+      distribution_sgld <<- function(theta){
+        distribution_sgld = stochPotential(theta, Batch, nData)
+      }
+      temp = onesteppSGLD(x, V, alpha, lambda, learning_rate)
+      x = temp$position_update
+      V = temp$V_update
+      
+      output[,t] =x
+    }
   }
   return(output)
 }

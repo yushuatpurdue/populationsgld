@@ -177,11 +177,11 @@ mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 60000, learning_rate)
+  output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 6000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
-  record = output_MSGLD[,c(1:2000)*3000]
+  record = output_MSGLD[,c(1:2000)*300]
   # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
   print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
   pdf(file=paste0("pRavine",i,".pdf"))
