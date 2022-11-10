@@ -159,7 +159,7 @@ batchpSGLD <-function(lambda, alpha, nepoch, learning_rate){
       x = temp$position_update
       V = temp$V_update
       
-      output[,t] =x
+      output[,((t-1)*nBatch+k)] =x
     }
   }
   return(output)
@@ -206,7 +206,7 @@ for (i in 1:nrun) {
   # var_est_pSGLD[,,i] = cov(t(record))
   
   df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,])
-  write.csv(df, "./thetaEstMSGLD.csv")
+  write.csv(df, "./thetaEstpSGLD.csv")
   
   # pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
   # for (j in 1:50) {

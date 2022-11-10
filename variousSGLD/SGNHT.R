@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 80                    # can be regarded as an initial friction. 
+A             =20                    # can be regarded as an initial friction. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -145,7 +145,7 @@ batchSGNHT <- function(A, temperature, nepoch, learning_rate){
       x          = temp$position_update
       m          = temp$momentum_update
       gamma      = temp$friction_update
-      output[,t] = x
+      output[,((t-1)*nBatch+k)] = x
     }
   }
   
@@ -174,7 +174,7 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_SGNHT = SGNHT(A, temperature, 150000000, learning_rate = 0.001)
-  output_SGNHT = batchSGNHT(A, temperature, 60000, learning_rate = 0.001)
+  output_SGNHT = batchSGNHT(A, temperature, 6, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
