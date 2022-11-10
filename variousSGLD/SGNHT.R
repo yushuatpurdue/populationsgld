@@ -197,7 +197,7 @@ for (i in 1:nrun) {
   df = data.frame(mu1 = mu_est_SGNHT[1,], mu2 = mu_est_SGNHT[2,])
   write.csv(df, "./thetaEstSGNHT.csv")
   
-  
+}
 #   pdf(file=paste0("mixGaussianSGnhtplot_",i,".pdf"))
 #   for (j in 1:50) {
 #     plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGNHT ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
