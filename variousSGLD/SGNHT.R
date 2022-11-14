@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 3                    # can be regarded as an initial friction. 
+A             = 10                    # can be regarded as an initial friction. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
