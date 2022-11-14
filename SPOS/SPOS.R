@@ -7,14 +7,14 @@ source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian
 
 ## ================ test =================
-nchain = 10
-dimension = 2
-lr = 0.03 # for now
-Beta = 1  # for now
-eta = 1 # for now
-niteration = 1000
-x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
-x = t(x)
+# nchain = 10
+# dimension = 2
+# lr = 0.03 # for now
+# Beta = 1  # for now
+# eta = 1 # for now
+# niteration = 1000
+# x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
+# x = t(x)
 # pd_grad = distribution_sgld(x)
 # print(pd_grad)
 
@@ -108,6 +108,9 @@ onestepSPOS <- function(x, lr, eta, Beta){
   sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr/Beta)*wn
   
   ## variational gradient
+  K_gradK = kernelComp(x,eta)
+  K = K_gradK$K
+  gradK = K_gradK$gradK
   VG1 = -gradX%*%t(K)*lr/M + gradK*lr/M
   
   xUpdate = sgldUpdate + VG1
@@ -134,14 +137,23 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 
 ## =============== run =====================
 
-M = 100
+M = 1000
 niteration = 2000
-print('M = ',M,'niteration = ', niteration)
+print(paste0('M = ',M,', niteration = ', niteration))
 
+mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
+var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
 outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
-csvOut = 
+
+pdf(file=paste0("mixGaussianSPOSplot_",i,".pdf"))
+plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+dev.off()
+
 for (i in 2:20){
-  mean = rowMeans(outputSPOS[,1,])
-  covariance = cov(t(outputSPOS[,1,]))
-  
+  mu_est_SPOS[,i-1] = rowMeans(outputSPOS[,1,100:(100*i)])
+  var_est_SPOS[,,i-1] = cov(t(outputSPOS[,1,100:(100*i)]))
 }
+
+df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
+print(df)
+write.csv(df, "./thetaEstSPOS.csv")
