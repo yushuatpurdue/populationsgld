@@ -132,8 +132,16 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 }
 
 
-## =============== test =====================
+## =============== run =====================
 
-# x = SPOS(x,lr,eta, Beta)
-outputSPOS = SPOS(5,10,0.03,1,1)
+M = 100
+niteration = 2000
+print('M = ',M,'niteration = ', niteration)
 
+outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
+csvOut = 
+for (i in 2:20){
+  mean = rowMeans(outputSPOS[,1,])
+  covariance = cov(t(outputSPOS[,1,]))
+  
+}
