@@ -138,25 +138,26 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 
 ## =============== run =====================
 
-M = 100
-niteration = 2000
-print(paste0('M = ',M,', niteration = ', niteration))
-
-mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
-var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
+# M = 100
+# niteration = 2000
+# print(paste0('M = ',M,', niteration = ', niteration))
+# 
+# mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
+# var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
 outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
 
-pdf(file=paste0("mixGaussianSPOSplot.pdf"))
-plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
-dev.off()
-
-for (i in 2:20){
-  mu_est_SPOS[,i-1] = rowMeans(outputSPOS[,1,100:(100*i)])
-  var_est_SPOS[,,i-1] = cov(t(outputSPOS[,1,100:(100*i)]))
-}
-
-df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
-print(df)
-write.csv(df, "./thetaEstSPOS.csv")
+# pdf(file=paste0("mixGaussianSPOSplot.pdf"))
+# plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
+# dev.off()
+# 
+# for (i in 2:20){
+#   mu_est_SPOS[,i-1] = rowMeans(outputSPOS[,1,100:(100*i)])
+#   var_est_SPOS[,,i-1] = cov(t(outputSPOS[,1,100:(100*i)]))
+# }
+# 
+# df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
+# print(df)
+# write.csv(df, "./thetaEstSPOS.csv")
+print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
 
 

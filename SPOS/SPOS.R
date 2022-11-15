@@ -144,7 +144,7 @@ print(paste0('M = ',M,', niteration = ', niteration))
 
 # mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
 # var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
-# outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
 # 
 # pdf(file=paste0("mixGaussianSPOSplot.pdf"))
 # plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
