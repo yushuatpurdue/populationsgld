@@ -1,5 +1,5 @@
 ### This file is created by Yushu Huang for local SPOS experiments.
-### This file runs SPOS. Algorithm see Zhang 2020 SPOS paper. 
+### This file runs SPOS with localized K. Algorithm improves Zhang 2020 SPOS paper. 
 
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
@@ -12,6 +12,7 @@ distribution_sgld <- mixgaussian
 # lr = 0.03 # for now
 # Beta = 1  # for now
 # eta = 1 # for now
+# truncAt = exp(-1)
 # niteration = 1000
 # x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
 # x = t(x)
@@ -22,7 +23,7 @@ distribution_sgld <- mixgaussian
 # K is an M*M matrix, M = # of particles.
 # K = [[k11,k12,k13,...,k1M],[k21,k22,k23,...,k2M],...,[k1M,k2M,k3M,...kMM]]. Note: row and column is flipped against convention. 
 
-kernelComp <- function(x,eta){
+kernelComp <- function(x,eta,truncAt){
   ## Input: 
   #     x       particles.      d*M matrix. d = dimension, M = number of particles.
   #     eta     scaling parameter. scale.
@@ -54,7 +55,7 @@ kernelComp <- function(x,eta){
     xi = x[,i]%*% ones
     diffx = xi - x
     l2 = 2*diffx/eta^2
-    result = l2 %*% K
+    result = l2 %*% K[,i]
     gradK[,i] = rowSums(result)
   }
   return(list('K' = K,'gradK' = gradK))
@@ -71,7 +72,7 @@ if (exists("mu")){
 
 ## =============== function: one step update SPOS ====================
 
-onestepSPOS <- function(x, lr, eta, Beta){
+onestepSPOS <- function(x, lr, eta, Beta, truncAt){
   ## Input:
   #   x    positions of the particles. d*M, d dimension, M #of particles.
   #   lr   learning rate
@@ -108,7 +109,7 @@ onestepSPOS <- function(x, lr, eta, Beta){
   sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr/Beta)*wn
   
   ## variational gradient
-  K_gradK = kernelComp(x,eta)
+  K_gradK = kernelComp(x,eta,truncAt)
   K = K_gradK$K
   gradK = K_gradK$gradK
   VG1 = -gradX%*%t(K)*lr/M + gradK*lr/M
@@ -118,14 +119,14 @@ onestepSPOS <- function(x, lr, eta, Beta){
 }
 
 ## =============== function: run SPOS chains ====================
-SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
+SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
   x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
   x = t(x)
   output = array(NA,dim = c(dimension,nchain,niteration))   
   output[,,1] = x 
   for (t in 2:niteration) {
     
-    x          = onestepSPOS(x, learning_rate, eta, Beta)
+    x          = onestepSPOS(x, learning_rate, eta, Beta, truncAt)
     output[,,t] = x
     
     # print(x)
@@ -143,7 +144,7 @@ print(paste0('M = ',M,', niteration = ', niteration))
 
 mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
 var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
-outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
+outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
 
 pdf(file=paste0("mixGaussianSPOSplot.pdf"))
 plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
