@@ -137,7 +137,7 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 
 ## =============== run =====================
 
-M = 1000
+M = 100
 niteration = 2000
 print(paste0('M = ',M,', niteration = ', niteration))
 
@@ -157,3 +157,5 @@ for (i in 2:20){
 df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
 print(df)
 write.csv(df, "./thetaEstSPOS.csv")
+
+
