@@ -144,7 +144,7 @@ print(paste0('M = ',M,', niteration = ', niteration))
 
 # mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
 # var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
-outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+# outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
 # 
 # pdf(file=paste0("mixGaussianSPOSplot.pdf"))
 # plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
@@ -158,6 +158,14 @@ outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = di
 # df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
 # print(df)
 # write.csv(df, "./thetaEstSPOS.csv")
-print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
+# print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
 
+MSE = c()
+for (nrun in 1:10){
+  outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+  temp = abs(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
+  print(paste0('run ',nrun,' MSE = ',temp))
+  MSE = cbind(MSE,temp)
+}
 
+print(paste0('mean MSE = ',mean(MSE)))
