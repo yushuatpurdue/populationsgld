@@ -138,9 +138,9 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 
 ## =============== run =====================
 
-M = 100
+M = 1000
 niteration = 2000
-print(paste0('M = ',M,', niteration = ', niteration))
+print(paste0('SPOS, M = ',M,', niteration = ', niteration))
 
 # mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
 # var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
