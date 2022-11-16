@@ -138,7 +138,7 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 
 ## =============== run =====================
 
-M = 1000
+M = 500
 niteration = 2000
 print(paste0('LSPOS, M = ',M,', niteration = ', niteration))
 # 
@@ -160,12 +160,12 @@ print(paste0('LSPOS, M = ',M,', niteration = ', niteration))
 # write.csv(df, "./thetaEstSPOS.csv")
 MSE = c()
 for (nrun in 1:10){
-  outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+  outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-0.5))     # outputSPOS dimension = dim*M*niteration
   temp = abs(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
   print(paste0('run ',nrun,' MSE = ',temp))
   MSE = cbind(MSE,temp)
 }
 
 print(paste0('mean MSE = ',mean(MSE)))
-
+write.csv(MSE, "./MSE_SPOS.csv")
 

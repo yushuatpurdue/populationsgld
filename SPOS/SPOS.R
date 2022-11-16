@@ -138,7 +138,7 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 
 ## =============== run =====================
 
-M = 1000
+M = 300
 niteration = 2000
 print(paste0('SPOS, M = ',M,', niteration = ', niteration))
 
@@ -169,3 +169,4 @@ for (nrun in 1:10){
 }
 
 print(paste0('mean MSE = ',mean(MSE)))
+write.csv(MSE, "./MSE_SPOS.csv")
