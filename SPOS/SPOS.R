@@ -23,7 +23,7 @@ distribution_sgld <- mixgaussian
 # K is an M*M matrix, M = # of particles.
 # K = [[k11,k12,k13,...,k1M],[k21,k22,k23,...,k2M],...,[k1M,k2M,k3M,...kMM]]. Note: row and column is flipped against convention. 
 
-kernelComp <- function(x,eta,truncAt){
+kernelComp <- function(x,eta){
   ## Input: 
   #     x       particles.      d*M matrix. d = dimension, M = number of particles.
   #     eta     scaling parameter. scale.
@@ -72,7 +72,7 @@ if (exists("mu")){
 
 ## =============== function: one step update SPOS ====================
 
-onestepSPOS <- function(x, lr, eta, Beta, truncAt){
+onestepSPOS <- function(x, lr, eta, Beta){
   ## Input:
   #   x    positions of the particles. d*M, d dimension, M #of particles.
   #   lr   learning rate
@@ -109,7 +109,7 @@ onestepSPOS <- function(x, lr, eta, Beta, truncAt){
   sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr/Beta)*wn
   
   ## variational gradient
-  K_gradK = kernelComp(x,eta,truncAt)
+  K_gradK = kernelComp(x,eta)
   K = K_gradK$K
   gradK = K_gradK$gradK
   VG1 = -gradX%*%t(K)*lr/M + gradK*lr/M
@@ -119,14 +119,14 @@ onestepSPOS <- function(x, lr, eta, Beta, truncAt){
 }
 
 ## =============== function: run SPOS chains ====================
-SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
+SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
   x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
   x = t(x)
   output = array(NA,dim = c(dimension,nchain,niteration))   
   output[,,1] = x 
   for (t in 2:niteration) {
     
-    x          = onestepSPOS(x, learning_rate, eta, Beta, truncAt)
+    x          = onestepSPOS(x, learning_rate, eta, Beta)
     output[,,t] = x
     
     # print(x)
@@ -138,7 +138,7 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 
 ## =============== run =====================
 
-M = 300
+M = 100
 niteration = 2000
 print(paste0('SPOS, M = ',M,', niteration = ', niteration))
 
@@ -161,8 +161,8 @@ print(paste0('SPOS, M = ',M,', niteration = ', niteration))
 # print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
 
 MSE = c()
-for (nrun in 1:10){
-  outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+for (nrun in 1:50){
+  outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
   temp = abs(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
   print(paste0('run ',nrun,' MSE = ',temp))
   MSE = cbind(MSE,temp)
