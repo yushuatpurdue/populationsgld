@@ -167,5 +167,5 @@ for (nrun in 1:50){
 }
 
 print(paste0('mean MSE = ',mean(MSE)))
-write.csv(MSE, "./MSE_SPOS.csv")
+write.csv(MSE, "./MSE_LSPOS.csv")
 
