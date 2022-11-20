@@ -136,11 +136,12 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 }
 
 
-## =============== run =====================
+## =============== run experiments =====================
 
-M = 100
-niteration = 2000
-print(paste0('SPOS, M = ',M,', niteration = ', niteration))
+# M =10
+niteration = 4000
+nrun = 50
+
 
 # mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
 # var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
@@ -160,13 +161,40 @@ print(paste0('SPOS, M = ',M,', niteration = ', niteration))
 # write.csv(df, "./thetaEstSPOS.csv")
 # print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
 
-MSE = c()
-for (nrun in 1:50){
-  outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
-  temp = abs(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
-  print(paste0('run ',nrun,' MSE = ',temp))
-  MSE = cbind(MSE,temp)
+accOfMSE <-function(M,niteration,nrun){
+  print(paste0('SPOS, M = ',M,', niteration = ', niteration, ', nrun = ', nrun))
+  ## meanMSE calculates the mean estimation of E(X^2) every 500 iterations
+  ## Input: 
+  #   M         : number of particles
+  #   niteration: number of iterations per run
+  #   nrun      : number of runs. 
+  
+  ## Output:
+  #   meanMSE   : vector of length niteration/500. 
+  
+  acc = rep(0, niteration/500)
+  for (run in 1:nrun){
+    outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
+    
+    reform = array(outputSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
+    SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
+    MS = cumsum(SS)/seq(500,niteration,500)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ... 
+    temp = abs(MS - 77.08546)        # 77.08546 = mu1^2 + mu2^2 + var1 + var2
+    
+    acc = acc + temp
+    # print(paste0('run ',nrun,' MSE = ',temp))
+  }
+  accOfMSE = acc/nrun
+  print(paste0('at iterations ',seq(500,niteration,500),', accuracy = ',accOfMSE))
+  return(accOfMSE)
 }
 
-print(paste0('mean MSE = ',mean(MSE)))
-write.csv(MSE, "./MSE_SPOS.csv")
+## ==========run============
+ACC = c()
+for (M in c(100,300,500,800,1000,1500)){
+  acc = accOfMSE(M,niteration,nrun)
+  ACC = rbind(ACC,acc)
+}
+
+df = data.frame(M = c(100,300,500,800,1000,1500), ACC = ACC)
+write.csv(df, "./MSE_SPOS.csv")
