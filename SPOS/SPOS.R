@@ -191,10 +191,12 @@ accOfMSE <-function(M,niteration,nrun){
 
 ## ==========run============
 ACC = c()
-for (M in c(100,300,500,800,1000,1500)){
+# for (M in c(100,300,500,800,1000,1500)){
+for (M in c(1800,2000,2300)){
   acc = accOfMSE(M,niteration,nrun)
   ACC = rbind(ACC,acc)
 }
 
-df = data.frame(M = c(100,300,500,800,1000,1500), ACC = ACC)
+# df = data.frame(M = c(100,300,500,800,1000,1500), ACC = ACC)
+df = data.frame(M = c(1800,2000,2300), ACC = ACC)
 write.csv(df, "./MSE_SPOS.csv")
