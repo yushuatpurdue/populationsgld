@@ -77,7 +77,7 @@ onestepSPOS <- function(x, lr, eta, Beta){
   #   x    positions of the particles. d*M, d dimension, M #of particles.
   #   lr   learning rate
   #   eta  scaling parameter in kernel
-  #   beta tuning parameter. Represents temperature. 
+  #   beta tuning parameter. Represents temperature inversed. 
   ## Side note: Can I set different temperature for each particle? (In paper it is the same for all. )
   ## Output:
   #   one step update of the positions. 
@@ -176,11 +176,18 @@ accOfMSE <-function(M,niteration,nrun){
   for (run in 1:nrun){
     outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
     
+    ## If using only 1st chain:
     reform = array(outputSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
     SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
-    MS = cumsum(SS)/seq(500,niteration,500)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ... 
-    temp = abs(MS - 77.08546)        # 77.08546 = mu1^2 + mu2^2 + var1 + var2
+    MS = cumsum(SS)/seq(500,niteration,500)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
     
+    ## If want to use all M chains:
+    # reform = array(outputSPOS,dim = c(2,500*M,niteration/500))
+    # SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
+    # MS = cumsum(SS)/(seq(500,niteration,500)*M)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
+    # 
+    temp = abs(MS - 77.08546)        # 77.08546 = mu1^2 + mu2^2 + var1 + var2
+    # 
     acc = acc + temp
     # print(paste0('run ',nrun,' MSE = ',temp))
   }

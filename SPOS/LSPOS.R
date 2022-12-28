@@ -1,5 +1,6 @@
 ### This file is created by Yushu Huang for local SPOS experiments.
 ### This file runs SPOS with localized K. Algorithm improves Zhang 2020 SPOS paper. 
+### It also adds a temperature ladder. 
 
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
@@ -72,7 +73,7 @@ if (exists("mu")){
 
 ## =============== function: one step update SPOS ====================
 
-onestepLSPOS <- function(x, lr, eta, Beta, truncAt){
+onestepLSPOS <- function(x, lr, eta, Beta, temperature, truncAt){
   ## Input:
   #   x    positions of the particles. d*M, d dimension, M #of particles.
   #   lr   learning rate
@@ -85,6 +86,9 @@ onestepLSPOS <- function(x, lr, eta, Beta, truncAt){
   M = dim(x)[2]     # M is the number of particles.
   ## calculate gradient:
   gradX = distribution_sgld(x)$grad
+  lr = t(array(lr,dim = dim(t(x))))
+  Beta = t(array(Beta,dim = dim(t(x))))
+  temperature = t(array(temperature, dim = dim(t(x))))
   
   ## the following 'if' is to bound the blowed up gradients. Idea and details refer to "./SGLD.R". 
   if (sum(is.na(gradX)) > 0){            # if there exists any entry being NA in grad:
@@ -106,7 +110,7 @@ onestepLSPOS <- function(x, lr, eta, Beta, truncAt){
   wn_length = length(x)
   wn        = rnorm(wn_length)
   wn        = array(wn, dim = dim(x))            # generate a gaussian noise
-  sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr/Beta)*wn
+  sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr*temperature/Beta)*wn
   
   ## variational gradient
   K_gradK = truncKernelComp(x,eta,truncAt)
@@ -119,14 +123,14 @@ onestepLSPOS <- function(x, lr, eta, Beta, truncAt){
 }
 
 ## =============== function: run SPOS chains ====================
-LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
+LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, truncAt){
   x = mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))
   x = t(x)
   output = array(NA,dim = c(dimension,nchain,niteration))   
   output[,,1] = x 
   for (t in 2:niteration) {
     
-    x          = onestepLSPOS(x, learning_rate, eta, Beta, truncAt)
+    x          = onestepLSPOS(x, learning_rate, eta, Beta, temperature, truncAt)
     output[,,t] = x
     
     # print(x)
@@ -141,6 +145,7 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, truncAt){
 # M = 10
 niteration = 4000
 nrun = 50
+Beta = 1
 
 # 
 # mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
@@ -171,8 +176,11 @@ accOfMSE <-function(M,niteration,nrun){
   #   meanMSE   : vector of length niteration/500. 
   
   acc = rep(0, niteration/500)
+  lr = seq(0.03,0.06,0.03/(M - 1))
+  temperature = seq(1,3,2/(M - 1))
+  
   for (run in 1:nrun){
-    outputLSPOS = LSPOS(niteration,M,0.03,1,1,exp(-0.5))     # outputSPOS dimension = dim*M*niteration
+    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.5))     # outputSPOS dimension = dim*M*niteration
     
     reform = array(outputLSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
     SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
