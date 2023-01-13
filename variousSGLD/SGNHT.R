@@ -166,7 +166,7 @@ batchSGNHT <- function(A, temperature, nepoch, learning_rate){
 # 
 # write.csv(output_SGNHT, "./variousSGLD/output_SGNHT.csv")
 
-nrun    = 10                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 mu_est_SGNHT = array(NA, dim = c(2, nrun))
 # var_est_SGNHT = array(NA, dim = c(2,2,nrun))
 
