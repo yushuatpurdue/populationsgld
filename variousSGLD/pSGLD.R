@@ -150,7 +150,7 @@ batchpSGLD <-function(lambda, alpha, nepoch, learning_rate){
   
   # run SGHMC chain
   for (t in 1:nepoch){
-    for (i in 1:nBatch){
+    for (k in 1:nBatch){
       Batch = Data[which(Data$augment == k),]
       distribution_sgld <<- function(theta){
         distribution_sgld = stochPotential(theta, Batch, nData)
