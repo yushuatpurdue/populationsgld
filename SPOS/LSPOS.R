@@ -180,7 +180,7 @@ accOfMSE <-function(M,niteration,nrun){
   temperature = seq(1,3,2/(M - 1))
   
   for (run in 1:nrun){
-    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.25))     # outputSPOS dimension = dim*M*niteration
+    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.5))     # outputSPOS dimension = dim*M*niteration
     
     reform = array(outputLSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
     SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
