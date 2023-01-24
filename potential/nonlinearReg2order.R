@@ -26,10 +26,10 @@ nonlinearReg2ord <-function(theta, Batch, nData){
   theta = t(theta)
   nBatch = dim(Batch)[1]
   nTheta = dim(theta)[1]
-  x = matrix(Batch$x)%*%rep(1,nTheta)
-  y = matrix(Batch$y)%*%rep(1,nTheta)
-  theta1 = t(matrix(theta[,1])%*%rep(1,nBatch))
-  theta2 = t(matrix(theta[,2])%*%rep(1,nBatch))
+  x = matrix(Batch$x)%*%rep(1,nTheta)        # dim(x) = nBatch * nTheta
+  y = matrix(Batch$y)%*%rep(1,nTheta)        # dim(y) = nBatch * nTheta
+  theta1 = t(matrix(theta[,1])%*%rep(1,nBatch))        # dim(theta1) = nBatch * nTheta
+  theta2 = t(matrix(theta[,2])%*%rep(1,nBatch))        # dim(theta2) = nBatch * nTheta
   
   fx = (x - 1)^2 + 2*sin(x*theta1) + theta1/30 + cos(x*theta2 - 1) - theta2/20
   negLogPrior = (theta[,1]^2 + theta[,1]^2)/2
@@ -37,22 +37,29 @@ nonlinearReg2ord <-function(theta, Batch, nData){
   pd = exp(-(negLogPrior+negStochLogLike)/nData)       # nData: leverage
   
   DnegLogPrior = theta
-  DnegStochLogLike = matrix(c(colSums(-(y-fx)*(2*x*cos(theta1*x) +1/30)), colSums((y - fx)*(x*sin(theta2*x -1) +1/20)))*nData/nBatch, nrow = dim(theta)[1], ncol = dim(theta)[2])
+  DnegStochLogLike = matrix(c(colSums(-(y-fx)*(2*x*cos(theta1*x) +1/30)), 
+                              colSums((y - fx)*(x*sin(theta2*x -1) +1/20)))*nData/nBatch, nrow = dim(theta)[1], ncol = dim(theta)[2])
   gradU = (DnegLogPrior + DnegStochLogLike)/nData               # nData: leverage
   
+  hess1 = 1 + colSums((2*x*cos(theta1*x) +1/30)**2 + (y-fx)*(2*x**2*sin(theta1*x))*nData/nBatch)
+  hess2 = 1 + colSums((x*sin(theta2*x - 1) +1/20)**2 + (y-fx)*(x**2*cos(theta2*x - 1))*nData/nBatch)
+  hess = matrix(c(hess1, hess2),nrow = dim(theta)[1], ncol = dim(theta)[2])/nData
   
-  return(list("pd" = t(pd), "gradU" = t(gradU)))
+  return(list("pd" = t(pd), "gradU" = t(gradU), "hess" = t(hess)))
 }
 
 
 ### ====================================================
 ### ================!!!   TEST    !!!===================
 ### ====================================================
-# Batch = output
-# theta1 = seq(-20,30,0.5)
-# theta2 = seq(-20,30,0.5)
-# theta = expand.grid(theta1,theta2)
-# pd_grad = nonlinearReg(theta, Batch, nData)
+Data = read.csv("dataset/datasetNLR1.csv")
+Batch = Data[which(Data$augment == 1),]
+nData = dim(Data)[1]
+
+theta1 = seq(-20,30,10)
+theta2 = seq(-20,30,10)
+theta = t(expand.grid(theta1,theta2))
+pd_grad = nonlinearReg2ord(theta, Batch, nData)
 # cols = rev(colorRampPalette(c('darkred','red','blue','lightblue'))(40))
 # filled.contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101),nlevels = 40, col = cols)
 # theta = mvrnorm(3, mu = rep(0,2), Sigma = diag(1,2))

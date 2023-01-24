@@ -16,9 +16,9 @@ lambda        = 0.1                 # tuning parameter 2
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
 Data = read.csv("dataset/datasetNLR1.csv")
-source("potential/nonlinearReg.R")
+source("potential/nonlinearReg2order.R")
 # potential = nonlinearReg
-stochPotential = nonlinearReg
+stochPotential = nonlinearReg2ord
 nData = dim(Data)[1]
 nBatch = max(Data$augment)
 
