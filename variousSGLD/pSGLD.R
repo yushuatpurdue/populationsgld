@@ -187,6 +187,7 @@ mu_est_pSGLD = array(NA, dim = c(2, nrun))
 for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
+  # output_pSGLD = pSGLD(lambda, alpha, 150000000, learning_rate = 0.001)
   output_pSGLD = batchpSGLD(lambda, alpha, 60000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
@@ -195,6 +196,8 @@ for (i in 1:nrun) {
   
   
   # record = output_pSGLD[,c(1:50000)*3000]
+  # mu_est_pSGLD[,i] = rowMeans(record)
+  # var_est_pSGLD[,,i] = cov(t(record))
   record = output_pSGLD[,c(1:2000)*3000]
   print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
   pdf(file=paste0("pRavine",i,".pdf"))
@@ -202,7 +205,7 @@ for (i in 1:nrun) {
   
   dev.off()
   
-  mu_est_pSGLD[,i] = rowMeans(record)
+  mu_est_pSGLD[,i] = rowMeans(record[,1000:2000])
   # var_est_pSGLD[,,i] = cov(t(record))
   
   df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,])
