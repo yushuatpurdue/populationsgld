@@ -208,7 +208,7 @@ for (i in 1:nrun) {
   mu_est_pSGLD[,i] = rowMeans(record[,1000:2000])
   # var_est_pSGLD[,,i] = cov(t(record))
   
-  df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,])
+  df = data.frame(mu1 = mu_est_pSGLD[1,], mu2 = mu_est_pSGLD[2,])
   write.csv(df, "./thetaEstpSGLD.csv")
   
   # pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
