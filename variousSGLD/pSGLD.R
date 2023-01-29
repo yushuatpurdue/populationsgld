@@ -10,7 +10,7 @@ library(MASS)
 
 dimension     = 2
 learning_rate = 0.001
-alpha         = 0.5                 # tuning parameter 1, value in [0,1]
+alpha         = 0.9                 # tuning parameter 1, value in [0,1]
 lambda        = 0.01                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
