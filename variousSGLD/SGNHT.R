@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 200                    # can be regarded as an initial friction. 
+A             = 2                    # sqrt(A) = scale of gaussian noise. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
