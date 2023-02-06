@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 0.2                    # sqrt(A) = scale of gaussian noise. 
+A             = 0.5                    # sqrt(A) = scale of gaussian noise. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -171,6 +171,7 @@ mu_est_SGNHT = array(NA, dim = c(2, nrun))
 # var_est_SGNHT = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
+  print('SGNHT')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_SGNHT = SGNHT(A, temperature, 150000000, learning_rate = 0.001)
@@ -186,7 +187,7 @@ for (i in 1:nrun) {
   # mu_est_SGNHT[,i] = rowMeans(record)
   # var_est_SGNHT[,,i] = cov(t(record))
   print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
-  pdf(file=paste0("pRavine",i,".pdf"))
+  pdf(file=paste0("pRavineSGNHT",i,".pdf"))
   plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
   
   dev.off()
@@ -198,6 +199,8 @@ for (i in 1:nrun) {
   write.csv(df, "./thetaEstSGNHT.csv")
   
 }
+print(paste("avg mu estimate = ", rowMeans(mu_est_pSGLD)))
+
 #   pdf(file=paste0("mixGaussianSGnhtplot_",i,".pdf"))
 #   for (j in 1:50) {
 #     plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGNHT ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")

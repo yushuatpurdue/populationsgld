@@ -11,7 +11,7 @@ library(MASS)
 dimension     = 2
 learning_rate = 0.001
 alpha         = 0.99                 # tuning parameter 1, value in [0,1]
-lambda        = 0.03                 # tuning parameter 2
+lambda        = 0.005                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -185,6 +185,7 @@ mu_est_pSGLD = array(NA, dim = c(2, nrun))
 # var_est_pSGLD = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
+  print('pSGLD')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_pSGLD = pSGLD(lambda, alpha, 150000000, learning_rate = 0.001)
@@ -200,7 +201,7 @@ for (i in 1:nrun) {
   # var_est_pSGLD[,,i] = cov(t(record))
   record = output_pSGLD[,c(1:2000)*3000]
   print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
-  pdf(file=paste0("pRavine",i,".pdf"))
+  pdf(file=paste0("pRavinepSGLD",i,".pdf"))
   plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
   
   dev.off()
@@ -223,6 +224,7 @@ for (i in 1:nrun) {
   # print(paste("mu estimate = ", mu_est_pSGLD[,i]))
   # print(paste("var estimate = ", var_est_pSGLD[,,i]))
 }
+print(paste("avg mu estimate = ", rowMeans(mu_est_pSGLD)))
 
 # mu_est = rowMeans(mu_est_pSGLD)
 # sigma_est_1 = mean(var_est_pSGLD[1,1,])
