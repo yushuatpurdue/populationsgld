@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 0.8                    # sqrt(A) = scale of gaussian noise. 
+A             = 3                    # sqrt(A) = scale of gaussian noise. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
