@@ -11,7 +11,7 @@
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 0.5                    # sqrt(A) = scale of gaussian noise. 
+A             = 0.8                    # sqrt(A) = scale of gaussian noise. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -199,7 +199,7 @@ for (i in 1:nrun) {
   write.csv(df, "./thetaEstSGNHT.csv")
   
 }
-print(paste("avg mu estimate = ", rowMeans(mu_est_pSGLD)))
+print(paste("avg mu estimate = ", rowMeans(mu_est_SGNHT)))
 
 #   pdf(file=paste0("mixGaussianSGnhtplot_",i,".pdf"))
 #   for (j in 1:50) {
