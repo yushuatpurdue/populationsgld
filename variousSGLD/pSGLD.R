@@ -7,7 +7,7 @@ library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 # source("potential/mixGauss2order.R")
 # distribution_sgld <- mixgaussian2    
-
+set.seed(1)
 dimension     = 2
 learning_rate = 0.001
 alpha         = 0.99                 # tuning parameter 1, value in [0,1]
