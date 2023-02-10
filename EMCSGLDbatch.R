@@ -1,6 +1,7 @@
 library(MASS)
 
-Data = read.csv("dataset/datasetNLR1.csv")
+Data = read.csv("dataset/datasetNLR2.csv")
+print('datasetNLR2')
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
@@ -85,6 +86,9 @@ mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
+  print('EMC')
+  print(paste0(i,"th run"))
+  
   start_time <- Sys.time()
   output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = 20, learning_rate)
   end_time <- Sys.time()
@@ -105,3 +109,4 @@ for (i in 1:nrun) {
   write.csv(df, "./thetaEst.csv")
   
 }
+print(paste("avg mu estimate = ", rowMeans(mu_est_EMC)))
