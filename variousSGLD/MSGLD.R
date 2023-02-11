@@ -16,7 +16,7 @@ biasfactor = 10                            # bias factor: how much portion of mo
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR1.csv")
+Data = read.csv("dataset/datasetNLR2.csv")
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
@@ -176,6 +176,7 @@ mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
+  print('MSGLD')
   start_time <- Sys.time()
   output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 60000, learning_rate)
   end_time <- Sys.time()
@@ -196,7 +197,7 @@ for (i in 1:nrun) {
   write.csv(df, "./thetaEstMSGLD.csv")
   
 }
-
+print(paste("avg mu estimate = ", rowMeans(mu_est_MSGLD)))
 
 # 
 # plot(output_MSGLD[1,1:50000], output_MSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 50000 iteration", xlab = "x", ylab = "y")
