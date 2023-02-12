@@ -170,6 +170,7 @@ mu_est_SGHMC = array(NA, dim = c(2, nrun))
 # var_est_SGHMC = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
+  print('SGHMC')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_SGHMC = SGHMC(temperature, 150000000, learning_rate = 0.001)
@@ -211,6 +212,7 @@ for (i in 1:nrun) {
   # print(paste("mu estimate = ", mu_est_SGHMC[,i]))
   # print(paste("var estimate = ", var_est_SGHMC[,,i]))
 }
+print(paste("avg mu estimate = ", rowMeans(mu_est_SGHMC)))
 
 # mu_est = rowMeans(mu_est_SGHMC)
 # sigma_est_1 = mean(var_est_SGHMC[1,1,])
