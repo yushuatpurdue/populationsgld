@@ -3,6 +3,7 @@
 ### An additional supportive function is defined to deal with the gradient blowup. 
 
 ###============= initialization: call functions and initial values=======================
+set.seed(1)
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 # source("potential/mixtureGaussian.R")
