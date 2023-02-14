@@ -12,7 +12,7 @@ library(MASS)
 ## initialize parameters: 
 dimension = 2
 M         = 1                  # mass of the particle. can be a dimension*dimension matrix, but need to modify the code in "onestepSGHMC()". 
-C         = 2                # tuning parameter, friction. 
+C         = 3                # tuning parameter, friction. 
 learning_rate = 0.001
 temperature = 1
 
