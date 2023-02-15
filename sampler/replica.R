@@ -12,10 +12,11 @@
 ### ========== first: global parameter setups ================================
 loglike_variance    = 0.5^2                        # tuning parameter: the variance of the approximated loglikelihood. In the mixture gaussian setting it cannot be estimated, so just fix and tune it. No need of F (correction factor) here consequently. 
 
+
 ### ========== call function: calculating potential & gradient ===============
 
-source("potential/mixtureGaussian.R")  
-potential = mixgaussian
+# source("potential/mixtureGaussian.R")  
+# potential = mixgaussian
 
 # ========================================================
 ## load the functions to be used when sampling. 
@@ -88,4 +89,4 @@ replica <-function(x, learning_rate = 0.1, Ts){
 # x = t(x)
 # learning_rate = c(0.01,0.03)
 # Ts = c(1,10)                    # temperature of the two chains.
-replica(x,learning_rate, Ts)
+# replica(x,learning_rate, Ts)
