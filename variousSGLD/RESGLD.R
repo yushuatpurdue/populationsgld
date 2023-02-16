@@ -118,7 +118,7 @@ for (i in 1:nrun) {
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
   
-  record = output_RESGLD$output[,1,c(1:2000)*2000]
+  record = output_RESGLD[,1,c(1:2000)*2000]
   
   # mu_est_RESGLD[,i] = rowMeans(record)
   # var_est_RESGLD[,,i] = cov(t(record))
