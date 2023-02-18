@@ -100,8 +100,8 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,8)                    # temperature of the two chains. 
-learning_rate       = c(0.001,0.02)
+Ts                  = c(1,3)                    # temperature of the two chains. 
+learning_rate       = c(0.001,0.005)
 
 
 nrun    = 20                  # run nrun independent times.
@@ -113,16 +113,17 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_RESGLD = RESGLD(Ts, niteration = 50000000, learning_rate)
-  output_RESGLD = batchRESGLD(Ts, nepoch = 40000, learning_rate)
+  output_RESGLD = batchRESGLD(Ts, nepoch = 36000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
   
-  record = output_RESGLD[,1,c(1:2000)*2000]
+  record = output_RESGLD[,1,c(1:2000)*1800]
   
   # mu_est_RESGLD[,i] = rowMeans(record)
   # var_est_RESGLD[,,i] = cov(t(record))
   mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
+  print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD))
   
   df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,])
   write.csv(df, "./thetaEstRESGLD.csv")

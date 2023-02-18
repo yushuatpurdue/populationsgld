@@ -15,7 +15,7 @@ A             = 5                    # sqrt(A) = scale of gaussian noise.
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR1.csv")
+Data = read.csv("dataset/datasetNLR2.csv")
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
