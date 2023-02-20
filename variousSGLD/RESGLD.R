@@ -123,7 +123,9 @@ for (i in 1:nrun) {
   # mu_est_RESGLD[,i] = rowMeans(record)
   # var_est_RESGLD[,,i] = cov(t(record))
   mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
-  print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD))
+  print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD[,i]))
+  pdf(file=paste0("pRavinepRESGLD",i,".pdf"))
+  plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
   
   df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,])
   write.csv(df, "./thetaEstRESGLD.csv")
