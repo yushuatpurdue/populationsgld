@@ -100,8 +100,8 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,3)                    # temperature of the two chains. 
-learning_rate       = c(0.001,0.005)
+Ts                  = c(1,2)                    # temperature of the two chains. 
+learning_rate       = c(0.001,0.002)
 
 
 nrun    = 20                  # run nrun independent times.
@@ -124,7 +124,7 @@ for (i in 1:nrun) {
   # var_est_RESGLD[,,i] = cov(t(record))
   mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
   print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD[,i]))
-  pdf(file=paste0("pRavinepRESGLD",i,".pdf"))
+  pdf(file=paste0("pRavineRESGLD",i,".pdf"))
   plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
   
   df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,])
