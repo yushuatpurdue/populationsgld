@@ -113,12 +113,12 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_RESGLD = RESGLD(Ts, niteration = 50000000, learning_rate)
-  output_RESGLD = batchRESGLD(Ts, nepoch = 20000, learning_rate)
+  output_RESGLD = batchRESGLD(Ts, nepoch = 30000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
   
-  record = output_RESGLD[,1,c(1:2000)*1000]
+  record = output_RESGLD[,1,c(1:2000)*1500]
   
   # mu_est_RESGLD[,i] = rowMeans(record)
   # var_est_RESGLD[,,i] = cov(t(record))
