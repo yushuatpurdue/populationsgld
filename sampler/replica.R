@@ -10,7 +10,7 @@
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
 ### ========== first: global parameter setups ================================
-loglike_variance    = 1^2                        # tuning parameter: the variance of the approximated loglikelihood. In the mixture gaussian setting it cannot be estimated, so just fix and tune it. No need of F (correction factor) here consequently. 
+loglike_variance    = 0.5^2                        # tuning parameter: the variance of the approximated loglikelihood. In the mixture gaussian setting it cannot be estimated, so just fix and tune it. No need of F (correction factor) here consequently. 
 
 
 ### ========== call function: calculating potential & gradient ===============
