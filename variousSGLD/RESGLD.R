@@ -101,7 +101,7 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=============== run function ============
 ###=========================================
 Ts                  = c(1,2)                    # temperature of the two chains. 
-learning_rate       = c(0.001,0.0015)
+learning_rate       = c(0.001,0.002)
 
 
 nrun    = 20                  # run nrun independent times.
