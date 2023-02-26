@@ -1,6 +1,6 @@
 library(MASS)
 
-Data = read.csv("dataset/datasetNLR2.csv")
+Data = read.csv("dataset/datasetNLR3.csv")
 print('datasetNLR2')
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
