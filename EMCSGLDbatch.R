@@ -1,7 +1,7 @@
 library(MASS)
 
-Data = read.csv("dataset/datasetNLR3.csv")
-print('datasetNLR2')
+Data = read.csv("dataset/datasetNLR4.csv")
+print('datasetNLR4')
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
