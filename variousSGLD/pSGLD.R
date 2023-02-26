@@ -189,7 +189,7 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   start_time <- Sys.time()
   # output_pSGLD = pSGLD(lambda, alpha, 150000000, learning_rate = 0.001)
-  output_pSGLD = batchpSGLD(lambda, alpha, 30000, learning_rate = 0.001)
+  output_pSGLD = batchpSGLD(lambda, alpha, 50000, learning_rate = 0.001)
   end_time <- Sys.time()
   print(paste0("running time = ", end_time - start_time))
   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
@@ -199,7 +199,7 @@ for (i in 1:nrun) {
   # record = output_pSGLD[,c(1:50000)*3000]
   # mu_est_pSGLD[,i] = rowMeans(record)
   # var_est_pSGLD[,,i] = cov(t(record))
-  record = output_pSGLD[,c(1:2000)*1500]
+  record = output_pSGLD[,c(1:2000)*2500]
   print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
   pdf(file=paste0("pRavinepSGLD",i,".pdf"))
   plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
