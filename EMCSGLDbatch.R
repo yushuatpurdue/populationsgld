@@ -1,5 +1,7 @@
 library(MASS)
 
+set.seed(1)
+
 Data = read.csv("dataset/datasetNLR4.csv")
 print('datasetNLR4')
 source("potential/nonlinearReg.R")
