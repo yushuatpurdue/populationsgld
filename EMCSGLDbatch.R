@@ -2,7 +2,7 @@ library(MASS)
 
 set.seed(1)
 
-Data = read.csv("dataset/datasetNLR4.csv")
+Data = read.csv("dataset/datasetNLR1.csv")
 print('datasetNLR4')
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg

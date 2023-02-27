@@ -8,6 +8,8 @@ library(MASS)
 # source("potential/mixtureGaussian.R")
 # distribution_sgld <- mixgaussian   
 # 
+set.seed(1)
+
 dimension = 2
 learning_rate = 0.001
 temperature = 1
