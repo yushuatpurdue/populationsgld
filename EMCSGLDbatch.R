@@ -2,8 +2,9 @@ library(MASS)
 
 set.seed(1)
 
-Data = read.csv("dataset/datasetNLR1.csv")
-print('datasetNLR4')
+dataset = 'datasetNLR2'
+Data = read.csv(paste0("dataset/",dataset,".csv"))
+print(dataset)
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
