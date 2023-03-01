@@ -52,14 +52,14 @@ nonlinearReg2ord <-function(theta, Batch, nData){
 ### ====================================================
 ### ================!!!   TEST    !!!===================
 ### ====================================================
-Data = read.csv("dataset/datasetNLR1.csv")
-Batch = Data[which(Data$augment == 1),]
-nData = dim(Data)[1]
-
-theta1 = seq(-20,30,10)
-theta2 = seq(-20,30,10)
-theta = t(expand.grid(theta1,theta2))
-pd_grad = nonlinearReg2ord(theta, Batch, nData)
+# Data = read.csv("dataset/datasetNLR1.csv")
+# Batch = Data[which(Data$augment == 1),]
+# nData = dim(Data)[1]
+# 
+# theta1 = seq(-20,30,10)
+# theta2 = seq(-20,30,10)
+# theta = t(expand.grid(theta1,theta2))
+# pd_grad = nonlinearReg2ord(theta, Batch, nData)
 # cols = rev(colorRampPalette(c('darkred','red','blue','lightblue'))(40))
 # filled.contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101),nlevels = 40, col = cols)
 # theta = mvrnorm(3, mu = rep(0,2), Sigma = diag(1,2))
