@@ -11,11 +11,11 @@ set.seed(1)
 dimension     = 2
 learning_rate = 0.001
 alpha         = 0.99                 # tuning parameter 1, value in [0,1]
-lambda        = 0.2                 # tuning parameter 2
+lambda        = 0.15                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR2.csv")
+Data = read.csv("dataset/datasetNLR3.csv")
 source("potential/nonlinearReg2order.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg2ord
