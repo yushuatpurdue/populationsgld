@@ -15,7 +15,7 @@ set.seed(1)
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR4.csv")
+Data = read.csv("dataset/datasetNLR5.csv")
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg

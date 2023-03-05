@@ -2,7 +2,7 @@ library(MASS)
 
 set.seed(1)
 
-dataset = 'datasetNLR5'
+dataset = 'datasetNLR3'
 Data = read.csv(paste0("dataset/",dataset,".csv"))
 print(dataset)
 source("potential/nonlinearReg.R")
