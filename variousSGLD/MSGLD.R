@@ -18,7 +18,7 @@ biasfactor = 10                            # bias factor: how much portion of mo
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR2.csv")
+Data = read.csv("dataset/datasetNLR3.csv")
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
