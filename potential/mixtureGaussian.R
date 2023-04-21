@@ -102,7 +102,7 @@ mixgaussian <- function(x)
 
 
 # #====================== test block ==================
-# weight = c(1/3, 1/3, 1/3)
+# weight = c(1/2, 1/2, 1/3)
 # Sigma = array(NA, dim = c(2,2,3))
 # mu = matrix(NA, nrow = 2, ncol = 3)
 # for (i in 1:3) {
