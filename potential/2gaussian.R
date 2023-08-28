@@ -78,6 +78,8 @@ calculate_density_grad <- function(ParResult, mu1, mu2, x)
 ### ================!!! MAIN BODY !!!===================
 ### ====================================================
 ## parameter setting. 
+epsilon_r = 0.1
+
 dimension = 5
 mu1 = rep(0,dimension)
 mu2 = rep(5,dimension)

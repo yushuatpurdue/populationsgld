@@ -33,18 +33,18 @@
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
-### ========== first: parameter setups ===================================================
+## ========== first: parameter setups ===================================================
 nchain  = dim(x)[2]                    # number of chains
 # temperature_select = 0.5             # selection temperature for sampling xj
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
 
 # source("potential/mixtureGaussian.R")                # source the potential & gradient calculator.
-# epsilon_r = 0.003                        # learning rate for sgld in sampling r.
+epsilon_r = 0.003                        # learning rate for sgld in sampling r.
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.1
+# epsilon_r = 0.1
 # potential = twogaussian
 ## potential will be specified in snookerSGLD. 
 # ==================================
@@ -153,32 +153,36 @@ sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998,
 # r0 = runif(10, -1,1)
 # r0[which(r0<0)] = r0[which(r0<0)]*5-0.5
 # r0[which(r0>0)] = r0[which(r0>0)]*5+0.5
-  # r0 = rnorm(length(Index))
-  # r0 = array(r0,dim = c(1,length(r0)))
-  # R = matrix(ncol = length(r0))
-  # R[1,] = r0
-  # r = r0
-  # temperature0 = 4+1/(0.998)^1000
-  # anneal_temperature = temperature0
-  # epsilon_r0 = 0.01/(0.999)^1000
-  # anneal_epsilon_r = epsilon_r0
-  # for (i in 1:1000) {
-  # 
-  #   anneal_temperature = (anneal_temperature-4)*0.998+4
-  #   anneal_epsilon_r = anneal_epsilon_r*0.999
-  #   dist_to0 = min(abs(r),0.01)
-  #   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
-  #   R = rbind(R,r)
-  # }
-  # for (i in 1:1000) {
-  # 
-  #   dist_to0 = min(abs(r),0.01)
-  #   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 5)
-  #   R = rbind(R,r)
-  # }
-
-# #
-# hist(R[,2], breaks = seq(-12,12,0.2))
+# r0 = rnorm(length(Index))
+# r0 = array(r0,dim = c(1,length(r0)))
+# R = matrix(ncol = length(r0))
+# gradRec = matrix(ncol = length(r0))
+# R[1,] = r0
+# gradRec[1,] = distribution_snookerscaler(r0)$grad
+# r = r0
+# temperature0 = 4+1/(0.998)^1000
+# anneal_temperature = temperature0
+# epsilon_r0 = 0.01/(0.999)^1000
+# anneal_epsilon_r = epsilon_r0
+# for (i in 1:1000) {
+# 
+#   anneal_temperature = (anneal_temperature-4)*0.998+4
+#   anneal_epsilon_r = anneal_epsilon_r*0.999
+#   dist_to0 = min(abs(r),0.01)
+#   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
+#   R = rbind(R,r)
+#   gradRec = rbind(gradRec,distribution_snookerscaler(r)$grad)
+# }
+# for (i in 1:1000) {
+# 
+#   dist_to0 = min(abs(r),0.01)
+#   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = 5)
+#   R = rbind(R,r)
+#   gradRec = rbind(gradRec,distribution_snookerscaler(r)$grad)
+# }
+# 
+# # #
+# hist(R[,2])
 
 
 ##===================================================

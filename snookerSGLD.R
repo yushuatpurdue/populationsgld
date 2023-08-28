@@ -15,6 +15,32 @@
 ###=============== !!!MAIN FUNCTION!!! ==========
 ###==============================================
 library(MASS)
+### =========== parameters ===================
+nchain  = 20
+# nchain  = 10
+Ts      = seq(1,5,4/(nchain-1))
+# Ts      = rep(1,nchain)
+mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
+# mutation_rate = 1
+# mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
+learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+# learning_rate = rep(0.05,nchain)
+# AB = 'ABAB'
+
+###============= source function ================
+# source('potential/ABpolymer.R')
+# potential <- function(x){
+#   temp <- function(x){
+#     temp = ABpolymer(x,AB)
+#   }
+#   potential = apply(x, 2, temp)
+#   len = length(potential)
+#   result = array(unlist(potential),dim = c((length(x)/len +1), len))
+#   pd = result[(length(x)/len +1),]
+#   grad = result[1:(length(x)/len),]
+#   return(list('pd' = exp(-pd),'grad' = grad))
+# }
+# distribution_sgld <- potential
 
 source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian               # target posterior distribution.
@@ -80,15 +106,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=========================================
 ###=============== run function ============
 ###=========================================
-nchain  = 20
-# nchain  = 10
-Ts      = seq(1,5,4/(nchain-1))
-# Ts      = rep(1,nchain)
-mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
-# mutation_rate = 1
-# mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
-# learning_rate = rep(0.05,nchain)
+
 print(paste0("mutation rate = ", mutation_rate))
 print(paste0("learning rate = ", learning_rate[1], "to ", learning_rate[nchain]))
 
@@ -100,11 +118,11 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 50000, nchain = nchain, learning_rate = learning_rate)
+  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 5000, nchain = nchain, learning_rate = learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
-  
-  # record = output_snooker$output[,1,c(1:50000)*3000]   # mixgaussian
+
+  record = output_snooker$output[,1,c(1:5000)]   # mixgaussian
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
@@ -116,7 +134,7 @@ for (i in 1:nrun) {
 #     hist(as.numeric(output_snooker$output[1,1,1:(500000*j)]),breaks = seq(-8,13,0.5), freq=FALSE, main = paste0("EMC-SGLD ", 500000*j, " iterations"), xlab = "axis 1")
 #   }
 #   plot(seq(22/2000,22,22/2000),output_snooker$output[1,1,c(1:800)*1200], type = "l", ylim = c(-2,8), main = "EMC-SGLD sample path", xlab = "CPU time (mins)", ylab = "position")
-# 
+#
 #   dev.off()
 # }
 
@@ -124,14 +142,14 @@ for (i in 1:nrun) {
 
 
 
-# 
+#
 # print(mu_est_EMC)
 # print(var_est_EMC)
-# 
+#
 # jobid = Sys.getenv("SLURM_JOBID")
 # write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
 # write.csv(var_est_EMC, paste0("./var_est_EMC",jobid,".csv"))
-
+# 
 
 #
 ##==================== run option2: run chain and plot =================
@@ -139,7 +157,7 @@ for (i in 1:nrun) {
 # # 
 # pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
   pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
-    for (j in 1:50) {
+    for (j in 1:5) {
       plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
       # plot(output_snooker$output[1,1,c(1:(1000*j))*3000], output_snooker$output[2,1,c(1:(1000*j))*3000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
       points(mu[1,], mu[2,], pch = 3,col = "green")

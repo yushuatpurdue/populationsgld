@@ -23,7 +23,12 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
   ## 
   
   dimension = dim(paired_x)[1]
+  spaceDim = dimension
   nsample = dim(paired_x)[2]
+  
+  if(exists("AB")){
+    spaceDim = dimension/length(as.list(strsplit(AB, "")[[1]]))
+  }
   
   r_matrix = t(array(r, dim = c(length(r), dimension)))
   position = paired_x + r_matrix*direction                     # xj + r*e
@@ -33,10 +38,10 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
   grad = temp_potential$grad                           # No temperature ladder here
   # hess = temp_potential$hess 
   
-  r_to_dm1 = abs(r)^(dimension - 1)    
+  r_to_dm1 = abs(r)^(spaceDim - 1)    
   pd_r = r_to_dm1 *pd                                   # compute f(r) UP TO A CONSTANT!!
   numerator = colSums(direction*grad)
-  grad_r = -(dimension - 1)/r + numerator                       # compute \nabla_r (-log(f(r) )) 
+  grad_r = -(spaceDim - 1)/r + numerator                       # compute \nabla_r (-log(f(r) )) 
   # 
   # term1_hess = (dimension - 1)/r^2
   # hess_r = rep(NA,nsample)
@@ -74,16 +79,16 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # }
 # 
 # # distribution plot
-# r = array(seq(-50,50,0.1),dim = c(1,1001))
-# r_matrix = array(r, dim = c(length(r), dimension))
-# position = paired_x[,3] + r_matrix*direction [,3]
+# r = array(seq(-30,30,0.1),dim = c(1,length(seq(-30,30,0.1))))
+# r_matrix = t(array(r, dim = c(length(r), dimension)))
+# position = paired_x[,2] + r_matrix*direction_e [,2]
 # temp_potential = distr_grad(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
-# r_to_dm1 = abs(r)^(dimension - 1)
+# r_to_dm1 = abs(r)^(2 - 1)
 # pd_r = r_to_dm1 *pd                                   # compute f(r) UP TO A CONSTANT!!
-# numerator = colSums(direction[1]*grad)
-# grad_r = -(dimension - 1)/r + numerator
+# numerator = colSums(direction_e[1]*grad)
+# grad_r = -(2 - 1)/r + numerator
 # #
 # plot(r, pd_r, type = "l")
 # plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
@@ -94,3 +99,10 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # rm(direction)
 # rm(paired_x)
 # rm(position)
+
+# r = array(seq(-30,30,0.1),dim = c(1,length(seq(-30,30,0.1))))
+# r = array(r, dim = c(length(r), 5))
+# pdGradR = apply(r,1,distribution_snookerscaler)
+# pdGradR1 = array(unlist(pdGradR),dim = c(10,length(pdGradR)))
+# plot(r[2:601,2],diff(log(pdGradR1[2,])),type = 'l')
+# plot(r[,2],pdGradR1[2,],type = 'l')

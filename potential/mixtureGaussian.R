@@ -57,6 +57,8 @@ calculate_density_grad <- function(mu, sigma, x, weight)
 ### ================!!! MAIN BODY !!!===================
 ### ====================================================
 ## parameter setting. 
+epsilon_r = 0.003  
+
 dimension = 2
 n_mixture = 20
 

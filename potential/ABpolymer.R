@@ -80,7 +80,8 @@ C <-function(ab){
     }
   }
   C = C[1:(N-2), 3:N]
-  return(C)
+  result = list('C' = C, 'N' = N)
+  return(result)
 }
 
 
@@ -140,31 +141,31 @@ gradVTheta <- function(x, DX, dx){
   B = dx
   
   # the following 7 terms adds up to gradient(VTheta). 
-  dAidxiBC = array(0, dim = dim(X))
+  dAidxiBC = array(0, dim = dim(x))
   temp = A^3*(x[,2:(N-1)] - x[,1:(N-2)])
   dAidxiBC[,1:(N-2)] = temp*B*C
   
-  dAidxi1BC = array(0, dim = dim(X))
+  dAidxi1BC = array(0, dim = dim(x))
   temp = A^3*(x[,1:(N-2)] - x[,2:(N-1)])
   dAidxi1BC[,2:(N-1)] = temp*B*C
   
-  ABdCidxi1 = array(0, dim = dim(X))
+  ABdCidxi1 = array(0, dim = dim(x))
   temp = C^3*(x[,3:N] - x[,2:(N-1)])
   ABdCidxi1[,2:(N-1)] = A*B*temp
   
-  ABdCidxi2 = array(0, dim = dim(X))
+  ABdCidxi2 = array(0, dim = dim(x))
   temp = C^3*(x[,2:(N-1)] - x[,3:N])
   ABdCidxi2[,3:N] = A*B*temp
   
-  AdBdxC = array(0, dim = dim(X))
+  AdBdxC = array(0, dim = dim(x))
   temp = (x[,2:(N-1)] - x[,3:N])
   AdBdxC[,1:(N-2)] = temp
   
-  AdBdx1C = array(0, dim = dim(X))
+  AdBdx1C = array(0, dim = dim(x))
   temp = x[,1:(N-2)] + x[,3:N] - 2*x[,2:(N-1)]
   AdBdx1C[,2:(N-1)] = temp
   
-  AdBdx2C = array(0, dim = dim(X))
+  AdBdx2C = array(0, dim = dim(x))
   temp = x[,2:(N-1)] - x[,1:(N-2)]
   AdBdx2C[,3:N] = temp
   
@@ -210,9 +211,15 @@ gradVLJ <- function(x, DX, Cmatrix){
   return(result)
 }
 
-ABpolymer <- function(X, AB){
+### ====================================================
+### ================!!! MAIN BODY !!!===================
+### ====================================================
+
+
+ABpolymer <- function(x, AB){
   ### Input: 
-  # X:      Positions of the monomers in a Fibbonacci AB polymer. matrix of dim (d,N), d space dimension, N length of polymer. 
+  # X:      Positions of the monomers in a Fibbonacci AB polymer. matrix of dim (d,N), d space dimension, N length of polymer. (this is no longer used. )
+  # x:      Positions of the monomers in a Fibbonacci AB polymer. vector of length d*N, d space dimension, N length of polymer.
   # AB:     AB representation of the chain. string of Fibbonacci length. 
   # (constraint: N = length(AB). If not, raise an error. )
   
@@ -221,27 +228,43 @@ ABpolymer <- function(X, AB){
   # gradH:  gradient of H. vector of length d*N. 
   
   Cmatrix = C(AB)
-  DX = distanceSq(X)
-  dx = neighborProd(X)
+  N = Cmatrix$N
+  Cmatrix = Cmatrix$C
+  d = length(x)/N
+  dimension <<- N*d
+  
+  x = array(x, dim = c(d,N))
+  DX = distanceSq(x)
+  dx = neighborProd(x)
   H = sumVLJ(DX,Cmatrix) + sumVTheta(DX,dx)
-  gradH = gradVLJ(X,DX,Cmatrix) + gradVTheta(X,DX,dx)
-  result = list("grad" = gradH,"pd" = H)
+  gradH = gradVLJ(x,DX,Cmatrix) + gradVTheta(x,DX,dx)
+  grad = as.vector(gradH)
+  result = list("grad" = grad,"pd" = H)
   return(result)
 }
 
 
 ###======== test ==============
-AB = 'ABAB'    # access ith monomer by substr(AB, i,i)
-Cmatrix = C(AB)
+# AB = 'ABAB'    # access ith monomer by substr(AB, i,i)
+# Cmatrix = C(AB)
+# 
+# X = t(mvrnorm(4, mu = rep(0,2), Sigma = diag(1,2)))  # d = 2, N = 4, dim(X) = 2,4
+# DX = distanceSq(X)
+# dx = neighborProd(X)
+# sumVLJ(DX,Cmatrix)
+# sumVTheta(DX,dx)
+# gradVLJ(X,DX,Cmatrix)
+# gradVTheta(X,DX,dx)
+# 
+# ABpolymer(X,AB)
+# 
+# X = t(rnorm(80))  # d = 2, N = 4, nchain = 10. d*N*nchain = 80
+# X = array(X, dim = c(8,10))   # dim(X) = 8,10
+# ABpolymer(X[,1],AB)
 
-X = t(mvrnorm(4, mu = rep(0,2), Sigma = diag(1,2)))  # d = 2, N = 4, dim(X) = 2,4
-DX = distanceSq(X)
-dx = neighborProd(X)
-sumVLJ(DX,Cmatrix)
-sumVTheta(DX,dx)
-gradVLJ(X,DX,Cmatrix)
-gradVTheta(X,DX,dx)
 
-ABpolymer(X,AB)
-
-
+# XX = array(rep(0.5,8),dim = c(8,1))
+# XX = array(10*c(2,1,1,-2,-1,-1,-1,1),dim = c(8,1))
+# XX = array(position[,1],dim = c(8,1))
+# ABpolymer(XX,AB)
+# potential(XX)
