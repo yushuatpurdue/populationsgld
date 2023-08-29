@@ -118,11 +118,11 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 50000, nchain = nchain, learning_rate = learning_rate)
+  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 20000, nchain = nchain, learning_rate = learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  record = output_snooker$output[,1,c(1:50000)]   # mixgaussian
+  record = output_snooker$output[,1,c(1:20000)]   # mixgaussian
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
@@ -157,7 +157,7 @@ for (i in 1:nrun) {
 # # 
 # pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
   pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
-    for (j in 1:50) {
+    for (j in 1:20) {
       plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
       # plot(output_snooker$output[1,1,c(1:(1000*j))*3000], output_snooker$output[2,1,c(1:(1000*j))*3000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
       points(mu[1,], mu[2,], pch = 3,col = "green")
