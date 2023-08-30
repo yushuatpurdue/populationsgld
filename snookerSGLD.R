@@ -18,9 +18,9 @@ library(MASS)
 ### =========== parameters ===================
 nchain  = 20
 # nchain  = 10
-Ts      = seq(1,8,4/(nchain-1))
+Ts      = seq(1,12,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.7        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 1
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
