@@ -122,7 +122,7 @@ for (i in 1:nrun) {
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  record = output_snooker$output[,1,c(1:20000)]   # mixgaussian
+  record = output_snooker$output[,1,c(10001:20000)]   # mixgaussian
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
