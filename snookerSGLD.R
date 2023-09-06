@@ -118,11 +118,11 @@ var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
 for (i in 1:nrun) {
   start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 20000, nchain = nchain, learning_rate = learning_rate)
+  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 50000, nchain = nchain, learning_rate = learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  record = output_snooker$output[,1,c(10001:20000)]   # mixgaussian
+  record = output_snooker$output[,1,c(10001:50000)]   # mixgaussian
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
