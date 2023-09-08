@@ -85,13 +85,13 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # temp_potential = distr_grad(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
-# r_to_dm1 = abs(r)^(2 - 1)
+# r_to_dm1 = abs(r)^(8 - 1)
 # pd_r = r_to_dm1 *pd                                   # compute f(r) UP TO A CONSTANT!!
 # numerator = colSums(direction_e[1]*grad)
-# grad_r = -(2 - 1)/r + numerator
+# grad_r = -(8 - 1)/r + numerator
 # #
 # plot(r, pd_r, type = "l")
-# plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
+# # plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
 # plot(r, grad_r,type = "l")
 # plot(r,-(dimension - 1)*sign(r)/r,type = "l")
 # 
