@@ -123,7 +123,10 @@ output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=2000, nchain=n
 end_time <- Sys.time()
 print(paste0("running time = ", end_time - start_time))
 
-potential(output$output[,1,])$pd   # larger the better.
+pd_history = potential(output$output[,1,])$pd   # larger the better.
+print(paste0("best pd = ",max(pd_history)))
+write.csv(potential(output$output[,1,])$pd, "./ABABpotential.csv")
+write.csv(output$output[,1,], "./ABABtraj.csv")
 # ABpolymer(output$output[,1,200],AB)$pd
 
 ##================ run option1: evaluate the mean & var estimation ==================
