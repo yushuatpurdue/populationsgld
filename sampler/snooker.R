@@ -33,8 +33,8 @@
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
-## ========== first: parameter setups ===================================================
-nchain  = dim(x)[2]                    # number of chains
+# ========== first: parameter setups ===================================================
+# nchain  = dim(x)[2]                    # number of chains
 # temperature_select = 0.5             # selection temperature for sampling xj
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Actually no use in snooker...
 ### ========== call function: calculating potential & gradient ===============
@@ -160,13 +160,13 @@ sample_r <- function(epsilon, niterate = 2000, temperature, T_annealing = 0.998,
 # R[1,] = r0
 # gradRec[1,] = distribution_snookerscaler(r0)$grad
 # r = r0
-# temperature0 = 4+1/(0.998)^1000
+# temperature0 = 0+1/(0.999)^1000
 # anneal_temperature = temperature0
 # epsilon_r0 = 0.01/(0.999)^1000
 # anneal_epsilon_r = epsilon_r0
 # for (i in 1:1000) {
 # 
-#   anneal_temperature = (anneal_temperature-4)*0.998+4
+#   anneal_temperature = (anneal_temperature-0)*0.998+0
 #   anneal_epsilon_r = anneal_epsilon_r*0.999
 #   dist_to0 = min(abs(r),0.01)
 #   r = SGLD(r,distribution_snookerscaler, dist_to0, tau = anneal_temperature)
@@ -210,7 +210,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 1, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.999, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }
@@ -218,6 +218,9 @@ snooker <-function(x, temperature_select, Index, tau){
   
   
   r_matrix = t(array(r, dim = c(length(r), dimension))) 
+  # print(Index)
+  # print(paired_Index)
+  # print(r_matrix)
   snooker_update = x[,paired_Index] + r_matrix*direction_e 
   return(snooker_update) 
 }

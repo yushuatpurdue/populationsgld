@@ -26,9 +26,9 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
   spaceDim = dimension
   nsample = dim(paired_x)[2]
   
-  if(exists("AB")){
-    spaceDim = dimension/length(as.list(strsplit(AB, "")[[1]]))
-  }
+  # if(exists("AB")){
+  #   spaceDim = dimension/length(as.list(strsplit(AB, "")[[1]]))
+  # }
   
   r_matrix = t(array(r, dim = c(length(r), dimension)))
   position = paired_x + r_matrix*direction                     # xj + r*e
@@ -79,22 +79,22 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # }
 # 
 # # distribution plot
-# r = array(seq(-30,30,0.1),dim = c(1,length(seq(-30,30,0.1))))
+# r = array(seq(-1,1,0.01),dim = c(1,length(seq(-1,1,0.01))))
 # r_matrix = t(array(r, dim = c(length(r), dimension)))
 # position = paired_x[,2] + r_matrix*direction_e [,2]
 # temp_potential = distr_grad(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
-# r_to_dm1 = abs(r)^(8 - 1)
+# r_to_dm1 = abs(r)^(2 - 1)
 # pd_r = r_to_dm1 *pd                                   # compute f(r) UP TO A CONSTANT!!
 # numerator = colSums(direction_e[1]*grad)
-# grad_r = -(8 - 1)/r + numerator
+# grad_r = -(2 - 1)/r + numerator
 # #
 # plot(r, pd_r, type = "l")
 # # plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
 # plot(r, grad_r,type = "l")
 # plot(r,-(dimension - 1)*sign(r)/r,type = "l")
-# 
+# # 
 # rm(r_matrix)
 # rm(direction)
 # rm(paired_x)

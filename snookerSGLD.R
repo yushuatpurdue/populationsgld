@@ -18,33 +18,36 @@ library(MASS)
 ### =========== parameters ===================
 nchain  = 20
 # nchain  = 10
-Ts      = seq(1,8,4/(nchain-1))
+Ts      = seq(1,8,7/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.9        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.8       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 1
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+# learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 # learning_rate = rep(0.05,nchain)
-# AB = 'ABAB'
+
+## setting for AB polymer 2d. 
+AB = 'ABAB'
+learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 ###============= source function ================
-# source('potential/ABpolymer.R')
-# potential <- function(x){
-#   temp <- function(x){
-#     temp = ABpolymer(x,AB)
-#   }
-#   potential = apply(x, 2, temp)
-#   len = length(potential)
-#   result = array(unlist(potential),dim = c((length(x)/len +1), len))
-#   pd = result[(length(x)/len +1),]
-#   grad = result[1:(length(x)/len),]
-#   return(list('pd' = exp(-pd),'grad' = grad))
-# }
-# distribution_sgld <- potential
+source('potential/ABpolymer.R')
+potential <- function(x){
+  temp <- function(x){
+    temp = ABpolymer(x,AB)
+  }
+  potential = apply(x, 2, temp)
+  len = length(potential)
+  result = array(unlist(potential),dim = c((length(x)/len +1), len))
+  pd = result[(length(x)/len +1),]
+  grad = result[1:(length(x)/len),]
+  return(list('pd' = exp(-pd),'grad' = grad))
+}
+distribution_sgld <- potential
 
-source("potential/mixtureGaussian.R")
-distribution_sgld <- mixgaussian               # target posterior distribution.
-potential = mixgaussian
+# source("potential/mixtureGaussian.R")
+# distribution_sgld <- mixgaussian               # target posterior distribution.
+# potential = mixgaussian
 # source("potential/2gaussian.R")
 # distribution_sgld <- twogaussian               # target posterior distribution.
 # potential = twogaussian
@@ -62,9 +65,9 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
   # distribution_sgld <- twogaussian               # target posterior distribution.  
   
   ## sample initial position x. need to change this according to the target distribution!!
-  # temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
-  # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  temp <- runif(nchain*dimension, min = 0, max = 1)
+  temp <- mvrnorm(nchain, mu = rep(2.5,dimension), Sigma = diag(25,dimension))      # initial states
+  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
+  # temp <- runif(nchain*dimension, min = 0, max = 1)
   x <<- matrix(temp, nrow = dimension)
   
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
@@ -93,9 +96,10 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
       x = SGLD(x, distribution_sgld, epsilon = learning_rate, tau = Ts)
       output[,,t] = x
     }
-   
-    # print(x)
+    
     # print(t)
+    # print(x)
+
   }
   
   return(list("output" = output))
@@ -107,27 +111,41 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 ###=============== run function ============
 ###=========================================
 
-print(paste0("mutation rate = ", mutation_rate))
-print(paste0("learning rate = ", learning_rate[1], "to ", learning_rate[nchain]))
+# print(paste0("mutation rate = ", mutation_rate))
+# print(paste0("learning rate = ", learning_rate[1], "to ", learning_rate[nchain]))
+# 
+# 
+# ##================ lowest potential of AB polymer ==================
+print("ABpolymer 2d")
+print(paste0("T = ",Ts, ", mutation rate = ", mutation_rate, ", nchain = ", nchain, ", learning_rate = ", learning_rate))
+start_time <- Sys.time()
+output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=2000, nchain=nchain, learning_rate = learning_rate)
+end_time <- Sys.time()
+print(paste0("running time = ", end_time - start_time))
 
+potential(output$output[,1,])$pd   # larger the better.
+# ABpolymer(output$output[,1,200],AB)$pd
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 5                  # run nrun independent times.
-mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
-var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+# nrun    = 5                  # run nrun independent times.
+# mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
+# var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+# 
+# for (i in 1:nrun) {
+#   start_time <- Sys.time()
+#   output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 30000, nchain = nchain, learning_rate = learning_rate)
+#   end_time <- Sys.time()
+#   print(paste0("running time for ", i, "th run = ", end_time - start_time))
+# 
+#   record = output_snooker$output[,1,c(10001:30000)]   # mixgaussian
+# 
+#   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
+#   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
+#   
+#   print(paste("mu estimate = ", mu_est_EMC[,i]))
+#   print(paste("var estimate = ", var_est_EMC[,,i]))
 
-for (i in 1:nrun) {
-  start_time <- Sys.time()
-  output_snooker = snookerSGLD(Ts = Ts, temperature_select = 0.5, 30000, nchain = nchain, learning_rate = learning_rate)
-  end_time <- Sys.time()
-  print(paste0("running time for ", i, "th run = ", end_time - start_time))
-
-  record = output_snooker$output[,1,c(10001:30000)]   # mixgaussian
-
-  mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
-  var_est_EMC[,,i] = cov(t(record))   # mixgaussian
-
-  ## plot
+  ##======= plot ========
   # pdf(file=paste0("2gaussianEMCplot_",i,".pdf"))
 #   pdf(file=paste0("2gaussianSGLDplot_",i,".pdf"))
 #   for (j in 1:20) {
@@ -167,20 +185,19 @@ for (i in 1:nrun) {
   # plot(output_snooker$output[1,1,c(1:50000)*3000],output_snooker$output[2,1,c(1:50000)*3000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
 
   # dev.off()s
-  print(paste("mu estimate = ", mu_est_EMC[,i]))
-  print(paste("var estimate = ", var_est_EMC[,,i]))
-}
+  
+# }
 
 ## ======= mixgaussian below ===========
-mu_est = rowMeans(mu_est_EMC)
-sigma_est_1 = mean(var_est_EMC[1,1,])
-sigma_est_2 = mean(var_est_EMC[2,2,])
-cov_est = mean(var_est_EMC[1,2,])
-print(paste0("estimated mu = ", mu_est))
-print(paste0("estimated cov = ", sigma_est_1,", ", sigma_est_2,", ",cov_est))
-
-df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,], var1 = var_est_EMC[1,1,], var2 = var_est_EMC[2,2,], cov = var_est_EMC[1,2,]) # estimating mu and sigma.
-write.csv(df, "./mu_var_est.csv")
+# mu_est = rowMeans(mu_est_EMC)
+# sigma_est_1 = mean(var_est_EMC[1,1,])
+# sigma_est_2 = mean(var_est_EMC[2,2,])
+# cov_est = mean(var_est_EMC[1,2,])
+# print(paste0("estimated mu = ", mu_est))
+# print(paste0("estimated cov = ", sigma_est_1,", ", sigma_est_2,", ",cov_est))
+# 
+# df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,], var1 = var_est_EMC[1,1,], var2 = var_est_EMC[2,2,], cov = var_est_EMC[1,2,]) # estimating mu and sigma.
+# write.csv(df, "./mu_var_est.csv")
 ## ========= mixgaussian above ============
 
 # # plot(output_snooker$output[1,,], output_snooker$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "snooker 20 chains 200000 iteration", xlab = "x", ylab = "y")

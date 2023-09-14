@@ -1,5 +1,5 @@
 ### This file is created by Yushu Huang for EMC-SGLD experiments.
-### It contains the function for calculation the Hamiltonian and its gradient of a polymer under AB model
+### It contains the function for calculation the Hamiltonian and its gradient of a polymer under AB model of space dimension = 2. 
 ### And several functions to support the calculation. 
 
 #### coding design: 
@@ -159,15 +159,15 @@ gradVTheta <- function(x, DX, dx){
   
   AdBdxC = array(0, dim = dim(x))
   temp = (x[,2:(N-1)] - x[,3:N])
-  AdBdxC[,1:(N-2)] = temp
+  AdBdxC[,1:(N-2)] = A*temp*C
   
   AdBdx1C = array(0, dim = dim(x))
   temp = x[,1:(N-2)] + x[,3:N] - 2*x[,2:(N-1)]
-  AdBdx1C[,2:(N-1)] = temp
+  AdBdx1C[,2:(N-1)] = A*temp*C
   
   AdBdx2C = array(0, dim = dim(x))
   temp = x[,2:(N-1)] - x[,1:(N-2)]
-  AdBdx2C[,3:N] = temp
+  AdBdx2C[,3:N] = A*temp*C
   
   result = -(dAidxiBC + dAidxi1BC + ABdCidxi1 + ABdCidxi2 + AdBdxC + AdBdx1C + AdBdx2C)/4
   return(result)
@@ -214,8 +214,11 @@ gradVLJ <- function(x, DX, Cmatrix){
 ### ====================================================
 ### ================!!! MAIN BODY !!!===================
 ### ====================================================
+## parameter setting.
+dimension <<- length(as.list(strsplit(AB, "")[[1]]))*2
 
-
+# ===================================
+## calculate the probability density and gradient for a position x.
 ABpolymer <- function(x, AB){
   ### Input: 
   # X:      Positions of the monomers in a Fibbonacci AB polymer. matrix of dim (d,N), d space dimension, N length of polymer. (this is no longer used. )
@@ -231,7 +234,7 @@ ABpolymer <- function(x, AB){
   N = Cmatrix$N
   Cmatrix = Cmatrix$C
   d = length(x)/N
-  dimension <<- N*d
+  # dimension <<- N*d
   
   x = array(x, dim = c(d,N))
   DX = distanceSq(x)
