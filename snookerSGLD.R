@@ -27,7 +27,7 @@ mutation_rate = 0.9       # number of chains to go through SGLD instead of snook
 # learning_rate = rep(0.05,nchain)
 
 ## setting for AB polymer 2d. 
-AB = 'ABAB'
+AB = 'ABBAB'
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 ###============= source function ================
@@ -69,12 +69,13 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
   x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
   # temp <- runif(nchain*dimension, min = 0, max = 1)
   x <<- matrix(temp, nrow = dimension)
-  
+  # print(dim(x))
   source("sampler/snooker.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
 ###=============== run population SGLD with snooker =====================
   
   output = array(NA,dim = c(dimension,nchain,niteration))   # result array
+  # print((dim(output)))
   output[,,1] = x                               # record initialization
   
   for (t in 2:niteration) {
@@ -275,5 +276,12 @@ write.csv(output$output[,1,], "./ABABtraj.csv")
 # }
 
 
-
+# x0 = c(6.240387578,
+#        98.65908077,
+#        13.1219746,
+#        44.81532589,
+#        -12.40054251,
+#        -20.46614687,
+#        -11.12837671,
+#        -77.60790189)
 
