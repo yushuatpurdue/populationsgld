@@ -40,7 +40,7 @@
 ### ========== call function: calculating potential & gradient ===============
 
 # source("potential/mixtureGaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.003                        # learning rate for sgld in sampling r.
+epsilon_r = 0.001                        # learning rate for sgld in sampling r.
 # potential = mixgaussian
 
 # source("potential/2gaussian.R")                # source the potential & gradient calculator.
@@ -210,7 +210,7 @@ snooker <-function(x, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, niterate = 2000, temperature = tau[paired_Index], T_annealing = 0.999, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, niterate = 500, temperature = tau[paired_Index], T_annealing = 0.999, e_annealing = 0.999, Index, distribution_snookerscaler), silent = TRUE)     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }

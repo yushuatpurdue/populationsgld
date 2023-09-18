@@ -115,6 +115,7 @@ sumVLJ <- function(DX, Cmatrix){
   term1 = 1/D2^6
   term1[lower.tri(term1,diag=F)] = 0
   term2 = Cmatrix/D2^3
+  term2[lower.tri(term2,diag=F)] = 0
   result = sum(4*(term1 - term2))
   return(result)
 }

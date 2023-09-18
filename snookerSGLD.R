@@ -20,15 +20,15 @@ nchain  = 20
 # nchain  = 10
 Ts      = seq(1,8,7/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.9       # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.6       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 1
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 # learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 # learning_rate = rep(0.05,nchain)
 
 ## setting for AB polymer 2d. 
-AB = 'ABBAB'
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+AB = 'ABBABBABABBAB'
+learning_rate = seq(0.005,0.05,0.045/(nchain - 1))
 
 ###============= source function ================
 source('potential/ABpolymer.R')
@@ -120,14 +120,14 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 print("ABpolymer 2d")
 print(paste0("T = ",Ts, ", mutation rate = ", mutation_rate, ", nchain = ", nchain, ", learning_rate = ", learning_rate))
 start_time <- Sys.time()
-output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=2000, nchain=nchain, learning_rate = learning_rate)
+output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=200, nchain=nchain, learning_rate = learning_rate)
 end_time <- Sys.time()
 print(paste0("running time = ", end_time - start_time))
 
 pd_history = potential(output$output[,1,])$pd   # larger the better.
 print(paste0("best pd = ",max(pd_history)))
-write.csv(potential(output$output[,1,])$pd, "./ABABpotential.csv")
-write.csv(output$output[,1,], "./ABABtraj.csv")
+write.csv(potential(output$output[,1,])$pd, "./13potential.csv")
+write.csv(output$output[,1,], "./13traj.csv")
 # ABpolymer(output$output[,1,200],AB)$pd
 
 ##================ run option1: evaluate the mean & var estimation ==================
