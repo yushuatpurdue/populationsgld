@@ -118,9 +118,10 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 # 
 # ##================ lowest potential of AB polymer ==================
 print("ABpolymer 2d")
-print(paste0("T = ",Ts, ", mutation rate = ", mutation_rate, ", nchain = ", nchain, ", learning_rate = ", learning_rate))
+print(paste0("T = ",Ts, ", learning_rate = ", learning_rate))
+print(paste0("mutation rate = ", mutation_rate, ", nchain = ", nchain))
 start_time <- Sys.time()
-output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=200, nchain=nchain, learning_rate = learning_rate)
+output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=2000, nchain=nchain, learning_rate = learning_rate)
 end_time <- Sys.time()
 print(paste0("running time = ", end_time - start_time))
 
