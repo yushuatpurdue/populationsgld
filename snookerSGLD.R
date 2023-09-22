@@ -18,9 +18,9 @@ library(MASS)
 ### =========== parameters ===================
 nchain  = 20
 # nchain  = 10
-Ts      = seq(1,8,7/(nchain-1))
+Ts      = seq(1,15,7/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.4       # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.7       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 1
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 # learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
@@ -28,7 +28,7 @@ mutation_rate = 0.4       # number of chains to go through SGLD instead of snook
 
 ## setting for AB polymer 2d. 
 AB = 'ABBABBABABBAB'
-learning_rate = seq(0.005,0.05,0.045/(nchain - 1))
+learning_rate = seq(0.005,0.1,0.095/(nchain - 1))
 
 ###============= source function ================
 source('potential/ABpolymer.R')
@@ -277,12 +277,8 @@ write.csv(output$output[,1,], "./13traj.csv")
 # }
 
 
-# x0 = c(6.240387578,
-#        98.65908077,
-#        13.1219746,
-#        44.81532589,
-#        -12.40054251,
-#        -20.46614687,
-#        -11.12837671,
-#        -77.60790189)
+
+
+
+
 
