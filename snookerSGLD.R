@@ -18,7 +18,7 @@ library(MASS)
 ### =========== parameters ===================
 nchain  = 20
 # nchain  = 10
-Ts      = seq(1,10,9/(nchain-1))
+Ts      = seq(1,8,7/(nchain-1))
 # Ts      = rep(1,nchain)
 mutation_rate = 0.7       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 1
@@ -121,7 +121,7 @@ print("ABpolymer 2d")
 print(paste0("T = ",Ts, ", learning_rate = ", learning_rate))
 print(paste0("mutation rate = ", mutation_rate, ", nchain = ", nchain))
 start_time <- Sys.time()
-output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=2000, nchain=nchain, learning_rate = learning_rate)
+output = snookerSGLD(Ts = Ts, temperature_select =0.5, niteration=10000, nchain=nchain, learning_rate = learning_rate)
 end_time <- Sys.time()
 print(paste0("running time = ", end_time - start_time))
 
