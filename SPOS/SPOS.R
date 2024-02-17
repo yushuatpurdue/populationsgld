@@ -139,8 +139,8 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 ## =============== run experiments =====================
 
 # M =100
-niteration = 4000
-nrun = 50
+niteration = 3000
+nrun = 10
 for (M in c(100,300,500,800,1000,1500)){
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
