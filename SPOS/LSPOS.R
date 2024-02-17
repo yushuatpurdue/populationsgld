@@ -146,10 +146,11 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 niteration = 4000
 nrun = 50
 Beta = 1
-lr = seq(0.03,0.06,0.03/(M - 1))
-temperature = seq(1,3,2/(M - 1))
+
 
 for (M in c(100,300,500,800,1000,1500)){
+  lr = seq(0.03,0.06,0.03/(M - 1))
+  temperature = seq(1,3,2/(M - 1))
   mu_est_LSPOS = array(NA, dim = c(2, nrun))
   var_est_LSPOS = array(NA, dim = c(2,2,nrun))
   
