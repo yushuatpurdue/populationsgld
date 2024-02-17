@@ -142,7 +142,7 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 
 ## =============== run experiments =====================
 
-# M = 10
+M = 100
 niteration = 2000
 nrun = 50
 Beta = 1

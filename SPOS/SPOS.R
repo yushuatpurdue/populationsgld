@@ -138,7 +138,7 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 
 ## =============== run experiments =====================
 
-# M =10
+M =100
 niteration = 2000
 nrun = 50
 
