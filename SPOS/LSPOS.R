@@ -161,14 +161,15 @@ for (M in c(100,300,500,800,1000,1500)){
     # plot(outputLSPOS[1,1,],outputLSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
     # dev.off()
     # 
-    for (i in 2:(niteration/100)){
-      mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
-      var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
-    }
+    
+    mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
+    var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
+
     # 
-    df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
-    write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
+    
   }
+  df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
+  write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
 }
 
 
