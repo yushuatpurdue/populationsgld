@@ -139,71 +139,71 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 ## =============== run experiments =====================
 
 # M =10
-niteration = 4000
+niteration = 2000
 nrun = 50
 
 
-# mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
-# var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
-# outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
+mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
+var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
+outputSPOS = SPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
 # 
 # pdf(file=paste0("mixGaussianSPOSplot.pdf"))
 # plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
 # dev.off()
 # 
-# for (i in 2:20){
-#   mu_est_SPOS[,i-1] = rowMeans(outputSPOS[,1,100:(100*i)])
-#   var_est_SPOS[,,i-1] = cov(t(outputSPOS[,1,100:(100*i)]))
-# }
-# 
-# df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
+for (i in 2:20){
+  mu_est_SPOS[,i-1] = rowMeans(outputSPOS[,1,100:(100*i)])
+  var_est_SPOS[,,i-1] = cov(t(outputSPOS[,1,100:(100*i)]))
+}
+
+df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
 # print(df)
-# write.csv(df, "./thetaEstSPOS.csv")
+write.csv(df, "./thetaEstSPOS.csv")
 # print(sum(outputSPOS[,1,]^2)/2000 - 77.08546)
 
-accOfMSE <-function(M,niteration,nrun){
-  print(paste0('SPOS, M = ',M,', niteration = ', niteration, ', nrun = ', nrun))
-  ## meanMSE calculates the mean estimation of E(X^2) every 500 iterations
-  ## Input: 
-  #   M         : number of particles
-  #   niteration: number of iterations per run
-  #   nrun      : number of runs. 
-  
-  ## Output:
-  #   meanMSE   : vector of length niteration/500. 
-  
-  acc = rep(0, niteration/500)
-  for (run in 1:nrun){
-    outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
-    
-    ## If using only 1st chain:
-    reform = array(outputSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
-    SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
-    MS = cumsum(SS)/seq(500,niteration,500)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
-    
-    ## If want to use all M chains:
-    # reform = array(outputSPOS,dim = c(2,500*M,niteration/500))
-    # SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
-    # MS = cumsum(SS)/(seq(500,niteration,500)*M)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
-    # 
-    temp = abs(MS - 77.08546)        # 77.08546 = mu1^2 + mu2^2 + var1 + var2
-    # 
-    acc = acc + temp
-    # print(paste0('run ',nrun,' MSE = ',temp))
-  }
-  accOfMSE = acc/nrun
-  print(paste0('at iterations ',seq(500,niteration,500),', accuracy = ',accOfMSE))
-  return(accOfMSE)
-}
+# accOfMSE <-function(M,niteration,nrun){
+#   print(paste0('SPOS, M = ',M,', niteration = ', niteration, ', nrun = ', nrun))
+#   ## meanMSE calculates the mean estimation of E(X^2) every 500 iterations
+#   ## Input: 
+#   #   M         : number of particles
+#   #   niteration: number of iterations per run
+#   #   nrun      : number of runs. 
+#   
+#   ## Output:
+#   #   meanMSE   : vector of length niteration/500. 
+#   
+#   acc = rep(0, niteration/500)
+#   for (run in 1:nrun){
+#     outputSPOS = SPOS(niteration,M,0.03,1,1)     # outputSPOS dimension = dim*M*niteration
+#     
+#     ## If using only 1st chain:
+#     reform = array(outputSPOS[,1,],dim = c(2,500,niteration/500))      # take chain 1 and reform it into groups of 500 data. dim(reform) = 2, 500, #groups
+#     SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
+#     MS = cumsum(SS)/seq(500,niteration,500)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
+#     
+#     ## If want to use all M chains:
+#     # reform = array(outputSPOS,dim = c(2,500*M,niteration/500))
+#     # SS = apply(reform^2,3,sum)       # for each group, calculate sum of square
+#     # MS = cumsum(SS)/(seq(500,niteration,500)*M)      # calculate the mean square of cumulated sum. This gives the estimator of E(X^2) for #iteration = 500, 1000, 1500, ...
+#     # 
+#     temp = abs(MS - 77.08546)        # 77.08546 = mu1^2 + mu2^2 + var1 + var2
+#     # 
+#     acc = acc + temp
+#     # print(paste0('run ',nrun,' MSE = ',temp))
+#   }
+#   accOfMSE = acc/nrun
+#   print(paste0('at iterations ',seq(500,niteration,500),', accuracy = ',accOfMSE))
+#   return(accOfMSE)
+# }
 
 ## ==========run============
-ACC = c()
-for (M in c(100,300,500,800,1000,1500)){
-# for (M in c(1800,2000,2300)){
-  acc = accOfMSE(M,niteration,nrun)
-  ACC = rbind(ACC,acc)
-}
-
-df = data.frame(M = c(100,300,500,800,1000,1500), ACC = ACC)
-# df = data.frame(M = c(1800,2000,2300), ACC = ACC)
-write.csv(df, "./MSE_SPOS.csv")
+# ACC = c()
+# for (M in c(100,300,500,800,1000,1500)){
+# # for (M in c(1800,2000,2300)){
+#   acc = accOfMSE(M,niteration,nrun)
+#   ACC = rbind(ACC,acc)
+# }
+# 
+# df = data.frame(M = c(100,300,500,800,1000,1500), ACC = ACC)
+# # df = data.frame(M = c(1800,2000,2300), ACC = ACC)
+# write.csv(df, "./MSE_SPOS.csv")
