@@ -142,28 +142,40 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 
 ## =============== run experiments =====================
 
-M = 100
-niteration = 2000
+# M = 100
+niteration = 4000
 nrun = 50
 Beta = 1
+lr = seq(0.03,0.06,0.03/(M - 1))
+temperature = seq(1,3,2/(M - 1))
 
-# 
-mu_est_SPOS = array(NA, dim = c(2, niteration/100-1))
-var_est_SPOS = array(NA, dim = c(2,2,niteration/100-1))
-outputLSPOS = LSPOS(niteration,M,0.03,1,1,exp(-1))     # outputSPOS dimension = dim*M*niteration
-
-# pdf(file=paste0("mixGaussianLSPOSplot.pdf"))
-# plot(outputLSPOS[1,1,],outputLSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
-# dev.off()
-# 
-for (i in 2:20){
-  mu_est_LSPOS[,i-1] = rowMeans(outputLSPOS[,1,100:(100*i)])
-  var_est_LSPOS[,,i-1] = cov(t(outputLSPOS[,1,100:(100*i)]))
+for (M in c(100,300,500,800,1000,1500)){
+  mu_est_LSPOS = array(NA, dim = c(2, nrun))
+  var_est_LSPOS = array(NA, dim = c(2,2,nrun))
+  
+  for (run in 1:nrun) {
+    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.15))    # outputSPOS dimension = dim*M*niteration
+    
+    # pdf(file=paste0("mixGaussianLSPOSplot.pdf"))
+    # plot(outputLSPOS[1,1,],outputLSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
+    # dev.off()
+    # 
+    for (i in 2:(niteration/100)){
+      mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
+      var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
+    }
+    # 
+    df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
+    write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
+  }
 }
+
+
 # 
-df = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
+
+
 # print(df)
-write.csv(df, "./thetaEstLSPOS.csv")
+
 # accOfMSE <-function(M,niteration,nrun){
 #   print(paste0('LSPOS, M = ',M,', niteration = ', niteration, ', nrun = ', nrun))
 #   ## meanMSE calculates the mean estimation of E(X^2) every 500 iterations
