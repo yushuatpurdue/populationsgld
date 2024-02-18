@@ -144,6 +144,7 @@ nrun = 10
 for (M in c(100,300,500,800,1000,1500)){
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
+  start_time <- Sys.time()
   for (run in 1:nrun) {
     
     outputSPOS = SPOS(niteration,M,0.03,1,1) # outputSPOS dimension = dim*M*niteration
@@ -156,6 +157,8 @@ for (M in c(100,300,500,800,1000,1500)){
     var_est_SPOS[,,run] = cov(t(outputSPOS[,1,100:niteration]))
     
   }
+  end_time <- Sys.time()
+  print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", start_time - end_time))
   df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
   write.csv(df, paste0("./thetaEstSPOS_M",M,".csv"))
 }
