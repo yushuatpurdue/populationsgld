@@ -60,7 +60,7 @@ calculate_density_grad <- function(mu, sigma, x, weight)
 epsilon_r = 0.003  
 
 dimension = 2
-n_mixture = 20
+n_mixture = 10
 
 weight = rep(1/n_mixture, n_mixture)
 sigma = 0.1
