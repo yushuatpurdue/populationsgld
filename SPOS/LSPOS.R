@@ -156,7 +156,7 @@ for (M in c(100,300,500,800,1000,1500)){
   
   start_time <- Sys.time()
   for (run in 1:nrun) {
-    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.15))    # outputSPOS dimension = dim*M*niteration
+    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.25))    # outputSPOS dimension = dim*M*niteration
     
     # pdf(file=paste0("mixGaussianLSPOSplot.pdf"))
     # plot(outputLSPOS[1,1,],outputLSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
