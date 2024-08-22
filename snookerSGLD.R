@@ -146,7 +146,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 # ABpolymer(output$output[,1,200],AB)$pd
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 niteration = 30000          # current setup is supposed to >10000
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
@@ -183,7 +183,7 @@ for (i in 1:nrun) {
 
 #
 print(paste0('mu est = ',rowMeans(mu_est_EMC)))
-print(past0('var est = ',mean(var_est_EMC[1,1,]), mean(var_est_EMC[1,2,]), mean(var_est_EMC[2,1,]), var_est_EMC[2,2,]))
+print(paste0('var est = ',mean(var_est_EMC[1,1,]), mean(var_est_EMC[1,2,]), mean(var_est_EMC[2,1,]), var_est_EMC[2,2,]))
 #
 # jobid = Sys.getenv("SLURM_JOBID")
 # write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
