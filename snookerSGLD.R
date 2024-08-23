@@ -183,7 +183,9 @@ for (i in 1:nrun) {
 
 #
 print(paste0('mu est = ',rowMeans(mu_est_EMC)))
-print(paste0('var est = ',mean(var_est_EMC[1,1,]), mean(var_est_EMC[1,2,]), mean(var_est_EMC[2,1,]), var_est_EMC[2,2,]))
+print(paste0('mu est std = ',sd(mu_est_EMC)))
+print(paste0('var est = ',mean(var_est_EMC[1,1,]), mean(var_est_EMC[1,2,]), mean(var_est_EMC[2,1,]), mean(var_est_EMC[2,2,])))
+print(paste0('var est std = ',sd(var_est_EMC[1,1,]), sd(var_est_EMC[1,2,]), sd(var_est_EMC[2,1,]), sd(var_est_EMC[2,2,])))
 #
 # jobid = Sys.getenv("SLURM_JOBID")
 # write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
