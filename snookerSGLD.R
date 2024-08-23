@@ -17,15 +17,18 @@
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/research/populationsgld")
 ### =========== parameters ===================
-nchain  = 10
+## ESGLD:
 # nchain  = 10
-Ts      = seq(1,10,9/(nchain-1))
-# Ts      = rep(1,nchain)
-mutation_rate = 0.7       # number of chains to go through SGLD instead of snooker.
-# mutation_rate =  1
+# Ts      = seq(1,10,9/(nchain-1))
+# mutation_rate = 0.7       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
-# learning_rate = rep(0.05,nchain)
+# learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+
+## SGLD: 
+nchain  = 1
+Ts      = rep(1,nchain)
+mutation_rate =  1
+learning_rate = rep(0.001,nchain)
 
 ## setting for AB polymer 2d. 
 # AB = 'ABBABBABABBAB'
@@ -147,7 +150,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 
 ##================ run option1: evaluate the mean & var estimation ==================
 nrun    = 20                  # run nrun independent times.
-niteration = 30000          # current setup is supposed to >10000
+niteration = 30000*40          # current setup is supposed to >10000
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
@@ -157,7 +160,7 @@ for (i in 1:nrun) {
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  record = output_snooker$output[,1,c(10001:niteration)]   # mixgaussian
+  record = output_snooker$output[,1,c((10001*40):niteration)]   # mixgaussian
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
@@ -183,9 +186,9 @@ for (i in 1:nrun) {
 
 #
 print(paste0('mu est = ',rowMeans(mu_est_EMC)))
-print(paste0('mu est std = ',sd(mu_est_EMC)))
-print(paste0('var est = ',mean(var_est_EMC[1,1,]), mean(var_est_EMC[1,2,]), mean(var_est_EMC[2,1,]), mean(var_est_EMC[2,2,])))
-print(paste0('var est std = ',sd(var_est_EMC[1,1,]), sd(var_est_EMC[1,2,]), sd(var_est_EMC[2,1,]), sd(var_est_EMC[2,2,])))
+print(paste0('mu est std = ',sd(mu_est_EMC[1,]),', ' ,sd(mu_est_EMC[2,])))
+print(paste0('var est = ',mean(var_est_EMC[1,1,]), ', ' ,mean(var_est_EMC[1,2,]), ', ' ,mean(var_est_EMC[2,1,]), ', ' ,mean(var_est_EMC[2,2,])))
+print(paste0('var est std = ',sd(var_est_EMC[1,1,]), ', ' ,sd(var_est_EMC[1,2,]), ', ' ,sd(var_est_EMC[2,1,]), ', ' ,sd(var_est_EMC[2,2,])))
 #
 # jobid = Sys.getenv("SLURM_JOBID")
 # write.csv(mu_est_EMC, paste0("./mu_est_EMC",jobid,".csv"))
@@ -196,16 +199,17 @@ print(paste0('var est std = ',sd(var_est_EMC[1,1,]), sd(var_est_EMC[1,2,]), sd(v
 ##==================== run option2: run chain and plot =================
 
 # # 
-pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
-  # pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
+# pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
+pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
     for (j in 1:6) {
-      plot(output_snooker$output[1,1,1:(5000*j)], output_snooker$output[2,1,1:(5000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",5000*j, " iteration"), xlab = "x", ylab = "y")
-      # plot(output_snooker$output[1,1,c(1:(1000*j))*3000], output_snooker$output[2,1,c(1:(1000*j))*3000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+      # plot(output_snooker$output[1,1,1:(5000*j)], output_snooker$output[2,1,1:(5000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",5000*j, " iteration"), xlab = "x", ylab = "y")
+      plot(output_snooker$output[1,1,c(1:(5000*j))*40], output_snooker$output[2,1,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
       points(mu[1,], mu[2,], pch = 3,col = "green")
 
     }
-plot(output_snooker$output[1,1,10000:niteration],output_snooker$output[2,1,10000:niteration], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-  # plot(output_snooker$output[1,1,c(1:50000)*3000],output_snooker$output[2,1,c(1:50000)*3000], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_snooker$output[1,1,10000:niteration],output_snooker$output[2,1,10000:niteration], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,1,c(10000:niteration)*40],output_snooker$output[2,1,c(10000:niteration)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
+points(mu[1,], mu[2,], pch = 3,col = "green")
 
 dev.off()
   
