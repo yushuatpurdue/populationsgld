@@ -208,7 +208,7 @@ pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
 
     }
 plot(output_snooker$output[1,1,10000:niteration],output_snooker$output[2,1,10000:niteration], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-# plot(output_snooker$output[1,1,c(10000:niteration)*40],output_snooker$output[2,1,c(10000:niteration)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_snooker$output[1,1,c(10000:30000)*40],output_snooker$output[2,1,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
 points(mu[1,], mu[2,], pch = 3,col = "green")
 
 dev.off()
