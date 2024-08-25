@@ -103,7 +103,7 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 Ts                  = c(1,10)                    # temperature of the two chains. 
 learning_rate       = c(0.001,0.01)
-niteration = 30000*40
+niteration = 30000*16
 
 
 nrun    = 1                  # run nrun independent times.
@@ -114,15 +114,15 @@ for (i in 1:nrun) {
   print('RESGLD')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_RESGLD = RESGLD(Ts, niteration = 30000*40, learning_rate)
+  output_RESGLD = RESGLD(Ts, niteration = niteration, learning_rate)
   # output_RESGLD = batchRESGLD(Ts, nepoch = 30000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
   
-  record = output_RESGLD$output[,1,c(1:30000)*40]
+  record = output_RESGLD$output[,1,c((10000*16):niteration)]
   
-  mu_est_RESGLD[,i] = rowMeans(record[,10000:30000])
+  mu_est_RESGLD[,i] = rowMeans(record)
   var_est_RESGLD[,,i] = cov(t(record))
   # mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
   # print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD[,i]))
@@ -168,11 +168,11 @@ print(paste0('var est std = ',sd(var_est_RESGLD[1,1,]), ', ' ,sd(var_est_RESGLD[
   
 pdf(file=paste0("mixGaussianRESGLDplot_",i,".pdf"))
 for (j in 1:6) {
-   plot(output_RESGLD$output[1,1,c(1:5000*j)*40], output_RESGLD$output[2,1,c(1:5000*j)*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
+   plot(output_RESGLD$output[1,1,c(1:5000*j)*16], output_RESGLD$output[2,1,c(1:5000*j)*16], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
    points(mu[1,], mu[2,], pch = 3,col = "green")
 
 }
-plot(output_RESGLD$output[1,1,c(1:30000)*40],output_RESGLD$output[2,1,c(1:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
+plot(output_RESGLD$output[1,1,c(1:30000)*16],output_RESGLD$output[2,1,c(1:30000)*16], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
 
 dev.off()
 
