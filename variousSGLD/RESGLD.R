@@ -9,23 +9,24 @@
 
 ## output: 
 #     a population of paths. array of dimension = c(dim(state space), 2, niteration)
-set.seed(1)
+# set.seed(1)
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR5.csv")
-source("potential/nonlinearReg.R")
-# potential = nonlinearReg
-stochPotential = nonlinearReg
-nData = dim(Data)[1]
-nBatch = max(Data$augment)
+# Data = read.csv("dataset/datasetNLR5.csv")
+# source("potential/nonlinearReg.R")
+# # potential = nonlinearReg
+# stochPotential = nonlinearReg
+# nData = dim(Data)[1]
+# nBatch = max(Data$augment)
   
 ###============= initialization: call functions and initial values=======================
   
-# source("potential/mixtureGaussian.R")
-# distribution_sgld <- mixgaussian               # target posterior distribution.
+source("potential/mixtureGaussian.R")
+distribution_sgld <- mixgaussian               # target posterior distribution.
+potential = mixgaussian
 #   
 ###================= function 1: RESGLD =================
   
@@ -34,7 +35,7 @@ RESGLD <-function(Ts, niteration, learning_rate){
   ## sample x. need to change this according to the target distribution!!
   # temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
   # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  temp <- runif(2*dimension, min = 0, max = 1)
+  temp <- runif(2*dimension, min = 0, max = 10)
   x <<- matrix(temp, nrow = dimension)
   # print(x)
   
@@ -100,38 +101,39 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,2)                    # temperature of the two chains. 
-learning_rate       = c(0.001,0.002)
+Ts                  = c(1,10)                    # temperature of the two chains. 
+learning_rate       = c(0.001,0.01)
+niteration = 30000*40
 
 
-nrun    = 20                  # run nrun independent times.
+nrun    = 1                  # run nrun independent times.
 mu_est_RESGLD = array(NA, dim = c(2, nrun))
-# var_est_RESGLD = array(NA, dim = c(2,2,nrun))
+var_est_RESGLD = array(NA, dim = c(2,2,nrun))
 
 for (i in 1:nrun) {
   print('RESGLD')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  # output_RESGLD = RESGLD(Ts, niteration = 50000000, learning_rate)
-  output_RESGLD = batchRESGLD(Ts, nepoch = 30000, learning_rate)
+  output_RESGLD = RESGLD(Ts, niteration = 30000*40, learning_rate)
+  # output_RESGLD = batchRESGLD(Ts, nepoch = 30000, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   
   
-  record = output_RESGLD[,1,c(1:2000)*1500]
+  record = output_RESGLD$output[,1,c(1:30000)*40]
   
-  # mu_est_RESGLD[,i] = rowMeans(record)
-  # var_est_RESGLD[,,i] = cov(t(record))
-  mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
-  print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD[,i]))
-  pdf(file=paste0("pRavineRESGLD",i,".pdf"))
-  plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
+  mu_est_RESGLD[,i] = rowMeans(record[,10000:30000])
+  var_est_RESGLD[,,i] = cov(t(record))
+  # mu_est_RESGLD[,i] = rowMeans(record[,1000:2000])
+  # print(paste0('1e3 to 2e3 mean = ', mu_est_RESGLD[,i]))
+  # pdf(file=paste0("pRavineRESGLD",i,".pdf"))
+  # plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
   
-  df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,])
-  write.csv(df, "./thetaEstRESGLD.csv")
+  # df = data.frame(mu1 = mu_est_RESGLD[1,], mu2 = mu_est_RESGLD[2,])
+  # write.csv(df, "./thetaEstRESGLD.csv")
   
-}
-print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
+# }
+# print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
 
 #   pdf(file=paste0("mixGaussianRESGLDplot_",i,".pdf"))
 #   for (j in 1:50) {
@@ -142,9 +144,15 @@ print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
 #   plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
 #   
 #   dev.off() 
-#   print(paste("mu estimate = ", mu_est_RESGLD[,i]))
-#   print(paste("var estimate = ", var_est_RESGLD[,,i]))
-# }
+  print(paste("mu estimate = ", mu_est_RESGLD[,i]))
+  print(paste("var estimate = ", var_est_RESGLD[,,i]))
+}
+  
+print(paste0('mu est = ',rowMeans(mu_est_RESGLD)))
+print(paste0('mu est std = ',sd(mu_est_RESGLD[1,]),', ' ,sd(mu_est_RESGLD[2,])))
+print(paste0('var est = ',mean(var_est_RESGLD[1,1,]), ', ' ,mean(var_est_RESGLD[1,2,]), ', ' ,mean(var_est_RESGLD[2,1,]), ', ' ,mean(var_est_RESGLD[2,2,])))
+print(paste0('var est std = ',sd(var_est_RESGLD[1,1,]), ', ' ,sd(var_est_RESGLD[1,2,]), ', ' ,sd(var_est_RESGLD[2,1,]), ', ' ,sd(var_est_RESGLD[2,2,])))
+
 # 
 # mu_est = rowMeans(mu_est_RESGLD)
 # sigma_est_1 = mean(var_est_RESGLD[1,1,])
@@ -157,6 +165,16 @@ print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
 # write.csv(df, "./mu_var_est_RESGLD.csv")
   
 ###===================
+  
+pdf(file=paste0("mixGaussianRESGLDplot_",i,".pdf"))
+for (j in 1:6) {
+   plot(output_RESGLD$output[1,1,c(1:5000*j)*40], output_RESGLD$output[2,1,c(1:5000*j)*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("RESGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
+   points(mu[1,], mu[2,], pch = 3,col = "green")
+
+}
+plot(output_RESGLD$output[1,1,c(1:30000)*40],output_RESGLD$output[2,1,c(1:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "RESGLD sample path", xlab = "x", ylab = "y")
+
+dev.off()
 
 # output_RESGLD = RESGLD(Ts, niteration = 200000, learning_rate)
 # 

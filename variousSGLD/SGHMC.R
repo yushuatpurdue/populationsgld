@@ -84,7 +84,7 @@ onestepSGHMC <- function(position, momentum, learning_rate = 0.1, temperature = 
 
 SGHMC <- function(temperature, niteration, learning_rate){
   # position:
-  x = runif(dimension, min = 0, max = 1)
+  x = runif(dimension, min = 0, max = 10)
   x = array(x, dim = c(dimension,1))
   # momentum: 
   m = 0
