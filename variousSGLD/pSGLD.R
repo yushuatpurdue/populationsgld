@@ -5,9 +5,9 @@
 ###============= initialization: call functions and initial values=======================
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
-# source("potential/mixGauss2order.R")
-# distribution_sgld <- mixgaussian2    
-set.seed(1)
+source("potential/mixGauss2order.R")
+distribution_sgld <- mixgaussian2
+# set.seed(1)
 dimension     = 2
 learning_rate = 0.001
 alpha         = 0.99                 # tuning parameter 1, value in [0,1]
@@ -15,12 +15,12 @@ lambda        = 0.15                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR5.csv")
-source("potential/nonlinearReg2order.R")
+# Data = read.csv("dataset/datasetNLR5.csv")
+# source("potential/nonlinearReg2order.R")
 # potential = nonlinearReg
-stochPotential = nonlinearReg2ord
-nData = dim(Data)[1]
-nBatch = max(Data$augment)
+# stochPotential = nonlinearReg2ord
+# nData = dim(Data)[1]
+# nBatch = max(Data$augment)
 
 
 ### =======================================================

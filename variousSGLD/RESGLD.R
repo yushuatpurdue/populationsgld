@@ -106,7 +106,7 @@ learning_rate       = c(0.001,0.01)
 niteration = 30000*16
 
 
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 mu_est_RESGLD = array(NA, dim = c(2, nrun))
 var_est_RESGLD = array(NA, dim = c(2,2,nrun))
 
