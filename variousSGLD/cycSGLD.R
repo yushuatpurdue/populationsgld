@@ -121,7 +121,7 @@ cSGLD <- function(niteration, K, M, alpha0, beta){
 # write.csv(output_pSGLD, "./variousSGLD/output_pSGLD.csv")
 
 
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 mu_est_cSGLD = array(NA, dim = c(2, nrun))
 var_est_cSGLD = array(NA, dim = c(2,2,nrun))
 niteration = 30000*30
