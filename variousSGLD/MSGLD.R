@@ -223,7 +223,7 @@ for (j in 1:6) {
   
 }
 # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-plot(output_pSGLD[1,c(10000:30000)*40],output_pSGLD[2,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "MSGLD sample path", xlab = "x", ylab = "y")
+plot(output_MSGLD[1,c(10000:30000)*40],output_MSGLD[2,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "MSGLD sample path", xlab = "x", ylab = "y")
 
 dev.off()
 
