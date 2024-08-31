@@ -52,6 +52,9 @@ onestepMSGLD <- function(position, momentum, smoothingfactor, biasfactor, learni
   # smoothingfactor: how much past momentum is cumulated into current momentum.
   # biasfactor     : how much momentum is used for updating. 
   # learning_rate  : stepsize of the discretized dynamic.  
+  ## output:
+  # position update: 1 step updated position. dimension*1 array. 
+  # momentum update: 1 step updated momentum. dimension*1 array. 
   
   dimension = dim(position)[1]
   grad = distribution_sgld(position)$grad        # calculate the gradient

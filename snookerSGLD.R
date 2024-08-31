@@ -23,6 +23,7 @@ Ts      = seq(1,10,9/(nchain-1))
 mutation_rate = 0.7       # number of chains to go through SGLD instead of snooker.
 # mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+# learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
 
 ## SGLD: 
 # nchain  = 1
