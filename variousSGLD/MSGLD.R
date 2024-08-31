@@ -176,7 +176,7 @@ batchMSGLD <- function(smoothingfactor, biasfactor, temperature, nepoch, learnin
 
 # output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, 2000, learning_rate)
 
-nrun    = 20                  # run nrun independent times.
+nrun    = 1                  # run nrun independent times.
 mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
 var_est_MSGLD = array(NA, dim = c(2,2,nrun))   # mixgaussian
 niteration = 30000*40
