@@ -18,12 +18,14 @@ library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/research/populationsgld")
 ### =========== parameters ===================
 ## ESGLD:
-nchain  = 1
+nchain  = 10
+# Ts      = 1
 Ts      = seq(1,10,9/(nchain-1))
-mutation_rate = 1       # number of chains to go through SGLD instead of snooker.
-# mutation_rate = 0.5        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
-# learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
+# mutation_rate = 1       # proportion of chains to go through SGLD instead of snooker.
+mutation_rate = 0.7        # number of chains to go through SGLD instead of snooker.
+# learning_rate = 0.001
+# learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+learning_rate = seq(0.01,0.03,0.02/(nchain - 1))
 
 ## SGLD: 
 # nchain  = 1
@@ -151,7 +153,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 
 ##================ run option1: evaluate the mean & var estimation ==================
 nrun    = 1                  # run nrun independent times.
-niteration = 30000*40          # current setup is supposed to >10000
+niteration = 30000          # current setup is supposed to >10000
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
@@ -161,8 +163,8 @@ for (i in 1:nrun) {
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
-  # record = output_snooker$output[,1,c((10001):niteration)]   # mixgaussian
-  record = output_snooker$output[,c((10000*40):niteration)]
+  record = output_snooker$output[,1,c((10001):niteration)]   # mixgaussian
+  # record = output_snooker$output[,,c((10000*40):niteration)]
 
   mu_est_EMC[,i] = rowMeans(record)   # mixgaussian
   var_est_EMC[,,i] = cov(t(record))   # mixgaussian
@@ -180,7 +182,7 @@ for (i in 1:nrun) {
 #
 #   dev.off()
 }
-# write.csv(output_snooker$output[1,1,], "./output_snooker.csv")
+write.csv(output_snooker$output[,1,], "./output_snooker.csv")
 
 
 
@@ -201,20 +203,59 @@ print(paste0('var est std = ',sd(var_est_EMC[1,1,]), ', ' ,sd(var_est_EMC[1,2,])
 ##==================== run option2: run chain and plot =================
 
 # # 
-# pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
-pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
+pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
+# pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
     for (j in 1:6) {
-      # plot(output_snooker$output[1,1,1:(5000*j)], output_snooker$output[2,1,1:(5000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",5000*j, " iteration"), xlab = "x", ylab = "y")
-      plot(output_snooker$output[1,1,c(1:(5000*j))*40], output_snooker$output[2,1,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
+      plot(output_snooker$output[1,1,1:(5000*j)], output_snooker$output[2,1,1:(5000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",5000*j, " iteration"), xlab = "x", ylab = "y")
+      # plot(output_snooker$output[1,1,c(1:(5000*j))*40], output_snooker$output[2,1,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
       points(mu[1,], mu[2,], pch = 3,col = "green")
 
     }
-# plot(output_snooker$output[1,1,10000:niteration],output_snooker$output[2,1,10000:niteration], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-plot(output_snooker$output[1,1,c(10000:30000)*40],output_snooker$output[2,1,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
+plot(output_snooker$output[1,1,10000:niteration],output_snooker$output[2,1,10000:niteration], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_snooker$output[1,1,c(10000:30000)*40],output_snooker$output[2,1,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
 points(mu[1,], mu[2,], pch = 3,col = "green")
 
 dev.off()
   
+
+##==================== mixgaussian: snooker trasition mode =================
+# x0 = record[,2303]     # sample before transit. change the index before running code
+# x1 = record[,2304]     # sample after transit. change the index before running code
+# y = output_snooker$anchor[,12304]     # anchor point. change the index before running code
+# 
+# plot(x0[1], x0[2], col = "black", pch = 20, xlim = c(0,10), ylim = c(0,10), xlab = "X", ylab = "Y", main = "Mode transition with snooker", type = "n")
+# 
+# # Add points for x0, x1, and y
+# points(mu[1,], mu[2,], pch = 3,col = "green")
+# # points(record[1,151:180], record[2,151:180], col = "black", pch = 20)
+# # points(x1[1], x1[2], col = "black", pch = 20)
+# points(x0[1], x0[2], col = "black", pch = 20)
+# points(x1[1], x1[2], col = "black", pch = 20)
+# points(y[1], y[2], col = "red", pch = 20)
+# 
+# # Add arrow from x0 to x1
+# arrows(x0[1], x0[2], x1[1], x1[2], col = "blue", length = 0.1, angle = 30, code = 2)
+
+# x0 = array(c(c(1.22926, 1.15905),c(1.3458175, 0.8688436),c(5.929494, 3.922557), c(6.12693, 7.39018), c(6.642096, 6.043990), c(7.241896, 4.052879), c(6.267951, 6.858978), c(6.198575, 6.958819)), dim = c(2,8))
+# x1 = array(c(c(3.010722, 2.669501), c(0.4503561, 5.5249136), c(4.144714, 7.304190), c(2.742609, 6.694822), c(7.333233, 3.992747), c(6.970024, 8.186827), c(8.633237, 6.231087), c(1.107694, 8.902122)), dim = c(2,8))
+# y = array(c(c(2.709536, 2.414134), c(1.142171, 1.927733), c(4.416181, 6.789840), c(3.000080, 6.747723), c(6.393887, 6.780655), c(6.945630, 8.557753), c(9.152201, 6.093323), c(2.097394, 8.524332)), dim = c(2,8))
+# 
+# pdf(file=paste0("ModeTransit.pdf"))
+# for (i in c(1:8)){
+#   plot(x0[1,i], x0[2,i], col = "black", pch = 20, xlim = c(0,10), ylim = c(0,10), xlab = "X", ylab = "Y", main = "Mode transition with snooker", type = "n")
+#   
+#   # Add points for x0, x1, and y
+#   points(mu[1,], mu[2,], pch = 3,col = "green")
+#   # points(record[1,151:180], record[2,151:180], col = "black", pch = 20)
+#   # points(x1[1], x1[2], col = "black", pch = 20)
+#   points(x0[1,i], x0[2,i], col = "black", pch = 20)
+#   points(x1[1,i], x1[2,i], col = "black", pch = 20)
+#   points(y[1,i], y[2,i], col = "red", pch = 20)
+#   
+#   # Add arrow from x0 to x1
+#   arrows(x0[1,i], x0[2,i], x1[1,i], x1[2,i], col = "blue", length = 0.1, angle = 30, code = 2)
+# }
+# dev.off()
 
 
 ## ======= mixgaussian below ===========
