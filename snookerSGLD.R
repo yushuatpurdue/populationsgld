@@ -152,7 +152,7 @@ snookerSGLD <- function(Ts, temperature_select, niteration, nchain, learning_rat
 # ABpolymer(output$output[,1,200],AB)$pd
 
 ##================ run option1: evaluate the mean & var estimation ==================
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 niteration = 30000          # current setup is supposed to >10000
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
