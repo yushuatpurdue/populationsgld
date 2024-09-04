@@ -243,15 +243,15 @@ dev.off()
 # pdf(file=paste0("ModeTransit.pdf"))
 # for (i in c(1:8)){
 #   plot(x0[1,i], x0[2,i], col = "black", pch = 20, xlim = c(0,10), ylim = c(0,10), xlab = "X", ylab = "Y", main = "Mode transition with snooker", type = "n")
-#   
+# 
 #   # Add points for x0, x1, and y
 #   points(mu[1,], mu[2,], pch = 3,col = "green")
 #   # points(record[1,151:180], record[2,151:180], col = "black", pch = 20)
 #   # points(x1[1], x1[2], col = "black", pch = 20)
-#   points(x0[1,i], x0[2,i], col = "black", pch = 20)
-#   points(x1[1,i], x1[2,i], col = "black", pch = 20)
-#   points(y[1,i], y[2,i], col = "red", pch = 20)
-#   
+#   points(x0[1,i], x0[2,i], col = "black", pch = 20, cex = 3)
+#   points(x1[1,i], x1[2,i], col = "black", pch = 20, cex = 3)
+#   points(y[1,i], y[2,i], col = "red", pch = 20, cex = 3)
+# 
 #   # Add arrow from x0 to x1
 #   arrows(x0[1,i], x0[2,i], x1[1,i], x1[2,i], col = "blue", length = 0.1, angle = 30, code = 2)
 # }
