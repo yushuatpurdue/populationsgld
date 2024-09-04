@@ -3,7 +3,7 @@
 ### An additional supportive function is defined to deal with the gradient blowup. 
 
 ###============= initialization: call functions and initial values=======================
-set.seed(1)
+# set.seed(1)
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 source("potential/mixtureGaussian.R")
@@ -11,9 +11,9 @@ distribution_sgld <- mixgaussian
 
 ## initialize parameters: 
 dimension = 2
-M         = 1                  # mass of the particle. can be a dimension*dimension matrix, but need to modify the code in "onestepSGHMC()". 
+M         = 0.1                  # mass of the particle. can be a dimension*dimension matrix, but need to modify the code in "onestepSGHMC()". 
 C         = 3                # tuning parameter, friction. 
-learning_rate = 0.001
+learning_rate = 0.01
 temperature = 1
 
 
@@ -166,7 +166,7 @@ batchSGHMC <- function(temperature, nepoch, learning_rate){
 # write.csv(output_SGHMC, "./variousSGLD/output_SGHMC.csv")
 
 
-nrun    = 20                  # run nrun independent times.
+nrun    = 1                  # run nrun independent times.
 niteration = 30000*40          # current setup is supposed to >10000
 mu_est_SGHMC = array(NA, dim = c(2, nrun))
 var_est_SGHMC = array(NA, dim = c(2,2,nrun))
