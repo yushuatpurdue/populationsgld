@@ -166,7 +166,7 @@ batchSGHMC <- function(temperature, nepoch, learning_rate){
 # write.csv(output_SGHMC, "./variousSGLD/output_SGHMC.csv")
 
 
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 niteration = 30000*40          # current setup is supposed to >10000
 mu_est_SGHMC = array(NA, dim = c(2, nrun))
 var_est_SGHMC = array(NA, dim = c(2,2,nrun))
