@@ -203,8 +203,8 @@ print(paste0('var est std = ',sd(var_est_EMC[1,1,]), ', ' ,sd(var_est_EMC[1,2,])
 ##==================== run option2: run chain and plot =================
 
 # # 
-pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
-# pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
+# pdf(file=paste0("mixGaussianEMCplot_",i,".pdf"))
+pdf(file=paste0("mixGaussianSGLDplot_",i,".pdf"))
     for (j in 1:6) {
       # plot(output_snooker$output[1,1,1:(5000*j)], output_snooker$output[2,1,1:(5000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",5000*j, " iteration"), xlab = "x", ylab = "y")
       plot(output_snooker$output[1,1,c(1:(5000*j))*40], output_snooker$output[2,1,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
