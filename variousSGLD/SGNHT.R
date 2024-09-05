@@ -11,7 +11,7 @@ set.seed(1)
 dimension = 2
 learning_rate = 0.001
 temperature   = 1
-A             = 100                    # sqrt(A) = scale of gaussian noise, is also friction. 
+A             = 80                    # sqrt(A) = scale of gaussian noise, is also friction. 
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
