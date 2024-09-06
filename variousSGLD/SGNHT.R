@@ -7,7 +7,7 @@
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian
-set.seed(1)
+# set.seed(1)
 dimension = 2
 learning_rate = 0.01
 temperature   = 1
