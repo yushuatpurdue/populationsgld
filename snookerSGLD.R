@@ -20,7 +20,7 @@ library(MASS)
 ## ESGLD:
 nchain  = 5
 # Ts      = 1
-Ts      = seq(1,10,9/(nchain-1))
+Ts      = seq(1,7,6/(nchain-1))
 # mutation_rate = 1       # proportion of chains to go through SGLD instead of snooker.
 mutation_rate = 0.7        # number of chains to go through SGLD instead of snooker.
 # learning_rate = 0.01
@@ -189,6 +189,7 @@ write.csv(output_snooker$output[,1,], "./output_snooker.csv")
 
 
 #
+print(paste0("#chain = ", nchain, ', lr = ',learning_rate[1],' to ', learning_rate[length(learning_rate)], ", highest T = ",Ts[length(Ts)], ', mut_rate = ', mutation_rate))
 print(paste0('mu est = ',rowMeans(mu_est_EMC)))
 print(paste0('mu est std = ',sd(mu_est_EMC[1,]),', ' ,sd(mu_est_EMC[2,])))
 print(paste0('var est = ',mean(var_est_EMC[1,1,]), ', ' ,mean(var_est_EMC[1,2,]), ', ' ,mean(var_est_EMC[2,1,]), ', ' ,mean(var_est_EMC[2,2,])))
