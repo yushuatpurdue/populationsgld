@@ -18,7 +18,7 @@ library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/research/populationsgld")
 ### =========== parameters ===================
 ## ESGLD:
-nchain  = 5
+nchain  = 10
 # Ts      = 1
 Ts      = seq(1,7,6/(nchain-1))
 # mutation_rate = 1       # proportion of chains to go through SGLD instead of snooker.
