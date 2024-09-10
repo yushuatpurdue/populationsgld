@@ -113,7 +113,12 @@ l2 <- function(vec){
 ## function to calculate e: the unit updating direction. 
 unit_direction <- function(x, index, pair){
   diff_pair = x[,pair] - x[,index]
-  e_norm = apply(diff_pair,2,l2)
+  if(length(index) == 1){
+    e_norm = l2(diff_pair)
+  }
+  else{
+    e_norm = apply(diff_pair,2,l2)
+  }
   e_norm = rep(1,dimension)%*%t(e_norm)
   unit_direction = diff_pair/e_norm 
   return(unit_direction)
@@ -246,8 +251,7 @@ snooker <-function(x, temperature_select, Index, tau){
   if(1 %in% Index){
     anchor1Index = paired_Index[which(Index==1)]
     anchor1 = x[,anchor1Index]
-  }
-  else{
+  } else{
     anchor1Index = 0
     anchor1 = c(0,0)
   }

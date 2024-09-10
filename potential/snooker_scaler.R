@@ -21,10 +21,16 @@
 snooker_scaler <- function(r, distr_grad, paired_x, direction){
   
   ## 
+  if (is.array(paired_x) == TRUE){
+    dimension = dim(paired_x)[1]
+    spaceDim = dimension
+    nsample = dim(paired_x)[2]
+  } else{
+    dimension = length(paired_x)
+    spaceDim = dimension
+    nsample = 1
+  }
   
-  dimension = dim(paired_x)[1]
-  spaceDim = dimension
-  nsample = dim(paired_x)[2]
   
   # if(exists("AB")){
   #   spaceDim = dimension/length(as.list(strsplit(AB, "")[[1]]))
