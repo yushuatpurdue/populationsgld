@@ -9,9 +9,9 @@ source("potential/mixGauss2order.R")
 distribution_sgld <- mixgaussian2
 # set.seed(1)
 dimension     = 2
-learning_rate = 0.01
-alpha         = 0.01                 # tuning parameter 1, value in [0,1]
-lambda        = 0.08                 # tuning parameter 2
+learning_rate = 0.001
+alpha         = 0.08                 # tuning parameter 1, value in [0,1]
+lambda        = 0.8                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -113,8 +113,10 @@ onesteppSGLD <- function(position, V, alpha, lambda, learning_rate = 0.1){
 pSGLD <-function(lambda, alpha, niteration, learning_rate){
   
   # position, dimension*1:
-  x = runif(dimension, min = 0, max = 10)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   # V, dimension*1: 
   V = 0
   V = array(V, dim = c(dimension,1))

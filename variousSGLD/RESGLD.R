@@ -63,11 +63,11 @@ RESGLD <-function(Ts, niteration, learning_rate){
 batchRESGLD <-function(Ts, nepoch, learning_rate){
   
   ## sample x. need to change this according to the target distribution!!
-  # temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
-  # x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
-  temp = rnorm(2*dimension, 0,1 )
-  # temp <- runif(2*dimension, min = 0, max = 1)
-  x <<- matrix(temp, nrow = dimension)
+  temp <- mvrnorm(nchain, mu = rep(0,dimension), Sigma = diag(1,dimension))      # initial states
+  x <<- t(temp)                                  # DEFINE AS GLOBAL! or snooker(x, Index) wouldn't be able to read it.
+  # # temp = rnorm(2*dimension, 0,1 )
+  # temp <- runif(2*dimension, min = 0, max = 10)
+  # x <<- matrix(temp, nrow = dimension)
   # print(x)
   
   source("sampler/replica.R")                    # source one-step replica exchange sampler. Note: SGLD sampler has got sourced in "sampler/replica.R", no need to source again. 
@@ -101,8 +101,8 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,5)                    # temperature of the two chains. 
-learning_rate       = c(0.01,0.03)
+Ts                  = c(1,10)                    # temperature of the two chains. 
+learning_rate       = c(0.001,0.01)
 niteration = 30000*16
 
 

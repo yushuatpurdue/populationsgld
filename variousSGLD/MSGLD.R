@@ -14,7 +14,7 @@ dimension = 2
 learning_rate = 0.01
 temperature = 1
 smoothingfactor = 0.1                        # smoothing factor beta (tailing off coefficient) for the momentum wrt time. beta_1 in pater
-biasfactor = 2                            # bias factor: how much portion of momentum will be used in updating position. alpha in paper
+biasfactor = 15                            # bias factor: how much portion of momentum will be used in updating position. alpha in paper
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
@@ -102,8 +102,10 @@ MSGLD <- function(smoothingfactor, biasfactor, temperature, niteration, learning
   # learning_rate  : stepsize of the discretized dynamic. 
   
   # position, dimension*1:
-  x = runif(dimension, min = 0, max = 10)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   # momentum, dimension*1: 
   m = 0
   m = array(m, dim = c(dimension,1))

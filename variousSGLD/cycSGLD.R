@@ -11,7 +11,7 @@ distribution_sgld <- mixgaussian
 source("sampler/SGLD.R")                          # source 1 step SGLD as part of updating method. 
 
 dimension     = 2
-learning_rate = 0.02
+learning_rate = 0.002
 K = 30000      # number of total iterations
 M = 300         # number of cycles
 beta = 0.1    # proportion of exploration stage
@@ -83,8 +83,10 @@ cSGLD <- function(niteration, K, M, alpha0, beta){
   # learning_rate  : stepsize of the discretized dynamic. 
   
   # position, dimension*1:
-  x = runif(dimension, min = 0, max = 10)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   
   # result array of positions:
   output = array(NA,dim = c(dimension,niteration))   

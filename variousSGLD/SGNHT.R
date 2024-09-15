@@ -89,8 +89,10 @@ onestepSGNHT <- function(position, momentum, friction, temperature, A, learning_
 
 SGNHT <- function(A, temperature, niteration, learning_rate){
   # position, dimension*1:
-  x = runif(dimension, min = 0, max = 10)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   # momentum, dimension*1: 
   m = 0
   m = array(m, dim = c(dimension,1))
