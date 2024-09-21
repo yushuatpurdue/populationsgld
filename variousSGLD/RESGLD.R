@@ -101,8 +101,8 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
-Ts                  = c(1,10)                    # temperature of the two chains. 
-learning_rate       = c(0.001,0.01)
+Ts                  = c(1,5)                    # temperature of the two chains. 
+learning_rate       = c(0.01,0.03)
 niteration = 30000*16
 
 

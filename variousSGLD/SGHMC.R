@@ -11,9 +11,9 @@ distribution_sgld <- mixgaussian
 
 ## initialize parameters: 
 dimension = 2
-M         = 1                  # mass of the particle. can be a dimension*dimension matrix, but need to modify the code in "onestepSGHMC()". 
+M         = 0.1                  # mass of the particle. can be a dimension*dimension matrix, but need to modify the code in "onestepSGHMC()". 
 C         = 3                # tuning parameter, friction. 
-learning_rate = 0.001
+learning_rate = 0.01
 temperature = 1
 
 

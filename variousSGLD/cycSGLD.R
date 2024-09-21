@@ -11,7 +11,7 @@ distribution_sgld <- mixgaussian
 source("sampler/SGLD.R")                          # source 1 step SGLD as part of updating method. 
 
 dimension     = 2
-learning_rate = 0.002
+learning_rate = 0.02
 K = 30000      # number of total iterations
 M = 300         # number of cycles
 beta = 0.1    # proportion of exploration stage
