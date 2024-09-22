@@ -114,3 +114,4 @@ for (i in 1:nrun) {
   
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_EMC)))
+print(paste("mu estimator sd = ", sd(mu_est_EMC[1,]),', ' ,sd(mu_est_EMC[2,])))
