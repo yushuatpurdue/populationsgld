@@ -131,30 +131,30 @@ sample_r <- function(epsilon, epochR = 20, temperature, T_annealing = 0.998, e_a
   r = rnorm(length(Index))
   r = array(r,dim = c(1,length(r)))
   # initializing temperature and stepsize (for annealing), assuming temperature >= 1
-  temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*epochR*nBatch)
-  anneal_temperature = temperature0
-  epsilon_r0 = epsilon_r/(e_annealing)^(0.5*epochR*nBatch)
-  anneal_epsilon_r = epsilon_r0
+  # temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*epochR*nBatch)
+  # anneal_temperature = temperature0
+  # epsilon_r0 = epsilon_r/(e_annealing)^(0.5*epochR*nBatch)
+  # anneal_epsilon_r = epsilon_r0
   # R = matrix(ncol = 5)
   # R[1,] = r
   
   # Annealing: half of total runs. 
-  for (t in 1:(0.5*epochR)){
-    for (k in 1:nBatch){
-      Batch = Data[which(Data$augment == k),]
-      temp <- function(theta){
-        temp = stochPotential(theta, Batch, nData)
-      }
-      distribution_snookerscaler <- function(r){
-        distribution_snookerscaler = snooker_scaler(r,temp,theta[,paired_Index],direction_e)
-      }
-      anneal_epsilon_r = anneal_epsilon_r*e_annealing
-      dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
-      anneal_temperature = (anneal_temperature+1-temperature)*T_annealing + temperature-1
-      r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
-    }
-  }
-  for (t in 1:(0.5*epochR)){
+  # for (t in 1:(0.5*epochR)){
+  #   for (k in 1:nBatch){
+  #     Batch = Data[which(Data$augment == k),]
+  #     temp <- function(theta){
+  #       temp = stochPotential(theta, Batch, nData)
+  #     }
+  #     distribution_snookerscaler <- function(r){
+  #       distribution_snookerscaler = snooker_scaler(r,temp,theta[,paired_Index],direction_e)
+  #     }
+  #     anneal_epsilon_r = anneal_epsilon_r*e_annealing
+  #     dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.  
+  #     anneal_temperature = (anneal_temperature+1-temperature)*T_annealing + temperature-1
+  #     r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
+  #   }
+  # }
+  for (t in 1:(epochR)){
     for (k in 1:nBatch){
       Batch = Data[which(Data$augment == k),]
       temp <- function(theta){
@@ -171,44 +171,41 @@ sample_r <- function(epsilon, epochR = 20, temperature, T_annealing = 0.998, e_a
 }
 
 # test for the convergence of sampling r.
-# r0 = runif(5, 10,20)
-# side = rbinom(5,1,0.5)*2-1
-# r0 = r0*side
 # r0 = rnorm(length(Index))
 # r0 = array(r0,dim = c(1,length(r0)))
 # R = matrix(ncol = length(r0))
 # R[1,] = r0
 # r = r0
-# epsilon_r = 0.03
-# T_annealing = 0.998
-# epochR = 20
-# e_annealing = 0.999
+# epsilon_r = 0.01
+# # T_annealing = 1
+# epochR = 5
+# # e_annealing = 1
 # temperature = 1
-# temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*epochR*nBatch)
-# anneal_temperature = temperature0
-# epsilon_r0 = epsilon_r/(e_annealing)^(0.5*epochR*nBatch)
-# anneal_epsilon_r = epsilon_r0
+# # temperature0 = temperature - 1 + 1/(T_annealing)^(0.5*epochR*nBatch)
+# # anneal_temperature = temperature0
+# # epsilon_r0 = epsilon_r/(e_annealing)^(0.5*epochR*nBatch)
+# # anneal_epsilon_r = epsilon_r0
 # # R = matrix(ncol = 5)
 # # R[1,] = r
 # 
 # # Annealing: half of total runs.
-# for (t in 1:(0.5*epochR)){
-#   for (k in 1:nBatch){
-#     Batch = Data[which(Data$augment == k),]
-#     temp <- function(theta){
-#       temp = nonlinearReg(theta, Batch, nData)
-#     }
-#     distribution_snookerscaler <- function(r){
-#       distribution_snookerscaler = snooker_scaler(r,temp,theta[,paired_Index],direction_e)
-#     }
-#     anneal_epsilon_r = anneal_epsilon_r*e_annealing
-#     dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.
-#     anneal_temperature = (anneal_temperature+1-temperature)*T_annealing + temperature-1
-#     r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
-#     R = rbind(R,r)
-#   }
-# }
-# for (t in 1:(0.5*epochR)){
+# # for (t in 1:(0.5*epochR)){
+# #   for (k in 1:nBatch){
+# #     Batch = Data[which(Data$augment == k),]
+# #     temp <- function(theta){
+# #       temp = nonlinearReg(theta, Batch, nData)
+# #     }
+# #     distribution_snookerscaler <- function(r){
+# #       distribution_snookerscaler = snooker_scaler(r,temp,theta[,paired_Index],direction_e)
+# #     }
+# #     anneal_epsilon_r = anneal_epsilon_r*e_annealing
+# #     dist_to0 = min(abs(r),epsilon = anneal_epsilon_r)               # the learning rate needs to be small near 0 to avoid blowing up there.
+# #     anneal_temperature = (anneal_temperature+1-temperature)*T_annealing + temperature-1
+# #     r = SGLD(r, distribution_snookerscaler, dist_to0, tau = anneal_temperature)
+# #     R = rbind(R,r)
+# #   }
+# # }
+# for (t in 1:(epochR)){
 #   for (k in 1:nBatch){
 #     Batch = Data[which(Data$augment == k),]
 #     temp <- function(theta){
@@ -247,7 +244,7 @@ snooker_batch <-function(theta, temperature_select, Index, tau){
   
   r = NA
   for (attempt in 1:3) {
-    try(r <- sample_r(epsilon_r, epochR, temperature = tau[paired_Index], T_annealing = 0.998, e_annealing = 0.999, Index, paired_Index = paired_Index, direction_e = direction_e))     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
+    try(r <- sample_r(epsilon_r, epochR, temperature = tau[paired_Index], T_annealing = 1, e_annealing = 1, Index, paired_Index = paired_Index, direction_e = direction_e))     # sample the scaler r. After consideration I choose to initialize r at N(0,1). Might need to modify.
     # I need "try" here because sometimes the sampling got screwed up with tiny chance. 
     if(!prod(is.na(r))) break       # if non of the entries of r is still NA then break
   }

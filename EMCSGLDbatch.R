@@ -76,7 +76,7 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 # nepoch = 10
 
 ## ================ run simulation ======================
-nchain  = 20
+nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
 mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
@@ -93,7 +93,7 @@ for (i in 1:nrun) {
   print(paste0(i,"th run"))
   
   start_time <- Sys.time()
-  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = 20, learning_rate)
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
@@ -101,7 +101,7 @@ for (i in 1:nrun) {
   # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
   print(paste0(rowMeans(output_snookerBatch$output[,1,1000:2000])))
   # pdf(file=paste0("pRavine",i,".pdf"))
-  # plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
+  plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
   # 
   # dev.off()
 

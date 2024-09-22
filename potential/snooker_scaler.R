@@ -79,17 +79,19 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # rm(paired_x)
 # rm(direction)
 
-# Batch = output[which(output$augment == 2),]
+# Batch = Data[which(Data$augment == 4),]
 # distr_grad <- function(theta){
 #   distr_grad = nonlinearReg(t(theta), Batch, nData)
 # }
-# 
-# # distribution plot
-# distr_grad=mixgaussian
+# x = theta
+# # 
+# # # distribution plot
+# # distr_grad=mixgaussian
 # paired_x = x[,paired_Index]
-# r = array(seq(-1,2,0.01),dim = c(1,length(seq(-1,2,0.01))))
+# r = array(seq(-10,30,0.5),dim = c(1,length(seq(-10,30,0.5))))
 # r_matrix = t(array(r, dim = c(length(r), dimension)))
 # position = paired_x[,5] + r_matrix*direction_e [,5]
+# position = t(position)  # run this line for pRavine
 # temp_potential = distr_grad(position)                # compute pi(xj + r*e) and \nabla U(xj + r*e)
 # pd = temp_potential$pd
 # grad = temp_potential$grad
@@ -97,9 +99,9 @@ snooker_scaler <- function(r, distr_grad, paired_x, direction){
 # pd_r = r_to_dm1 *pd                                   # compute f(r) UP TO A CONSTANT!!
 # numerator = colSums(direction_e[1]*grad)
 # grad_r = -(2 - 1)/r + numerator
-# # #
+# # # #
 # plot(r, pd_r, type = "l")
-# # plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
+# # # plot(r[2:1001],-(log(pd_r)[2:1001] - log(pd_r)[1:1000])/0.05, type = "l")
 # plot(r, grad_r,type = "l")
 # plot(r,-(dimension - 1)*sign(r)/r,type = "l")
 # # 
