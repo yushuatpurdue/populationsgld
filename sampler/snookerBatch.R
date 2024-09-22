@@ -40,9 +40,9 @@ nchain  = dim(theta)[2]                    # number of chains
 ### ========== call function: calculating potential & gradient ===============
 
 # source("potential/mixtureGaussian.R")                # source the potential & gradient calculator.
-epsilon_r = 0.003                        # learning rate for sgld in sampling r.
+epsilon_r = 0.001                        # learning rate for sgld in sampling r.
 # stochPotential = nonlinearReg
-epochR = 20
+epochR = 10
 # Data = read.csv("dataset/datasetNLR1.csv")
 # nData = dim(Data)[1]
 # nBatch = max(Data$augment)

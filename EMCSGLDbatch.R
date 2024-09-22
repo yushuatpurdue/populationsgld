@@ -79,12 +79,13 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 nchain  = 10
 Ts      = seq(1,5,4/(nchain-1))
 # Ts      = rep(1,nchain)
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
+mutation_rate = 0.8
+# number of chains to go through SGLD instead of snooker.
 learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
-nrun    = 20                  # run nrun independent times.
+nrun    = 1                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
