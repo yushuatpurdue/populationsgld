@@ -85,7 +85,7 @@ learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
-nrun    = 1                  # run nrun independent times.
+nrun    = 20                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
 
