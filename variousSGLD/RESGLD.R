@@ -196,9 +196,9 @@ for (i in 1:nrun) {
   output_RESGLD = batchRESGLD(Ts = Ts, nepoch = nepoch, learning_rate = learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
-  print(paste0(rowMeans(output_RESGLD[,1,1000000:2000000])))
+  print(paste0(rowMeans(output_RESGLD[,1,500000:1000000])))
   
-  mu_est_MSGLD[,i] = rowMeans(output_RESGLD[,1,1000000:2000000])
+  mu_est_MSGLD[,i] = rowMeans(output_RESGLD[,1,500000:1000000])
   
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
