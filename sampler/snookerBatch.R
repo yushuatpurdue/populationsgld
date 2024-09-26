@@ -34,7 +34,7 @@
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
 ### ========== first: parameter setups ===================================================
-nchain  = dim(theta)[2]                    # number of chains
+# nchain  = dim(theta)[2]                    # number of chains
 # temperature_select = 0.5             # selection temperature for sampling xj
 # Ts      = seq(1,5,4/(nchain-1))      # temperature ladder. Don't use this in snooker: inheritate from EMCSGLDBatch.R
 ### ========== call function: calculating potential & gradient ===============
