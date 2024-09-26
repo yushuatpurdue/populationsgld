@@ -5,22 +5,22 @@
 ###============= initialization: call functions and initial values=======================
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
-source("potential/mixGauss2order.R")
-distribution_sgld <- mixgaussian2
-# set.seed(1)
+# source("potential/mixGauss2order.R")
+# distribution_sgld <- mixgaussian2
+set.seed(1)
 dimension     = 2
-learning_rate = 0.01
-alpha         = 0.01                 # tuning parameter 1, value in [0,1]
-lambda        = 0.08                 # tuning parameter 2
+learning_rate = 0.001
+alpha         = 0.99                 # tuning parameter 1, value in [0,1]
+lambda        = 0.0001                 # tuning parameter 2
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-# Data = read.csv("dataset/datasetNLR5.csv")
-# source("potential/nonlinearReg2order.R")
+Data = read.csv("dataset/datasetNLR5.csv")
+source("potential/nonlinearReg2order.R")
 # potential = nonlinearReg
-# stochPotential = nonlinearReg2ord
-# nData = dim(Data)[1]
-# nBatch = max(Data$augment)
+stochPotential = nonlinearReg2ord
+nData = dim(Data)[1]
+nBatch = max(Data$augment)
 
 
 ### =======================================================
@@ -171,80 +171,95 @@ batchpSGLD <-function(lambda, alpha, nepoch, learning_rate){
 ###=============== run function ============
 ###=========================================
 
-# output_pSGLD = pSGLD(lambda, alpha, 200000, learning_rate)
+##=========== mixgaussian =================
+
 # 
-# plot(output_pSGLD[1,1:50000], output_pSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "pSGLD: 50000 iteration", xlab = "x", ylab = "y")
-# points(mu[1,], mu[2,], pch = 3,col = "green")
+# nrun    = 20                  # run nrun independent times.
+# mu_est_pSGLD = array(NA, dim = c(2, nrun))
+# var_est_pSGLD = array(NA, dim = c(2,2,nrun))
+# niteration = 30000*40
 # 
-# plot(output_pSGLD[1,], output_pSGLD[2,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "pSGLD: 200000 iteration", xlab = "x", ylab = "y")
-# points(mu[1,], mu[2,], pch = 3,col = "green")
+# for (i in 1:nrun) {
+#   print('pSGLD')
+#   print(paste0(i,"th run"))
+#   start_time <- Sys.time()
+#   output_pSGLD = pSGLD(lambda, alpha, niteration = niteration, learning_rate = 0.001)
+#   # output_pSGLD = batchpSGLD(lambda, alpha, 50000, learning_rate = 0.001)
+#   end_time <- Sys.time()
+#   print(paste0("running time = ", end_time - start_time))
+#   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
+#   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
+#   
+#   
+#   record = output_pSGLD[,c((10000*40):niteration)]
+#   mu_est_pSGLD[,i] = rowMeans(record)
+#   var_est_pSGLD[,,i] = cov(t(record))
+#   # record = output_pSGLD[,c(1:2000)*2500]
+#   # print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
+#   # pdf(file=paste0("pRavinepSGLD",i,".pdf"))
+#   # plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
+#   # 
+#   # dev.off()
+#   
+#   # mu_est_pSGLD[,i] = rowMeans(record[,1000:2000])
+#   # var_est_pSGLD[,,i] = cov(t(record))
+#   
+#   # df = data.frame(mu1 = mu_est_pSGLD[1,], mu2 = mu_est_pSGLD[2,])
+#   # write.csv(df, "./thetaEstpSGLD.csv")
+#   
+#   # pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
+#   # for (j in 1:50) {
+#   #   plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("pSGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
+#   #   points(mu[1,], mu[2,], pch = 3,col = "green")
+#   #   
+#   # }
+#   # plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "pSGLD sample path", xlab = "x", ylab = "y")
+#   
+#   # dev.off() 
+#   print(paste("mu estimate = ", mu_est_pSGLD[,i]))
+#   print(paste("var estimate = ", var_est_pSGLD[,,i]))
+# }
+# 
+# print(paste0('mu est = ',rowMeans(mu_est_pSGLD)))
+# print(paste0('mu est std = ',sd(mu_est_pSGLD[1,]),', ' ,sd(mu_est_pSGLD[2,])))
+# print(paste0('var est = ',mean(var_est_pSGLD[1,1,]), ', ' ,mean(var_est_pSGLD[1,2,]), ', ' ,mean(var_est_pSGLD[2,1,]), ', ' ,mean(var_est_pSGLD[2,2,])))
+# print(paste0('var est std = ',sd(var_est_pSGLD[1,1,]), ', ' ,sd(var_est_pSGLD[1,2,]), ', ' ,sd(var_est_pSGLD[2,1,]), ', ' ,sd(var_est_pSGLD[2,2,])))
+# 
+# 
+# pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
+# for (j in 1:6) {
+#   # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
+#   plot(output_pSGLD[1,c(1:(5000*j))*40], output_pSGLD[2,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("pSGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
+#   points(mu[1,], mu[2,], pch = 3,col = "green")
+#   
+# }
+# # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_pSGLD[1,c(10000:30000)*40],output_pSGLD[2,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "pSGLD sample path", xlab = "x", ylab = "y")
+# 
+# dev.off()
 
-# write.csv(output_pSGLD, "./variousSGLD/output_pSGLD.csv")
 
-
+##============== nonlinear regression ===================
 nrun    = 20                  # run nrun independent times.
-mu_est_pSGLD = array(NA, dim = c(2, nrun))
-var_est_pSGLD = array(NA, dim = c(2,2,nrun))
-niteration = 30000*40
+mu_est_pSGLD = array(NA, dim = c(2, nrun))   # nonlinear regression
+nepoch = 20000
 
 for (i in 1:nrun) {
   print('pSGLD')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_pSGLD = pSGLD(lambda, alpha, niteration = niteration, learning_rate = 0.001)
-  # output_pSGLD = batchpSGLD(lambda, alpha, 50000, learning_rate = 0.001)
+  outputpSGLD = batchpSGLD(lambda, alpha, nepoch, learning_rate)
   end_time <- Sys.time()
-  print(paste0("running time = ", end_time - start_time))
-  # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
-  # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
+  print(paste0("running time for ", i, "th run = ", end_time - start_time))
+  print(paste0(rowMeans(outputpSGLD[,1000000:2000000])))
   
-  
-  record = output_pSGLD[,c((10000*40):niteration)]
-  mu_est_pSGLD[,i] = rowMeans(record)
-  var_est_pSGLD[,,i] = cov(t(record))
-  # record = output_pSGLD[,c(1:2000)*2500]
-  # print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
-  # pdf(file=paste0("pRavinepSGLD",i,".pdf"))
-  # plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
-  # 
-  # dev.off()
-  
-  # mu_est_pSGLD[,i] = rowMeans(record[,1000:2000])
-  # var_est_pSGLD[,,i] = cov(t(record))
-  
-  # df = data.frame(mu1 = mu_est_pSGLD[1,], mu2 = mu_est_pSGLD[2,])
-  # write.csv(df, "./thetaEstpSGLD.csv")
-  
-  # pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
-  # for (j in 1:50) {
-  #   plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("pSGLD ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
-  #   points(mu[1,], mu[2,], pch = 3,col = "green")
-  #   
-  # }
-  # plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "pSGLD sample path", xlab = "x", ylab = "y")
-  
-  # dev.off() 
-  print(paste("mu estimate = ", mu_est_pSGLD[,i]))
-  print(paste("var estimate = ", var_est_pSGLD[,,i]))
-}
-
-print(paste0('mu est = ',rowMeans(mu_est_pSGLD)))
-print(paste0('mu est std = ',sd(mu_est_pSGLD[1,]),', ' ,sd(mu_est_pSGLD[2,])))
-print(paste0('var est = ',mean(var_est_pSGLD[1,1,]), ', ' ,mean(var_est_pSGLD[1,2,]), ', ' ,mean(var_est_pSGLD[2,1,]), ', ' ,mean(var_est_pSGLD[2,2,])))
-print(paste0('var est std = ',sd(var_est_pSGLD[1,1,]), ', ' ,sd(var_est_pSGLD[1,2,]), ', ' ,sd(var_est_pSGLD[2,1,]), ', ' ,sd(var_est_pSGLD[2,2,])))
-
-
-pdf(file=paste0("mixGaussianpSGLDplot_",i,".pdf"))
-for (j in 1:6) {
-  # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
-  plot(output_pSGLD[1,c(1:(5000*j))*40], output_pSGLD[2,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("pSGLD ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
-  points(mu[1,], mu[2,], pch = 3,col = "green")
+  mu_est_pSGLD[,i] = rowMeans(outputpSGLD[,1000000:2000000])
   
 }
-# plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-plot(output_pSGLD[1,c(10000:30000)*40],output_pSGLD[2,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "pSGLD sample path", xlab = "x", ylab = "y")
+print(paste("avg mu estimate = ", rowMeans(mu_est_pSGLD)))
+print(paste("mu estimator sd = ", sd(mu_est_pSGLD[1,]),', ' ,sd(mu_est_pSGLD[2,])))
 
-dev.off()
+
 
 # print(paste("avg mu estimate = ", rowMeans(mu_est_pSGLD)))
 
