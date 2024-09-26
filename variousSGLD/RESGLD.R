@@ -9,6 +9,7 @@
 
 ## output: 
 #     a population of paths. array of dimension = c(dim(state space), 2, niteration)
+library(MASS)
 set.seed(1)
 ###=========== set path ================
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
