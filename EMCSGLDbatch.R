@@ -80,7 +80,7 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 ## ================ run simulation ======================
 # nchain  = 10
 nchain  = 1
-Ts      = seq(1,5,4/(nchain-1))
+# Ts      = seq(1,5,4/(nchain-1))
 Ts      = 1
 # Ts      = rep(1,nchain)
 # mutation_rate = 0.8
@@ -114,7 +114,7 @@ for (i in 1:nrun) {
   # 
   # dev.off()
 
-  # mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])
+  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000000:2000000])
   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
 
   # df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])

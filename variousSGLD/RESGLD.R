@@ -198,7 +198,7 @@ for (i in 1:nrun) {
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
   print(paste0(rowMeans(output_RESGLD[,1,500000:1000000])))
   
-  mu_est_MSGLD[,i] = rowMeans(output_RESGLD[,1,500000:1000000])
+  mu_est_RESGLD[,i] = rowMeans(output_RESGLD[,1,500000:1000000])
   
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_RESGLD)))
