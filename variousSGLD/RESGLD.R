@@ -186,8 +186,8 @@ batchRESGLD <-function(Ts, nepoch, learning_rate){
 nrun    = 20                  # run nrun independent times.
 mu_est_RESGLD = array(NA, dim = c(2, nrun))   # nonlinear regression
 nepoch = 10000
-Ts                  = c(1,5)                    # temperature of the two chains.
-learning_rate       = c(0.01,0.03)
+Ts                  = c(1,2)                    # temperature of the two chains.
+learning_rate       = c(0.001,0.011)
 
 for (i in 1:nrun) {
   print('RESGLD')
@@ -209,7 +209,7 @@ print(paste("mu estimator sd = ", sd(mu_est_RESGLD[1,]),', ' ,sd(mu_est_RESGLD[2
 # 
 # hist(as.numeric(output_RESGLD$output[1,2,]),breaks = seq(-7,12,0.1),main = "RESGLD")
 
-# plot(output_RESGLD$output[1,,], output_RESGLD$output[2,,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD 200000 iteration", xlab = "x", ylab = "y")
+plot(output_RESGLD[1,1,], output_RESGLD[2,1,], pch = ".", xlim = c(0,30), ylim = c(0,20), main = "RESGLD 200000 iteration", xlab = "x", ylab = "y")
 # points(output_RESGLD$mu[1,], output_RESGLD$mu[2,], pch = 3,col = "green")
 
 # plot(output_RESGLD$output[1,1,], output_RESGLD$output[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "RESGLD: chain 1, 200000 iteration", xlab = "x", ylab = "y")
