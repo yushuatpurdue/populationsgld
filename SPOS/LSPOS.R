@@ -3,7 +3,7 @@
 ### It also adds a temperature ladder. 
 
 library(MASS)
-# setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+# setwd("/Users/yushuhuang/Documents/pu/research/populationsgld")
 source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian
 
@@ -78,7 +78,7 @@ onestepLSPOS <- function(x, lr, eta, Beta, temperature, truncAt){
   #   x    positions of the particles. d*M, d dimension, M #of particles.
   #   lr   learning rate
   #   eta  scaling parameter in kernel
-  #   beta tuning parameter. Represents temperature. 
+  #   beta tuning parameter. stepsize of SVGD/ stepsize of SGLD. 
   ## Side note: Can I set different temperature for each particle? (In paper it is the same for all. )
   ## Output:
   #   one step update of the positions. 
@@ -143,40 +143,59 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 ## =============== run experiments =====================
 
 # M = 100
-niteration = 3000
-nrun = 10
-Beta = 1
+niteration = 6000
+nrun = 1
+Beta = 2
+cutoff = 1
 
 
-for (M in c(100,300,500,800,1000,1500)){
-  lr = seq(0.03,0.06,0.03/(M - 1))
-  temperature = seq(1,3,2/(M - 1))
+# for (M in c(100,300,500,800,1000,1500)){
+for (M in c(100)){
+  # lr = seq(0.013,0.06,0.03/(M - 1))
+  lr = 0.036
+  # temperature = seq(1,3,2/(M - 1))
+  temperature = 1
   mu_est_LSPOS = array(NA, dim = c(2, nrun))
   var_est_LSPOS = array(NA, dim = c(2,2,nrun))
   
   start_time <- Sys.time()
   for (run in 1:nrun) {
-    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-0.25))    # outputSPOS dimension = dim*M*niteration
-    
-    # pdf(file=paste0("mixGaussianLSPOSplot.pdf"))
-    # plot(outputLSPOS[1,1,],outputLSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
-    # dev.off()
-    # 
+    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-cutoff))    # outputSPOS dimension = dim*M*niteration
     
     mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
     var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
-
-    # 
+    
+    if(cutoff==0){
+      pdf(file=paste0("./SPOS/results/9Gaussian/SGLD_M",M,"_",run,".pdf"))
+    } else{
+      pdf(file=paste0("./SPOS/results/9Gaussian/LSPOS_M",M,"_",run,".pdf"))
+    }
+    
+    plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], pch = ".",cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("LSPOS ",niteration, " iteration ", "M=", M, " lr=", lr, " Beta=", Beta, " cutoff=", cutoff ), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+    LSPOS_hist = hist(outputLSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    dev.off()
     
   }
   end_time <- Sys.time()
   
-  print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", start_time - end_time))
-  df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
-  write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
+  print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", end_time - start_time))
+  # df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
+  # write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
+  
 }
 
+print(paste0('mu est = ',rowMeans(mu_est_LSPOS)))
+print(paste0('mu est std = ',sd(mu_est_LSPOS[1,]),', ' ,sd(mu_est_LSPOS[2,])))
+print(paste0('var est = ',mean(var_est_LSPOS[1,1,]), ', ' ,mean(var_est_LSPOS[1,2,]), ', ' ,mean(var_est_LSPOS[2,1,]), ', ' ,mean(var_est_LSPOS[2,2,])))
+print(paste0('var est std = ',sd(var_est_LSPOS[1,1,]), ', ' ,sd(var_est_LSPOS[1,2,]), ', ' ,sd(var_est_LSPOS[2,1,]), ', ' ,sd(var_est_LSPOS[2,2,])))
 
+
+# distribution_xaxis <- function(x){
+#   dnorm(x,-1,0.1) + dnorm(x,1,0.1)
+# }
+# groundtruth = apply(array(seq(-3,3,0.2)),1, distribution_xaxis)
+# hist(seq(-3,3,0.2),groundtruth)
 # 
 
 

@@ -29,7 +29,7 @@ kernelComp <- function(x,eta){
   #     eta     scaling parameter. scale.
   ## output:
   #     K       kernel matrix. Matrix of dimension M*M. 
-  #     gradK   gradient (of second term) of K matrix, summed over the second tem. 
+  #     gradK   gradient (of second term) of K matrix, summed over the second term. 
   # Detail about gradK: it is the summation of the 4th term in Zhang 2020 equation (9). 
   # K is the kernel matrix where Kij = exp(-(xi - xj)^2/eta^2). gradK first takes gradient K wrt. xj, and this provides an M*M*d tensor. Then it sums out wrt j, and this provides an M*d matrix. 
   ## ====== compute K ===========
@@ -139,30 +139,41 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 ## =============== run experiments =====================
 
 # M =100
-niteration = 3000
-nrun = 10
-for (M in c(100,300,500,800,1000,1500)){
+niteration = 6000
+nrun = 1
+Beta = 2
+# for (M in c(100,300,500,800,1000,1500)){
+for (M in c(100)){
+  lr = 0.039
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
   start_time <- Sys.time()
   for (run in 1:nrun) {
     
-    outputSPOS = SPOS(niteration,M,0.03,1,1) # outputSPOS dimension = dim*M*niteration
-    # 
-    # pdf(file=paste0("mixGaussianSPOSplot.pdf"))
-    # plot(outputSPOS[1,1,],outputSPOS[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SPOS samples", xlab = "x", ylab = "y")
-    # dev.off()
-    # 
+    outputSPOS = SPOS(niteration,M,lr,1,Beta) # outputSPOS dimension = dim*M*niteration
+    
     mu_est_SPOS[,run] = rowMeans(outputSPOS[,1,100:niteration])
     var_est_SPOS[,,run] = cov(t(outputSPOS[,1,100:niteration]))
+    
+    pdf(file=paste0("./SPOS/results/9Gaussian/SPOS_M",M,"_",run,".pdf"))
+    plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], pch = ".", cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("SPOS ",niteration, " iteration", " M=", M, " lr=", lr, " Beta=", Beta), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+    SPOS_hist = hist(outputSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    dev.off()
     
   }
   end_time <- Sys.time()
   print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", start_time - end_time))
-  df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
-  write.csv(df, paste0("./thetaEstSPOS_M",M,".csv"))
+  # df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
+  # write.csv(df, paste0("./thetaEstSPOS_M",M,".csv"))
+  
+  
 }
 
+print(paste0('mu est = ',rowMeans(mu_est_SPOS)))
+print(paste0('mu est std = ',sd(mu_est_SPOS[1,]),', ' ,sd(mu_est_SPOS[2,])))
+print(paste0('var est = ',mean(var_est_SPOS[1,1,]), ', ' ,mean(var_est_SPOS[1,2,]), ', ' ,mean(var_est_SPOS[2,1,]), ', ' ,mean(var_est_SPOS[2,2,])))
+print(paste0('var est std = ',sd(var_est_SPOS[1,1,]), ', ' ,sd(var_est_SPOS[1,2,]), ', ' ,sd(var_est_SPOS[2,1,]), ', ' ,sd(var_est_SPOS[2,2,])))
 
 
 # print(df)
