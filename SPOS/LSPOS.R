@@ -144,15 +144,18 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 
 # M = 100
 niteration = 6000
-nrun = 1
+nrun = 20
 Beta = 2
-cutoff = 1
+cutoff = 0.1
+Mlist = c(100,300,500,800,1000,1500)
+# Mlist = c(100)
 
+temp = array(NA, dim = c(length(Mlist), 10))
 
-# for (M in c(100,300,500,800,1000,1500)){
-for (M in c(100)){
+for (i in 1:length(Mlist)){
+  M = Mlist[i]
   # lr = seq(0.013,0.06,0.03/(M - 1))
-  lr = 0.036
+  lr = 0.037
   # temperature = seq(1,3,2/(M - 1))
   temperature = 1
   mu_est_LSPOS = array(NA, dim = c(2, nrun))
@@ -165,16 +168,16 @@ for (M in c(100)){
     mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
     var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
     
-    if(cutoff==0){
-      pdf(file=paste0("./SPOS/results/9Gaussian/SGLD_M",M,"_",run,".pdf"))
-    } else{
-      pdf(file=paste0("./SPOS/results/9Gaussian/LSPOS_M",M,"_",run,".pdf"))
-    }
-    
-    plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], pch = ".",cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("LSPOS ",niteration, " iteration ", "M=", M, " lr=", lr, " Beta=", Beta, " cutoff=", cutoff ), xlab = "x", ylab = "y")
-    points(mu[1,], mu[2,], pch = 3,col = "green")
-    LSPOS_hist = hist(outputLSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
-    dev.off()
+    # if(cutoff==0){
+    #   pdf(file=paste0("./SPOS/results/9Gaussian/SGLD_M",M,"_",run,".pdf"))
+    # } else{
+    #   pdf(file=paste0("./SPOS/results/9Gaussian/LSPOS_M",M,"_",run,".pdf"))
+    # }
+    # 
+    # plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], pch = ".",cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("LSPOS ",niteration, " iteration ", "M=", M, " lr=", lr, " Beta=", Beta, " cutoff=", cutoff ), xlab = "x", ylab = "y")
+    # points(mu[1,], mu[2,], pch = 3,col = "green")
+    # LSPOS_hist = hist(outputLSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    # dev.off()
     
   }
   end_time <- Sys.time()
@@ -182,13 +185,22 @@ for (M in c(100)){
   print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", end_time - start_time))
   # df1 = data.frame(mu1 = mu_est_LSPOS[1,], mu2 = mu_est_LSPOS[2,], var1 = var_est_LSPOS[1,1,], var2 = var_est_LSPOS[2,2,], cov = var_est_LSPOS[1,2,])
   # write.csv(df1, paste0("./thetaEstLSPOS_M",M,".csv"))
-  
+  temp[i,] = c(rowMeans(mu_est_LSPOS), sd(mu_est_LSPOS[1,]), sd(mu_est_LSPOS[2,]), mean(var_est_LSPOS[1,1,]), mean(var_est_LSPOS[1,2,]), mean(var_est_LSPOS[2,2,]), sd(var_est_LSPOS[1,1,]), sd(var_est_LSPOS[1,2,]), sd(var_est_LSPOS[2,2,]))
+  print(temp[i,])
 }
 
-print(paste0('mu est = ',rowMeans(mu_est_LSPOS)))
-print(paste0('mu est std = ',sd(mu_est_LSPOS[1,]),', ' ,sd(mu_est_LSPOS[2,])))
-print(paste0('var est = ',mean(var_est_LSPOS[1,1,]), ', ' ,mean(var_est_LSPOS[1,2,]), ', ' ,mean(var_est_LSPOS[2,1,]), ', ' ,mean(var_est_LSPOS[2,2,])))
-print(paste0('var est std = ',sd(var_est_LSPOS[1,1,]), ', ' ,sd(var_est_LSPOS[1,2,]), ', ' ,sd(var_est_LSPOS[2,1,]), ', ' ,sd(var_est_LSPOS[2,2,])))
+df = data.frame(temp)
+colnames(df) <- c("mu1", "mu2", "sd_mu1", "sd_mu2", "var1", "var2", "cov", "sd_var1", "sd_var2", "sd_cov")
+if (cutoff == 0){
+  write.csv(df, paste0("./SGLD_lr",lr,"_beta",Beta, ".csv"))
+} else{
+  write.csv(df, paste0("./LSPOS_lr",lr,"_beta",Beta, ".csv"))
+}
+
+# print(paste0('mu est = ',rowMeans(mu_est_LSPOS)))
+# print(paste0('mu est std = ',sd(mu_est_LSPOS[1,]),', ' ,sd(mu_est_LSPOS[2,])))
+# print(paste0('var est = ',mean(var_est_LSPOS[1,1,]), ', ' ,mean(var_est_LSPOS[1,2,]), ', ' ,mean(var_est_LSPOS[2,1,]), ', ' ,mean(var_est_LSPOS[2,2,])))
+# print(paste0('var est std = ',sd(var_est_LSPOS[1,1,]), ', ' ,sd(var_est_LSPOS[1,2,]), ', ' ,sd(var_est_LSPOS[2,1,]), ', ' ,sd(var_est_LSPOS[2,2,])))
 
 
 # distribution_xaxis <- function(x){

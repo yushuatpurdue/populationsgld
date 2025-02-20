@@ -140,10 +140,14 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 
 # M =100
 niteration = 6000
-nrun = 1
+nrun = 20
 Beta = 2
-# for (M in c(100,300,500,800,1000,1500)){
-for (M in c(100)){
+Mlist = c(100,300,500,800,1000,1500)
+
+temp = array(NA, dim = c(length(Mlist), 10))
+
+for (i in 1:length(Mlist)){
+  M = Mlist[i]
   lr = 0.039
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
@@ -155,25 +159,31 @@ for (M in c(100)){
     mu_est_SPOS[,run] = rowMeans(outputSPOS[,1,100:niteration])
     var_est_SPOS[,,run] = cov(t(outputSPOS[,1,100:niteration]))
     
-    pdf(file=paste0("./SPOS/results/9Gaussian/SPOS_M",M,"_",run,".pdf"))
-    plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], pch = ".", cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("SPOS ",niteration, " iteration", " M=", M, " lr=", lr, " Beta=", Beta), xlab = "x", ylab = "y")
-    points(mu[1,], mu[2,], pch = 3,col = "green")
-    SPOS_hist = hist(outputSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
-    dev.off()
+    # pdf(file=paste0("./SPOS/results/9Gaussian/SPOS_M",M,"_",run,".pdf"))
+    # plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], pch = ".", cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("SPOS ",niteration, " iteration", " M=", M, " lr=", lr, " Beta=", Beta), xlab = "x", ylab = "y")
+    # points(mu[1,], mu[2,], pch = 3,col = "green")
+    # SPOS_hist = hist(outputSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    # dev.off()
     
   }
   end_time <- Sys.time()
   print(paste0("time for sampling ", nrun, "times with M = ", M, " is ", start_time - end_time))
   # df = data.frame(mu1 = mu_est_SPOS[1,], mu2 = mu_est_SPOS[2,], var1 = var_est_SPOS[1,1,], var2 = var_est_SPOS[2,2,], cov = var_est_SPOS[1,2,])
   # write.csv(df, paste0("./thetaEstSPOS_M",M,".csv"))
-  
+  temp[i,] = c(rowMeans(mu_est_SPOS), sd(mu_est_SPOS[1,]), sd(mu_est_SPOS[2,]), mean(var_est_SPOS[1,1,]), mean(var_est_SPOS[1,2,]), mean(var_est_SPOS[2,2,]), sd(var_est_SPOS[1,1,]), sd(var_est_SPOS[1,2,]), sd(var_est_SPOS[2,2,]))
+  print(temp[i,])
   
 }
 
-print(paste0('mu est = ',rowMeans(mu_est_SPOS)))
-print(paste0('mu est std = ',sd(mu_est_SPOS[1,]),', ' ,sd(mu_est_SPOS[2,])))
-print(paste0('var est = ',mean(var_est_SPOS[1,1,]), ', ' ,mean(var_est_SPOS[1,2,]), ', ' ,mean(var_est_SPOS[2,1,]), ', ' ,mean(var_est_SPOS[2,2,])))
-print(paste0('var est std = ',sd(var_est_SPOS[1,1,]), ', ' ,sd(var_est_SPOS[1,2,]), ', ' ,sd(var_est_SPOS[2,1,]), ', ' ,sd(var_est_SPOS[2,2,])))
+df = data.frame(temp)
+colnames(df) <- c("mu1", "mu2", "sd_mu1", "sd_mu2", "var1", "var2", "cov", "sd_var1", "sd_var2", "sd_cov")
+write.csv(df, paste0("./SPOS_lr",lr,"_beta",Beta, ".csv"))
+
+
+# print(paste0('mu est = ',rowMeans(mu_est_SPOS)))
+# print(paste0('mu est std = ',sd(mu_est_SPOS[1,]),', ' ,sd(mu_est_SPOS[2,])))
+# print(paste0('var est = ',mean(var_est_SPOS[1,1,]), ', ' ,mean(var_est_SPOS[1,2,]), ', ' ,mean(var_est_SPOS[2,1,]), ', ' ,mean(var_est_SPOS[2,2,])))
+# print(paste0('var est std = ',sd(var_est_SPOS[1,1,]), ', ' ,sd(var_est_SPOS[1,2,]), ', ' ,sd(var_est_SPOS[2,1,]), ', ' ,sd(var_est_SPOS[2,2,])))
 
 
 # print(df)
