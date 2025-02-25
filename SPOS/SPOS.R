@@ -148,7 +148,7 @@ temp = array(NA, dim = c(length(Mlist), 10))
 
 for (i in 1:length(Mlist)){
   M = Mlist[i]
-  lr = 0.039
+  lr = 0.037
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
   start_time <- Sys.time()

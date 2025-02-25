@@ -146,7 +146,7 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 niteration = 6000
 nrun = 20
 Beta = 2
-cutoff = 0.1
+cutoff = 0
 Mlist = c(100,300,500,800,1000,1500)
 # Mlist = c(100)
 
