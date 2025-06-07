@@ -159,7 +159,7 @@ LSPOSbatch <- function(nepoch, nchain, learning_rate, eta, Beta, temperature, tr
 
 # ============ test =================
 
-nrun = 2
+nrun = 40
 M = 500
 # lr = seq(0.03,0.06,0.03/(M - 1))
 # temperature = seq(1,20,2/(M - 1))
