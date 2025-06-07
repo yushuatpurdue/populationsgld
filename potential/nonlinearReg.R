@@ -24,9 +24,9 @@ nonlinearReg <-function(theta, Batch, nData){
   #    $gradU: leveraged stochastic gradient
   theta = t(theta)
   nBatch = dim(Batch)[1]
-  nTheta = dim(theta)[1]
-  x = matrix(Batch$x)%*%rep(1,nTheta)
-  y = matrix(Batch$y)%*%rep(1,nTheta)
+  dimTheta = dim(theta)[1]
+  x = matrix(Batch$x)%*%rep(1,dimTheta)
+  y = matrix(Batch$y)%*%rep(1,dimTheta)
   theta1 = t(matrix(theta[,1])%*%rep(1,nBatch))
   theta2 = t(matrix(theta[,2])%*%rep(1,nBatch))
   
@@ -47,11 +47,12 @@ nonlinearReg <-function(theta, Batch, nData){
 ### ====================================================
 ### ================!!!   TEST    !!!===================
 ### ====================================================
-# Batch = output
-# theta1 = seq(-20,30,0.5)
-# theta2 = seq(-20,30,0.5)
-# theta = expand.grid(theta1,theta2)
-# pd_grad = nonlinearReg(theta, Batch, nData)
+# # Batch = output
+# Batch = Data[which(Data$augment == 1),]
+# theta1 = seq(-5,5,0.5)
+# theta2 = seq(-5,5,0.5)
+# Theta = t(expand.grid(theta1,theta2))
+# pd_grad = nonlinearReg(Theta, Batch, nData)
 # cols = rev(colorRampPalette(c('darkred','red','blue','lightblue'))(40))
-# filled.contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 101),nlevels = 40, col = cols)
+# filled.contour(x = theta1, y = theta2, z = matrix(pd_grad$pd,ncol = 21),nlevels = 40, col = cols)
 # theta = mvrnorm(3, mu = rep(0,2), Sigma = diag(1,2))

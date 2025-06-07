@@ -116,10 +116,12 @@ onestepLSPOS <- function(x, lr, eta, Beta, temperature, truncAt){
   K_gradK = truncKernelComp(x,eta,truncAt)
   K = K_gradK$K
   gradK = K_gradK$gradK
-  VG1 = -gradX%*%t(K)*lr/M + gradK*lr/M
+  VG1 = -gradX%*%t(K)*lr/M 
+  VG2 = + gradK*lr/M
   
-  xUpdate = sgldUpdate + VG1
-  return(xUpdate)
+  xUpdate = sgldUpdate + VG1 +VG2
+  # return(xUpdate)
+  return(list("xUpdate" = xUpdate, "VG1"= VG1[,1], "VG2" = VG2[,1]))
 }
 
 ## =============== function: run SPOS chains ====================
@@ -128,15 +130,21 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
   x = t(x)
   output = array(NA,dim = c(dimension,nchain,niteration))   
   output[,,1] = x 
+  VG1path = array(NA,dim = c(dimension,niteration-1)) 
+  VG2path = array(NA,dim = c(dimension,niteration-1)) 
   for (t in 2:niteration) {
     
-    x          = onestepLSPOS(x, learning_rate, eta, Beta, temperature, truncAt)
+    onestep_update   = onestepLSPOS(x, learning_rate, eta, Beta, temperature, truncAt)
+    x = onestep_update$xUpdate
     output[,,t] = x
+    VG1path[,t-1] = onestep_update$VG1
+    VG2path[,t-1] = onestep_update$VG2
     
     # print(x)
     # print(t)
   }
-  return(output)
+  # return(output)
+  return(list("output" = output, "VG1"= VG1path, "VG2" = VG2path))
 }
 
 
@@ -144,18 +152,18 @@ LSPOS <-function(niteration,nchain, learning_rate, eta, Beta, temperature, trunc
 
 # M = 100
 niteration = 6000
-nrun = 20
-Beta = 2
-cutoff = 0
-Mlist = c(100,300,500,800,1000,1500)
-# Mlist = c(100)
+nrun = 1
+Beta = 1
+cutoff = 0.2
+# Mlist = c(100,300,500,800,1000)
+Mlist = c(300)
 
 temp = array(NA, dim = c(length(Mlist), 10))
 
 for (i in 1:length(Mlist)){
   M = Mlist[i]
   # lr = seq(0.013,0.06,0.03/(M - 1))
-  lr = 0.037
+  lr = 0.018
   # temperature = seq(1,3,2/(M - 1))
   temperature = 1
   mu_est_LSPOS = array(NA, dim = c(2, nrun))
@@ -163,20 +171,40 @@ for (i in 1:length(Mlist)){
   
   start_time <- Sys.time()
   for (run in 1:nrun) {
-    outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-cutoff))    # outputSPOS dimension = dim*M*niteration
+    # outputLSPOS = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-cutoff))
+    LSPOS_result = LSPOS(niteration,M,lr,1,Beta,temperature,exp(-cutoff))
+    outputLSPOS  = LSPOS_result$output   # outputSPOS dimension = dim*M*niteration
+    VG1LSPOS     = LSPOS_result$VG1
+    VG2LSPOS     = LSPOS_result$VG2
     
     mu_est_LSPOS[,run] = rowMeans(outputLSPOS[,1,100:niteration])
     var_est_LSPOS[,,run] = cov(t(outputLSPOS[,1,100:niteration]))
     
     # if(cutoff==0){
-    #   pdf(file=paste0("./SPOS/results/9Gaussian/SGLD_M",M,"_",run,".pdf"))
+    #   pdf(file=paste0("./SPOS/results/4Gaussian/SGLD_M",M,"_beta",Beta,"_",run,"_scatter",".pdf"))
     # } else{
-    #   pdf(file=paste0("./SPOS/results/9Gaussian/LSPOS_M",M,"_",run,".pdf"))
+    #   pdf(file=paste0("./SPOS/results/4Gaussian/LSPOS_M",M,"_beta",Beta,"_",run,"_scatter",".pdf"))
     # }
-    # 
-    # plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], pch = ".",cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("LSPOS ",niteration, " iteration ", "M=", M, " lr=", lr, " Beta=", Beta, " cutoff=", cutoff ), xlab = "x", ylab = "y")
-    # points(mu[1,], mu[2,], pch = 3,col = "green")
-    # LSPOS_hist = hist(outputLSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    
+    if(cutoff==0){
+      pdf(file=paste0("./SPOS/results/4Gaussian/SGLD_M",M,"_beta",Beta,"lr",lr,"cut_off",cutoff,".pdf"))
+    } else{
+      pdf(file=paste0("./SPOS/results/4Gaussian/LSPOS_M",M,"_beta",Beta,"lr",lr,"cut_off",cutoff,".pdf"))
+    }
+    
+    plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], pch = ".",cex=3, xlim = c(-2,4), ylim = c(-2,4), main = paste0("LSPOS ",niteration, " iteration ", "M=", M, " lr=", lr, " Beta=", Beta, " cutoff=", cutoff ), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+    
+    plot(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)], type = "n", xlab = "Dimension 1", ylab = "Dimension 2", main = "Trajectory of 2D Samples")
+    lines(outputLSPOS[1,1,c(100:niteration)], outputLSPOS[2,1,c(100:niteration)])
+    
+    dev.off()
+    # if(cutoff==0){
+    #   pdf(file=paste0("./SPOS/results/4Gaussian/SGLD_M",M,"_beta",Beta,"_",run,"_hist",".pdf"))
+    # } else{
+    #   pdf(file=paste0("./SPOS/results/4Gaussian/LSPOS_M",M,"_beta",Beta,"_",run,"_hist",".pdf"))
+    # }
+    LSPOS_hist = hist(outputLSPOS[1,1,c(100:niteration)], breaks = seq(-2,4,0.2))
     # dev.off()
     
   }

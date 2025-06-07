@@ -2,7 +2,7 @@
 ### This file runs SPOS with localized K. Algorithm improves Zhang 2020 SPOS paper. 
 
 library(MASS)
-# setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
+# setwd("/Users/yushuhuang/Documents/pu/research/populationsgld/")
 source("potential/mixtureGaussian.R")
 distribution_sgld <- mixgaussian
 
@@ -106,16 +106,19 @@ onestepSPOS <- function(x, lr, eta, Beta){
   wn_length = length(x)
   wn        = rnorm(wn_length)
   wn        = array(wn, dim = dim(x))            # generate a gaussian noise
-  sgldUpdate = x - lr*gradX/Beta + sqrt(2*lr/Beta)*wn
+  negStochGrad = - lr*gradX/Beta
+  sgldUpdate = x + negStochGrad + sqrt(2*lr/Beta)*wn
   
   ## variational gradient
   K_gradK = kernelComp(x,eta)
   K = K_gradK$K
   gradK = K_gradK$gradK
-  VG1 = -gradX%*%t(K)*lr/M + gradK*lr/M
+  VG1 = -gradX%*%t(K)*lr/M 
+  VG2 = + gradK*lr/M
   
-  xUpdate = sgldUpdate + VG1
-  return(xUpdate)
+  xUpdate = sgldUpdate + VG1 + VG2 
+  # return(xUpdate)
+  return(list("xUpdate" = xUpdate, "negStochGrad" = negStochGrad[,1], "VG1"= VG1[,1], "VG2" = VG2[,1]))
 }
 
 ## =============== function: run SPOS chains ====================
@@ -124,15 +127,23 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
   x = t(x)
   output = array(NA,dim = c(dimension,nchain,niteration))   
   output[,,1] = x 
+  VG1path = array(NA,dim = c(dimension,niteration-1)) 
+  VG2path = array(NA,dim = c(dimension,niteration-1))
+  negStochGrad = array(NA,dim = c(dimension,niteration-1))
   for (t in 2:niteration) {
     
-    x          = onestepSPOS(x, learning_rate, eta, Beta)
+    onestep_update  = onestepSPOS(x, learning_rate, eta, Beta)
+    x = onestep_update$xUpdate
     output[,,t] = x
+    VG1path[,t-1] = onestep_update$VG1
+    VG2path[,t-1] = onestep_update$VG2
+    negStochGrad[,t-1] = onestep_update$negStochGrad
     
     # print(x)
     # print(t)
   }
-  return(output)
+  # return(output)
+  return(list("output" = output, "negStochGrad" = negStochGrad, "VG1"= VG1path, "VG2" = VG2path))
 }
 
 
@@ -140,29 +151,42 @@ SPOS <-function(niteration,nchain, learning_rate, eta, Beta){
 
 # M =100
 niteration = 6000
-nrun = 20
-Beta = 2
-Mlist = c(100,300,500,800,1000,1500)
+nrun = 1
+Beta = 1
+eta = 1
+Mlist = c(100)
+# Mlist = c(100,300,500,800,1000,1500)
 
 temp = array(NA, dim = c(length(Mlist), 10))
 
 for (i in 1:length(Mlist)){
   M = Mlist[i]
-  lr = 0.037
+  lr = 0.018
   mu_est_SPOS = array(NA, dim = c(2, nrun))
   var_est_SPOS = array(NA, dim = c(2,2,nrun))
   start_time <- Sys.time()
   for (run in 1:nrun) {
     
-    outputSPOS = SPOS(niteration,M,lr,1,Beta) # outputSPOS dimension = dim*M*niteration
+    SPOS_result  = SPOS(niteration,M,lr,eta,Beta) # outputSPOS dimension = dim*M*niteration
+    outputSPOS  = SPOS_result$output   # outputSPOS dimension = dim*M*niteration
+    negStochGrad = SPOS_result$negStochGrad
+    VG1SPOS     = SPOS_result$VG1
+    VG2SPOS     = SPOS_result$VG2
     
     mu_est_SPOS[,run] = rowMeans(outputSPOS[,1,100:niteration])
     var_est_SPOS[,,run] = cov(t(outputSPOS[,1,100:niteration]))
     
-    # pdf(file=paste0("./SPOS/results/9Gaussian/SPOS_M",M,"_",run,".pdf"))
-    # plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], pch = ".", cex=3, xlim = c(-2,6), ylim = c(-2,6), main = paste0("SPOS ",niteration, " iteration", " M=", M, " lr=", lr, " Beta=", Beta), xlab = "x", ylab = "y")
-    # points(mu[1,], mu[2,], pch = 3,col = "green")
-    # SPOS_hist = hist(outputSPOS[1,1,c(100:niteration)], breaks = seq(-2,6,0.2))
+    # pdf(file=paste0("./SPOS/results/4Gaussian/SPOS_M",M,"_beta",Beta,"_",run,".pdf"))
+    pdf(file=paste0("./SPOS/results/4Gaussian/SPOS_M",M,"_beta",Beta,"_lr", lr,".pdf"))
+    plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], pch = ".", cex=3, xlim = c(-2,4), ylim = c(-2,4), main = paste0("SPOS ",niteration, " iteration", " M=", M, " lr=", lr, " Beta=", Beta), xlab = "x", ylab = "y")
+    points(mu[1,], mu[2,], pch = 3,col = "green")
+    
+    plot(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)], type = "n", xlab = "Dimension 1", ylab = "Dimension 2", main = "Trajectory of 2D Samples")
+    lines(outputSPOS[1,1,c(100:niteration)], outputSPOS[2,1,c(100:niteration)])
+    
+    dev.off()
+    # pdf(file=paste0("./SPOS/results/4Gaussian/SPOS_M",M,"_beta",Beta,"_",run,"_hist",".pdf"))
+    SPOS_hist = hist(outputSPOS[1,1,c(100:niteration)], breaks = seq(-2,4,0.2))
     # dev.off()
     
   }

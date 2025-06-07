@@ -5,10 +5,10 @@
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 
-# set.seed(1)
+set.seed(1)
 
 dataset = 'datasetNLR3'
-Data = read.csv(paste0("dataset/",dataset,".csv"))
+Data = read.csv(paste0("SPOS/dataset/",dataset,".csv"))
 print(dataset)
 source("potential/nonlinearReg.R")
 stochPotential = nonlinearReg
@@ -159,11 +159,17 @@ LSPOSbatch <- function(nepoch, nchain, learning_rate, eta, Beta, temperature, tr
 
 # ============ test =================
 
-M = 100
-lr = seq(0.03,0.06,0.03/(M - 1))
-temperature = seq(1,20,2/(M - 1))
+M = 500
+# lr = seq(0.03,0.06,0.03/(M - 1))
+# temperature = seq(1,20,2/(M - 1))
+eta = 1.5
+Beta = 50
+lr = 0.5
+temperature = 1
+cutoff = exp(-0.25)
+cutoff = 0   # SPOS
 
-output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=2, Beta=5, temperature= temperature, exp(-0.25))
-rowMeans(output$output[,1,3000:4000])
-plot(output$output[1,1,3000:4000], output$output[2,1,3000:4000],pch = ".")
-
+set.seed(1)
+output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
+plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
+rowMeans(output$output[,1,1000:4000])
