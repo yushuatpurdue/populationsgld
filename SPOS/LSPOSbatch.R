@@ -159,17 +159,43 @@ LSPOSbatch <- function(nepoch, nchain, learning_rate, eta, Beta, temperature, tr
 
 # ============ test =================
 
+nrun = 2
 M = 500
 # lr = seq(0.03,0.06,0.03/(M - 1))
 # temperature = seq(1,20,2/(M - 1))
-eta = 1.5
+eta = 3
 Beta = 50
 lr = 0.5
 temperature = 1
 cutoff = exp(-0.25)
-cutoff = 0   # SPOS
+# cutoff = 0   # SPOS
 
-set.seed(1)
-output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
-plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
-rowMeans(output$output[,1,1000:4000])
+mu_est = array(NA, dim = c(2, nrun))
+
+for (seed in c(1:nrun)){
+  set.seed(seed)
+  output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
+  pdf(file=paste0("./SPOS/LSPOS",seed,".pdf"))
+  plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
+  dev.off()
+  mu_est[,seed] = rowMeans(output$output[,1,1000:4000])
+}
+write.csv(mu_est, paste0("./SPOS/thetaEstLSPOS_M",M,".csv"))
+
+# SPOS 
+cutoff = 0   # SPOS
+mu_est = array(NA, dim = c(2, nrun))
+for (seed in c(1:nrun)){
+  set.seed(seed)
+  output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
+  pdf(file=paste0("./SPOS/SPOS",seed,".pdf"))
+  plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
+  dev.off()
+  mu_est[,seed] = rowMeans(output$output[,1,1000:4000])
+}
+write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,".csv"))
+
+# set.seed(9)
+# output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
+# plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
+# rowMeans(output$output[,1,1000:4000])
