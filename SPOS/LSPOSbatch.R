@@ -173,6 +173,7 @@ cutoff = exp(-0.25)
 mu_est = array(NA, dim = c(2, nrun))
 
 for (seed in c(1:nrun)){
+  print(paste0("seed = ", seed))
   set.seed(seed)
   output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
   pdf(file=paste0("./SPOS/LSPOS",seed,".pdf"))
