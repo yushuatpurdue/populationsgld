@@ -7,7 +7,7 @@ library(MASS)
 
 set.seed(1)
 
-dataset = 'datasetNLR3'
+dataset = 'datasetNLR1'
 Data = read.csv(paste0("SPOS/dataset/",dataset,".csv"))
 print(dataset)
 source("potential/nonlinearReg.R")
@@ -173,13 +173,15 @@ cutoff = exp(-0.25)
 mu_est = array(NA, dim = c(2, nrun))
 
 for (seed in c(1:nrun)){
-  print(paste0("seed = ", seed))
+  print(paste0("LSPOS seed = ", seed))
   set.seed(seed)
   output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
   pdf(file=paste0("./SPOS/LSPOS",seed,".pdf"))
   plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
   dev.off()
-  mu_est[,seed] = rowMeans(output$output[,1,1000:4000])
+  mean_est = rowMeans(output$output[,1,1000:4000])
+  mu_est[,seed] = mean_est
+  print(paste0("LSPOS mean est = ", mean_est))
 }
 write.csv(mu_est, paste0("./SPOS/thetaEstLSPOS_M",M,".csv"))
 
@@ -187,12 +189,15 @@ write.csv(mu_est, paste0("./SPOS/thetaEstLSPOS_M",M,".csv"))
 cutoff = 0   # SPOS
 mu_est = array(NA, dim = c(2, nrun))
 for (seed in c(1:nrun)){
+  print(paste0("SPOS seed = ", seed))
   set.seed(seed)
   output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
   pdf(file=paste0("./SPOS/SPOS",seed,".pdf"))
   plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
   dev.off()
-  mu_est[,seed] = rowMeans(output$output[,1,1000:4000])
+  mean_est = rowMeans(output$output[,1,1000:4000])
+  mu_est[,seed] = mean_est
+  print(paste0("SPOS mean est = ", mean_est))
 }
 write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,".csv"))
 
@@ -200,3 +205,7 @@ write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,".csv"))
 # output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
 # plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
 # rowMeans(output$output[,1,1000:4000])
+
+
+thetaEstLSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/thetaEstLSPOS_M500.csv")
+thetaEstSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/thetaEstSPOS_M500.csv")
