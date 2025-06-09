@@ -163,12 +163,17 @@ nrun = 40
 M = 500
 # lr = seq(0.03,0.06,0.03/(M - 1))
 # temperature = seq(1,20,2/(M - 1))
-eta = 3
-Beta = 50
+eta = 4
+Beta = 80
 lr = 0.5
 temperature = 1
 cutoff = exp(-0.25)
 # cutoff = 0   # SPOS
+
+# set.seed(8)
+# output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
+# plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
+# rowMeans(output$output[,1,1000:4000])
 
 mu_est = array(NA, dim = c(2, nrun))
 
@@ -201,11 +206,6 @@ for (seed in c(1:nrun)){
 }
 write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,".csv"))
 
-# set.seed(9)
-# output = LSPOSbatch(nepoch = 40, nchain=M, learning_rate=lr, eta=eta, Beta=Beta, temperature= temperature, truncAt = cutoff)
-# plot(output$output[1,1,1000:4000], output$output[2,1,1000:4000],pch = ".", main = paste0("eta=",eta,",beta=", Beta,",lr=",lr, ",cutoff=", cutoff))
-# rowMeans(output$output[,1,1000:4000])
 
-
-thetaEstLSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/thetaEstLSPOS_M500.csv")
-thetaEstSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/thetaEstSPOS_M500.csv")
+# thetaEstLSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/results/nonLinearReg/ds2/thetaEstLSPOS_M500.csv")
+# thetaEstSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/results/nonLinearReg/ds2/thetaEstSPOS_M500.csv")
