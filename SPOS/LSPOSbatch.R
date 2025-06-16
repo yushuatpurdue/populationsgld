@@ -188,7 +188,7 @@ for (seed in c(1:nrun)){
   mu_est[,seed] = mean_est
   print(paste0("LSPOS mean est = ", mean_est))
 }
-write.csv(mu_est, paste0("./SPOS/thetaEstLSPOS_M",M,".csv"))
+write.csv(mu_est, paste0("./SPOS/thetaEstLSPOS_M",M,"_",dataset,".csv"))
 
 # SPOS 
 cutoff = 0   # SPOS
