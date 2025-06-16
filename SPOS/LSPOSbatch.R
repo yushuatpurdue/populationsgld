@@ -160,7 +160,7 @@ LSPOSbatch <- function(nepoch, nchain, learning_rate, eta, Beta, temperature, tr
 # ============ test =================
 
 nrun = 40
-M = 500
+M = 100
 # lr = seq(0.03,0.06,0.03/(M - 1))
 # temperature = seq(1,20,2/(M - 1))
 eta = 4
@@ -204,7 +204,7 @@ for (seed in c(1:nrun)){
   mu_est[,seed] = mean_est
   print(paste0("SPOS mean est = ", mean_est))
 }
-write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,".csv"))
+write.csv(mu_est, paste0("./SPOS/thetaEstSPOS_M",M,"_",dataset,".csv"))
 
 
 # thetaEstLSPOS_M500 = read.csv("/Users/yushuhuang/Documents/pu/research/populationsgld/SPOS/results/nonLinearReg/ds2/thetaEstLSPOS_M500.csv")
