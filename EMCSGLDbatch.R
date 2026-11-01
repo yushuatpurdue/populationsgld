@@ -20,7 +20,9 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
   
   ###============= initialization: call functions and initial values=======================
   
-  theta <<- t(mvrnorm(nchain, mu = c(0,0), Sigma = diag(1,2)))
+  # theta <<- t(mvrnorm(nchain, mu = c(0,0), Sigma = diag(1,2)))
+  temp <- mvrnorm(nchain, mu = c(0,0), Sigma = diag(1,2))      # initial states
+  theta <<- matrix(temp, nrow = 2)
   
   source("sampler/snookerBatch.R")                    # source one-step snooker sampler. Note: SGLD sampler has got sourced in "sampler/snooker.R", no need to source again. 
   
@@ -76,40 +78,48 @@ snookerSGLDbatch <- function(Ts, temperature_select, nepoch, nchain, learning_ra
 # nepoch = 10
 
 ## ================ run simulation ======================
-nchain  = 20
-Ts      = seq(1,5,4/(nchain-1))
+# nchain  = 10
+nchain  = 1
+# Ts      = seq(1,5,4/(nchain-1))
+Ts      = 1
 # Ts      = rep(1,nchain)
-mutation_rate = 0.8        # number of chains to go through SGLD instead of snooker.
-learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+# mutation_rate = 0.8
+mutation_rate = 1
+# number of chains to go through SGLD instead of snooker.
+# learning_rate = seq(0.001,0.021,0.02/(nchain - 1))
+learning_rate = 0.01
 
 # output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 40, nchain = 10, learning_rate)
 
 nrun    = 20                  # run nrun independent times.
 mu_est_EMC = array(NA, dim = c(2, nrun))   # mixgaussian
 # var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+nepoch = 20000
 
 for (i in 1:nrun) {
-  print('EMC')
+  # print('EMC')
+  print('SGLD')
   print(paste0(i,"th run"))
   
   start_time <- Sys.time()
-  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = 20, nchain = 20, learning_rate)
+  output_snookerBatch = snookerSGLDbatch(Ts, temperature_select = 0.5, nepoch = nepoch, nchain = nchain, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
 
   # record = output_snookerBatch$output[,1,]   # mixgaussian
   # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
-  print(paste0(rowMeans(output_snookerBatch$output[,1,1000:2000])))
+  print(paste0(rowMeans(output_snookerBatch$output[,1,1000000:2000000])))
   # pdf(file=paste0("pRavine",i,".pdf"))
   # plot(output_snookerBatch$output[1,1,1000:2000],output_snookerBatch$output[2,1,1000:2000],pch = ".")
   # 
   # dev.off()
 
-  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000:2000])
+  mu_est_EMC[,i] = rowMeans(output_snookerBatch$output[,1,1000000:2000000])
   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
 
-  df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])
-  write.csv(df, "./thetaEst.csv")
+  # df = data.frame(mu1 = mu_est_EMC[1,], mu2 = mu_est_EMC[2,])
+  # write.csv(df, "./thetaEst.csv")
   
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_EMC)))
+print(paste("mu estimator sd = ", sd(mu_est_EMC[1,]),', ' ,sd(mu_est_EMC[2,])))

@@ -6,7 +6,7 @@
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 # source("potential/mixtureGaussian.R")
-# distribution_sgld <- mixgaussian   
+# distribution_sgld <- mixgaussian
 # 
 set.seed(1)
 
@@ -18,7 +18,9 @@ biasfactor = 10                            # bias factor: how much portion of mo
 
 ## ========= below is the initialization for minibatch sampling narrow potential ravine example ======
 
-Data = read.csv("dataset/datasetNLR1.csv")
+dataset = 'datasetNLR3'
+Data = read.csv(paste0("dataset/",dataset,".csv"))
+print(dataset)
 source("potential/nonlinearReg.R")
 # potential = nonlinearReg
 stochPotential = nonlinearReg
@@ -52,6 +54,9 @@ onestepMSGLD <- function(position, momentum, smoothingfactor, biasfactor, learni
   # smoothingfactor: how much past momentum is cumulated into current momentum.
   # biasfactor     : how much momentum is used for updating. 
   # learning_rate  : stepsize of the discretized dynamic.  
+  ## output:
+  # position update: 1 step updated position. dimension*1 array. 
+  # momentum update: 1 step updated momentum. dimension*1 array. 
   
   dimension = dim(position)[1]
   grad = distribution_sgld(position)$grad        # calculate the gradient
@@ -99,8 +104,10 @@ MSGLD <- function(smoothingfactor, biasfactor, temperature, niteration, learning
   # learning_rate  : stepsize of the discretized dynamic. 
   
   # position, dimension*1:
-  x = runif(dimension, min = 0, max = 1)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   # momentum, dimension*1: 
   m = 0
   m = array(m, dim = c(dimension,1))
@@ -135,8 +142,8 @@ batchMSGLD <- function(smoothingfactor, biasfactor, temperature, nepoch, learnin
   # learning_rate  : stepsize of the discretized dynamic.  
   
   # position, dimension*1:
-  # x = runif(dimension, min = 0, max = 1)
-  x = rnorm(dimension, 0,1 )
+  x = runif(dimension, min = 0, max = 1)
+  # x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
   # momentum, dimension*1: 
   m = 0
@@ -171,35 +178,70 @@ batchMSGLD <- function(smoothingfactor, biasfactor, temperature, nepoch, learnin
 ###=============== run function ============
 ###=========================================
 
-# output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, 2000, learning_rate)
+##=========== mixgaussian =================
+# nrun    = 20                  # run nrun independent times.
+# mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
+# var_est_MSGLD = array(NA, dim = c(2,2,nrun))   # mixgaussian
+# niteration = 30000*60
+# 
+# for (i in 1:nrun) {
+#   print('MSGLD')
+#   start_time <- Sys.time()
+#   output_MSGLD = MSGLD(smoothingfactor, biasfactor, temperature, niteration = niteration, learning_rate)
+#   # output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 60000, learning_rate)
+#   end_time <- Sys.time()
+#   print(paste0("running time for ", i, "th run = ", end_time - start_time))
+#   
+#   record = output_MSGLD[,c((10000*60):niteration)]
+#   
+# 
+#     mu_est_MSGLD[,i] = rowMeans(record)
+#     var_est_MSGLD[,,i] = cov(t(record))
+#     print(paste("mu estimate = ", mu_est_MSGLD[,i]))
+#     print(paste("var estimate = ", var_est_MSGLD[,,i]))
+#   
+# }
+# # print(paste("avg mu estimate = ", rowMeans(mu_est_MSGLD)))
+# print(paste0('mu est = ',rowMeans(mu_est_MSGLD)))
+# print(paste0('mu est std = ',sd(mu_est_MSGLD[1,]),', ' ,sd(mu_est_MSGLD[2,])))
+# print(paste0('var est = ',mean(var_est_MSGLD[1,1,]), ', ' ,mean(var_est_MSGLD[1,2,]), ', ' ,mean(var_est_MSGLD[2,1,]), ', ' ,mean(var_est_MSGLD[2,2,])))
+# print(paste0('var est std = ',sd(var_est_MSGLD[1,1,]), ', ' ,sd(var_est_MSGLD[1,2,]), ', ' ,sd(var_est_MSGLD[2,1,]), ', ' ,sd(var_est_MSGLD[2,2,])))
+# 
+# pdf(file=paste0("mixGaussianMSGLDplot_",i,".pdf"))
+# for (j in 1:6) {
+#   # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
+#   plot(output_MSGLD[1,c(1:(5000*j))*60], output_MSGLD[2,c(1:(5000*j))*60], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("MSGLD ",5000*j*60, " iteration"), xlab = "x", ylab = "y")
+#   points(mu[1,], mu[2,], pch = 3,col = "green")
+#   
+# }
+# # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_MSGLD[1,c(10000:30000)*60],output_MSGLD[2,c(10000:30000)*60], type = "l", xlim = c(0,10), ylim = c(0,10), main = "MSGLD sample path", xlab = "x", ylab = "y")
+# 
+# dev.off()
 
+
+##============== nonlinear regression ===================
+# output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, 2000, learning_rate)
 nrun    = 20                  # run nrun independent times.
-mu_est_MSGLD = array(NA, dim = c(2, nrun))   # mixgaussian
-# var_est_EMC = array(NA, dim = c(2,2,nrun))   # mixgaussian
+mu_est_MSGLD = array(NA, dim = c(2, nrun))   # nonlinear regression
+nepoch = 20000
 
 for (i in 1:nrun) {
   print('MSGLD')
+  print(paste0(i,"th run"))
   start_time <- Sys.time()
-  output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = 60000, learning_rate)
+  output_MSGLD = batchMSGLD(smoothingfactor, biasfactor, temperature, nepoch = nepoch, learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
+  print(paste0(rowMeans(output_MSGLD[,1000000:2000000])))
   
-  record = output_MSGLD[,c(1:2000)*3000]
-  # print(paste0("1e3 to 2e3: ", rowMeans(output_snookerBatch$output[,1,1000:2000]), "; 2e3 to 3e3: ", rowMeans(output_snookerBatch$output[,1,2000:3000]), "; 3e3 to 4e3: ", rowMeans(output_snookerBatch$output[,1,3000:4000])))
-  print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
-  pdf(file=paste0("pRavine",i,".pdf"))
-  plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
-  
-  dev.off()
-  
-  mu_est_MSGLD[,i] = rowMeans(record[,1000:2000])
-  # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
-  
-  df = data.frame(mu1 = mu_est_MSGLD[1,], mu2 = mu_est_MSGLD[2,])
-  write.csv(df, "./thetaEstMSGLD.csv")
+  mu_est_MSGLD[,i] = rowMeans(output_MSGLD[,1000000:2000000])
   
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_MSGLD)))
+print(paste("mu estimator sd = ", sd(mu_est_MSGLD[1,]),', ' ,sd(mu_est_MSGLD[2,])))
+
+
 
 # 
 # plot(output_MSGLD[1,1:50000], output_MSGLD[2,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "MSGLD: 50000 iteration", xlab = "x", ylab = "y")

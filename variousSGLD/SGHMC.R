@@ -7,7 +7,7 @@ set.seed(1)
 library(MASS)
 # setwd("/Users/yushuhuang/Documents/pu/2020fall/populationsgld")
 # source("potential/mixtureGaussian.R")
-# distribution_sgld <- mixgaussian    
+# distribution_sgld <- mixgaussian
 
 ## initialize parameters: 
 dimension = 2
@@ -84,8 +84,10 @@ onestepSGHMC <- function(position, momentum, learning_rate = 0.1, temperature = 
 
 SGHMC <- function(temperature, niteration, learning_rate){
   # position:
-  x = runif(dimension, min = 0, max = 1)
+  x = rnorm(dimension, 0,1 )
   x = array(x, dim = c(dimension,1))
+  # x = runif(dimension, min = 0, max = 10)
+  # x = array(x, dim = c(dimension,1))
   # momentum: 
   m = 0
   m = array(m, dim = c(dimension,1))
@@ -154,66 +156,96 @@ batchSGHMC <- function(temperature, nepoch, learning_rate){
 ###=========================================
 ###=============== run function ============
 ###=========================================
+##=========== mixgaussian =================
 
-# output_SGHMC = SGHMC(temperature, 200000, learning_rate)
-# 
-# plot(output_SGHMC[1,1,1:50000], output_SGHMC[2,1,1:50000], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 50000 iteration", xlab = "x", ylab = "y")
-# points(mu[1,], mu[2,], pch = 3,col = "green")
-# 
-# plot(output_SGHMC[1,1,], output_SGHMC[2,1,], pch = ".", xlim = c(0,10), ylim = c(0,10), main = "SGHMC: 200000 iteration", xlab = "x", ylab = "y")
-# points(mu[1,], mu[2,], pch = 3,col = "green")
-
-# write.csv(output_SGHMC, "./variousSGLD/output_SGHMC.csv")
-
-
-nrun    = 20                  # run nrun independent times.
-mu_est_SGHMC = array(NA, dim = c(2, nrun))
+# nrun    = 20                  # run nrun independent times.
+# niteration = 30000*40          # current setup is supposed to >10000
+# mu_est_SGHMC = array(NA, dim = c(2, nrun))
 # var_est_SGHMC = array(NA, dim = c(2,2,nrun))
+# 
+# for (i in 1:nrun) {
+#   print('SGHMC')
+#   print(paste0(i,"th run"))
+#   start_time <- Sys.time()
+#   output_SGHMC = SGHMC(temperature, niteration, learning_rate = 0.001)
+#   # output_SGHMC = batchSGHMC(temperature, 60000, learning_rate = 0.001)
+#   end_time <- Sys.time()
+#   print(paste0("running time for ", i, "th run = ", end_time - start_time))
+#   # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
+#   # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
+# 
+# 
+#   record = output_SGHMC[,1,c((10000*40):niteration)]
+# 
+#   mu_est_SGHMC[,i] = rowMeans(record)
+#   var_est_SGHMC[,,i] = cov(t(record))
+#   print(paste("mu estimate = ", mu_est_SGHMC[,i]))
+#   print(paste("var estimate = ", var_est_SGHMC[,,i]))
+#   # print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
+#   # pdf(file=paste0("pRavine",i,".pdf"))
+#   # plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
+#   
+#   # dev.off()
+#   
+#   # mu_est_SGHMC[,i] = rowMeans(record[,1000:2000])
+#   # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
+#   
+#   # df = data.frame(mu1 = mu_est_SGHMC[1,], mu2 = mu_est_SGHMC[2,])
+#   # write.csv(df, "./thetaEstSGHMC.csv")
+# 
+# 
+#   
+#   # print(paste("mu estimate = ", mu_est_SGHMC[,i]))
+#   # print(paste("var estimate = ", var_est_SGHMC[,,i]))
+# }
+# 
+# 
+# 
+# print(paste0('mu est = ',rowMeans(mu_est_SGHMC)))
+# print(paste0('mu est std = ',sd(mu_est_SGHMC[1,]),', ' ,sd(mu_est_SGHMC[2,])))
+# print(paste0('var est = ',mean(var_est_SGHMC[1,1,]), ', ' ,mean(var_est_SGHMC[1,2,]), ', ' ,mean(var_est_SGHMC[2,1,]), ', ' ,mean(var_est_SGHMC[2,2,])))
+# print(paste0('var est std = ',sd(var_est_SGHMC[1,1,]), ', ' ,sd(var_est_SGHMC[1,2,]), ', ' ,sd(var_est_SGHMC[2,1,]), ', ' ,sd(var_est_SGHMC[2,2,])))
+# 
+# 
+# ##======= plot ========
+# pdf(file=paste0("mixGaussianSGHMCplot_",i,".pdf"))
+# for (j in 1:6) {
+#   # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
+#   plot(output_SGHMC[1,1,c(1:(5000*j))*40], output_SGHMC[2,1,c(1:(5000*j))*40], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGHMC ",5000*j*40, " iteration"), xlab = "x", ylab = "y")
+#   points(mu[1,], mu[2,], pch = 3,col = "green")
+#   
+# }
+# # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
+# plot(output_SGHMC[1,1,c(10000:30000)*40],output_SGHMC[2,1,c(10000:30000)*40], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGHMC sample path", xlab = "x", ylab = "y")
+# 
+# dev.off()
+
+
+##============== nonlinear regression ===================
+nrun    = 20                  # run nrun independent times.
+mu_est_SGHMC = array(NA, dim = c(2, nrun))   # nonlinear regression
+nepoch = 20000
 
 for (i in 1:nrun) {
   print('SGHMC')
   print(paste0(i,"th run"))
   start_time <- Sys.time()
-  # output_SGHMC = SGHMC(temperature, 150000000, learning_rate = 0.001)
-  output_SGHMC = batchSGHMC(temperature, 60000, learning_rate = 0.001)
+  output_SGHMC = batchSGHMC(temperature = temperature, nepoch = nepoch, learning_rate= learning_rate)
   end_time <- Sys.time()
   print(paste0("running time for ", i, "th run = ", end_time - start_time))
-  # hist(as.numeric(output_snooker$output[1,1,]),breaks = seq(-8,13,0.5),main = paste0("EMC-SGLD at ", i, "th run"), xlab = "axis 1")
-  # write.csv(output_snooker$output, paste0("./output_snooker_",i,".csv"))
-
-
-  record = output_SGHMC[,1,c(1:2000)*3000]
-
-  # mu_est_SGHMC[,i] = rowMeans(record)
-  # var_est_SGHMC[,,i] = cov(t(record))
-  print(paste0("1e3 to 2e3: ", rowMeans(record[,1000:2000])))
-  pdf(file=paste0("pRavine",i,".pdf"))
-  plot(record[1,1000:2000],record[2,1000:2000],pch = ".")
+  print(paste0(rowMeans(output_SGHMC[,1,1000000:2000000])))
   
-  dev.off()
+  mu_est_SGHMC[,i] = rowMeans(output_SGHMC[,1,1000000:2000000])
   
-  mu_est_SGHMC[,i] = rowMeans(record[,1000:2000])
-  # var_est_EMC[,,i] = cov(t(record))   # mixgaussian
-  
-  df = data.frame(mu1 = mu_est_SGHMC[1,], mu2 = mu_est_SGHMC[2,])
-  write.csv(df, "./thetaEstSGHMC.csv")
-
-
-  # pdf(file=paste0("mixGaussianSGHMCplot_",i,".pdf"))
-  # for (j in 1:50) {
-  #   # plot(output_snooker$output[1,1,1:(1000*j)], output_snooker$output[2,1,1:(1000*j)], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("EMC ",1000*j, " iteration"), xlab = "x", ylab = "y")
-  #   plot(record[1,c(1:(1000*j))], record[2,c(1:(1000*j))], pch = ".", xlim = c(0,10), ylim = c(0,10), main = paste0("SGHMC ",1000*j*3000, " iteration"), xlab = "x", ylab = "y")
-  #   points(mu[1,], mu[2,], pch = 3,col = "green")
-  # 
-  # }
-  # # plot(output_snooker$output[1,1,],output_snooker$output[2,1,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "EMC-SGLD sample path", xlab = "x", ylab = "y")
-  # plot(record[1,],record[2,], type = "l", xlim = c(0,10), ylim = c(0,10), main = "SGLD sample path", xlab = "x", ylab = "y")
-  # 
-  # dev.off()
-  # print(paste("mu estimate = ", mu_est_SGHMC[,i]))
-  # print(paste("var estimate = ", var_est_SGHMC[,,i]))
 }
 print(paste("avg mu estimate = ", rowMeans(mu_est_SGHMC)))
+print(paste("mu estimator sd = ", sd(mu_est_SGHMC[1,]),', ' ,sd(mu_est_SGHMC[2,])))
+
+
+
+
+
+# print(paste("avg mu estimate = ", rowMeans(mu_est_SGHMC)))
 
 # mu_est = rowMeans(mu_est_SGHMC)
 # sigma_est_1 = mean(var_est_SGHMC[1,1,])
